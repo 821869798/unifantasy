@@ -1,0 +1,16 @@
+{
+    "name": "UniFan.Res",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5ec7fe36951adcd4fad26566e757c41b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

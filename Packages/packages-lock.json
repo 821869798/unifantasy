@@ -12,7 +12,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "141ff18a7ea61403e7e9c372e2f6259ff2eba4ac"
+      "hash": "6909c32a0c8fcf11d4b573af890a0232c1525afe"
     },
     "com.unity.collab-proxy": {
       "version": "1.17.7",
@@ -50,6 +50,13 @@
     },
     "com.unity.ide.vscode": {
       "version": "1.2.5",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.mathematics": {
+      "version": "1.2.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

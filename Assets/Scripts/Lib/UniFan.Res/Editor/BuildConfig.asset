@@ -1,0 +1,478 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa1bcc5ae70d5454da35501aabd147e0, type: 3}
+  m_Name: BuildConfig
+  m_EditorClassIdentifier: 
+  buildRules:
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Shaders
+    searchPattern: '*.shader'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 2
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Shaders
+    searchPattern: '*.shadervariants'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 2
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 1
+    overrideBundleName: Assets/Shaders
+    searchPath: Assets/FX/FXShader
+    searchPattern: '*.shader'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 2
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/LuaScripts
+    searchPattern: '*.bytes'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 1
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Tables
+    searchPattern: '*.bytes'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/pb
+    searchPattern: '*.bytes'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/ThirdParty/PostProcessing/PostProcessing
+    searchPattern: '*.asset'
+    searchOption: 0
+    forceInclueDeps: 1
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/SpriteAtlas
+    searchPattern: '*.spriteatlas'
+    searchOption: 1
+    forceInclueDeps: 1
+    manifestWriteType: 2
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 1
+    overrideBundleName: Assets/Res/Character_npic
+    searchPath: Assets/Res/Character
+    searchPattern: npic_*.png
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 1
+    overrideBundleName: Assets/Res/Character_spic
+    searchPath: Assets/Res/Character
+    searchPattern: spic_*.png
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/UIPrefabs
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/BattlePrefabs
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/FX
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Effect
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Model/Fbx/Character/yelena_open
+    searchPattern: '*.*'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Model
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Images
+    searchPattern: '*.png'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/ScriptableConfig
+    searchPattern: '*.asset'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/ThirdParty/IngameDebugConsole
+    searchPattern: '*.prefab'
+    searchOption: 0
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Timeline
+    searchPattern: '*.playable'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Timeline/PlayableDirPrefabs
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/PackScenes
+    searchPattern: '*.unity'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 2
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Character
+    searchPattern: '*_face_*.png'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Materials/UI
+    searchPattern: Scene_*.mat
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/FX/Common/FX_UI/FXP_LatticeEffect/DixingGrid
+    searchPattern: '*.mat'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Character
+    searchPattern: lpic_*.png
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 1
+    overrideBundleName: Assets/Res/Model/Fbx/Dorm/DormAnimationController
+    searchPath: Assets/Res/Model/Fbx/Character
+    searchPattern: '*_dorm_animator.controller'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Character
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 2
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Materials/HomeMainBg
+    searchPattern: '*.mat'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Fonts/FontWithId
+    searchPattern: '*.*'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 30
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Language/AssetCfg
+    searchPattern: '*.asset'
+    searchOption: 0
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 1
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Language/UIConfig
+    searchPattern: '*.asset'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Language/Bytes
+    searchPattern: '*.bytes'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Language/Images
+    searchPattern: '*.png'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/FX/Scene/tianqi/new
+    searchPattern: '*.mat'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Model/Fbx/Character
+    searchPattern: '*warchess_animator.controller'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/WarChess/AreaPrefab
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/WarChess/GridPrefabs
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  sharedBuildRules:
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Model/Fbx/Character
+    searchPattern: .+
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 1
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Model/Fbx/Monster
+    searchPattern: .+
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 1
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Packages/com.unity.cinemachine
+    searchPattern: .+
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/Character
+    searchPattern: .+/L2D/.+
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
