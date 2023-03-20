@@ -49,7 +49,7 @@ namespace UniFan.Res.Editor
 
         private static void ReloadConfig()
         {
-            _globalBuildFilterConfig = AssetDatabase.LoadAssetAtPath<BuildFilterConfig>("Assets/Editor/BuildFilter/BundleBuildFilterConfig.asset");
+            _globalBuildFilterConfig = EditorHelper.LoadSettingData<BuildFilterConfig>();
         }
 
     }

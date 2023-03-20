@@ -3,7 +3,6 @@ using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.SceneManagement;
 using UniFan;
 
 namespace UniFan.Res.Editor
@@ -12,13 +11,24 @@ namespace UniFan.Res.Editor
     {
         const string EncryptExtension = "_Encrypt";
 
-        [MenuItem("GameEditor/AssetBundle/Build Config Setting")]
+#if UNITY_2019_4_OR_NEWER
+        [MenuItem("GameEditor/AssetBundle/BundleBuildSettingWindow", priority = 1)]
         public static void BuilderRulesSetting()
         {
-            BundleBuildSettingWindow.Open();
+            BundleBuildSettingWindow wnd = EditorWindow.GetWindow<BundleBuildSettingWindow>();
+            wnd.titleContent = new GUIContent("BundleBuildSettingWindow");
+        }
+#else
+        [MenuItem("GameEditor/AssetBundle/BundleBuildSettingWindow(Legacy)")]
+        public static void BuilderRulesSettingLegacy()
+        {
+            BundleBuildSettingLegacyWindow.Open();
         }
 
-        [MenuItem("GameEditor/AssetBundle/Start Build")]
+#endif
+
+
+        [MenuItem("GameEditor/AssetBundle/Start Build", priority = 10)]
         public static void StartBuildByMenu()
         {
             if (StartBuild(LanguageGlobal.LanguageEditorMode, true) && EditorUtility.DisplayDialog("提示", "AssetBundle打包完成!\nCopy AssetBundles to StreamingAssets?", "确认", "取消"))
@@ -27,7 +37,7 @@ namespace UniFan.Res.Editor
                 EditorUtility.ClearProgressBar();
         }
 
-        [MenuItem("GameEditor/AssetBundle/Start Build(增量打包)")]
+        [MenuItem("GameEditor/AssetBundle/Start Build(增量打包)", priority = 11)]
         public static void StartBuildIncrementByMenu()
         {
             if (StartBuild(LanguageGlobal.LanguageEditorMode, true, false, true) && EditorUtility.DisplayDialog("提示", "AssetBundle打包完成!\nCopy AssetBundles to StreamingAssets?", "确认", "取消"))
@@ -98,7 +108,7 @@ namespace UniFan.Res.Editor
             return true;
         }
 
-        [MenuItem("GameEditor/AssetBundle/Copy AssetBundles to StreamingAssets")]
+        [MenuItem("GameEditor/AssetBundle/Copy AssetBundles to StreamingAssets", priority = 20)]
         public static void CopyAssetBundlesToStreamingAssets()
         {
             string destination = Path.Combine(Application.streamingAssetsPath, Consts.AssetbundleLoadPath);
@@ -107,7 +117,7 @@ namespace UniFan.Res.Editor
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("GameEditor/AssetBundle/Zip Encrypted")]
+        [MenuItem("GameEditor/AssetBundle/Zip Encrypted", priority = 21)]
         static void ZipEncrypted()
         {
             var sourcePath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName()) + EncryptExtension;
@@ -124,71 +134,39 @@ namespace UniFan.Res.Editor
             Debug.Log("Zip complete!");
         }
 
-        [MenuItem("GameEditor/SceneShortcut/不保存当前场景并进入Launcher %h")]
-        static void OpenSceneLauncher()
-        {
-            EditorSceneManager.OpenScene("Assets/Scenes/Launcher.unity");
-        }
-        [MenuItem("GameEditor/SceneShortcut/不保存当前场景并进入特效预览场景 %j")]
-        static void OpenSceneModTest()
-        {
-            EditorSceneManager.OpenScene("Assets/Test/ModTest/ModTest02.unity");
-        }
-
-        [MenuItem("GameEditor/Clear Editor ProgressBar(防止异常卡住)")]
-        public static void ClearEditorProgressBar()
-        {
-            EditorUtility.ClearProgressBar();
-        }
-
-        [MenuItem("GameEditor/清除本地缓存数据/Clear All PlayerPrefs(清除本地保存的数据)")]
-        public static void ClearAllPlayerPrefs()
-        {
-            PlayerPrefs.DeleteAll();
-        }
-
-        [MenuItem("GameEditor/清除本地缓存数据/Clear All EditorPrefs(清除编辑器本地保存的数据)")]
-        public static void ClearAllEditorPrefs()
-        {
-            EditorPrefs.DeleteAll();
-        }
-
-        [MenuItem("GameEditor/清除本地缓存数据/Clear All UserData(清除编辑器本地保存的用户数据)")]
-        public static void ClearAllUserData()
-        {
-            if (Application.isPlaying)
-            {
-                EditorUtility.DisplayDialog("状态错误", "运行状态无法调用本方法,请退出后进行调用", "确认");
-            }
-            else
-            {
-                try
-                {
-                    if (Directory.Exists(Consts.EditorPersistentPath))
-                    {
-                        Directory.Delete(Consts.EditorPersistentPath, true);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogException(e);
-                }
-            }
-        }
+        #region Special Options
 
         const string kRuntimeMode = "GameEditor/AssetBundle/Editor Bundle Mode";
 
-        [MenuItem(kRuntimeMode)]
+        [MenuItem(kRuntimeMode,false,100)]
         public static void ToggleRuntimeMode()
         {
             AssetBundleUtility.ActiveBundleMode = !AssetBundleUtility.ActiveBundleMode;
         }
 
-        [MenuItem(kRuntimeMode, true)]
+        [MenuItem(kRuntimeMode, true,100)]
         public static bool ToggleRuntimeModeValidate()
         {
             Menu.SetChecked(kRuntimeMode, AssetBundleUtility.ActiveBundleMode);
             return true;
         }
+
+        const string kSimulationAsyncLoad = "GameEditor/AssetBundle/Editor Simulation AsyncLoad";
+
+        [MenuItem(kSimulationAsyncLoad, false,100)]
+        public static void ToggleSimulationAsyncLoad()
+        {
+            AssetBundleUtility.SimulationAsyncLoad = !AssetBundleUtility.SimulationAsyncLoad;
+        }
+
+        [MenuItem(kSimulationAsyncLoad, true,100)]
+        public static bool ToggleSimulationAsyncLoadValidate()
+        {
+            Menu.SetChecked(kSimulationAsyncLoad, AssetBundleUtility.SimulationAsyncLoad);
+            return true;
+        }
+
+        #endregion
+
     }
 }

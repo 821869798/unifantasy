@@ -1,274 +1,310 @@
-Ôªøusing System;
-using System.Collections.Generic;
-using UnityEngine;
+#if UNITY_2019_4_OR_NEWER
 using UnityEditor;
-using UnityEditorInternal;
-using System.IO;
+using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEditor.UIElements;
+using System.Collections.Generic;
+using System.Linq;
+using NUnit.Framework;
+using PlasticPipe.PlasticProtocol.Messages;
 
 namespace UniFan.Res.Editor
 {
     public class BundleBuildSettingWindow : EditorWindow
     {
-        internal static void Open()
-        {
-            var window = GetWindow<BundleBuildSettingWindow>("BundleRuleSettingWindow", true);
-            window.Show();
-        }
 
         private AssetBundleBuildConfig _config;
-        private ReorderableList _list;
-        private Vector2 _scrollPosition = Vector2.zero;
-        //ÊòØÂê¶ÊòØÂÖ±‰∫´ËµÑÊ∫êÁöÑËßÑÂàô
-        private bool _isSharedRule;
-        private bool _changeRuleMode;
 
-        private void InitConfig()
+
+        private ListView _rulePreviewList;
+        private BuildRuleDetailContainer _ruleDetailContainer;
+        private Label _ruleTypeInfo;
+
+        //…œ¥Œ—°‘ÒµƒπÊ‘ÚÀ˜“˝
+        private int _lastSelectRuleIndex;
+        // «∑Ò «π´”√◊ ‘¥∞¸πÊ‘Ú
+        private bool _isShareRuleMode = false;
+
+        public List<BuildRule> GetCurModeRules()
         {
-            _config = AssetBundleBuildConfig.LoadOrCreateConfig();
-            _isSharedRule = false;
-            _changeRuleMode = false;
-        }
-
-        void InitFilterListDrawer()
-        {
-            var ruleList = _isSharedRule ? _config.sharedBuildRules : _config.buildRules;
-            _list = new ReorderableList(ruleList, typeof(BuildRule));
-            _list.drawElementCallback = OnListElementGUI;
-            _list.drawHeaderCallback = OnListHeaderGUI;
-            _list.draggable = true;
-            _list.elementHeight = 130;
-            _list.onAddCallback = (list) => AddRule();
-        }
-
-        private void OnGUI()
-        {
-            if (_config == null)
+            if (_isShareRuleMode)
             {
-                InitConfig();
+                return _config.sharedBuildRules;
             }
-            if (_list == null || _changeRuleMode)
+            else
             {
-                if (_changeRuleMode)
-                {
-                    _isSharedRule = !_isSharedRule;
-                    _changeRuleMode = false;
-                }
-                InitFilterListDrawer();
-            }
-
-            GUILayout.BeginHorizontal(EditorStyles.toolbar);
-            {
-                if (GUILayout.Button("StartBuild", EditorStyles.toolbarButton))
-                {
-                    AssetBundleMenuItem.StartBuildByMenu();
-                }
-                if (GUILayout.Button("StartBuildIncrement", EditorStyles.toolbarButton))
-                {
-                    AssetBundleMenuItem.StartBuildIncrementByMenu();
-                }
-                if (GUILayout.Button("Copy To StreamingAsset", EditorStyles.toolbarButton))
-                {
-                    AssetBundleMenuItem.CopyAssetBundlesToStreamingAssets();
-                }
-                if (GUILayout.Button("EnableAllRule(AutoSave)", EditorStyles.toolbarButton))
-                {
-                    SetAllRuleActive(true);
-                    SaveConfig();
-                }
-                if (GUILayout.Button("DisableAllRule(AutoSave)", EditorStyles.toolbarButton))
-                {
-                    SetAllRuleActive(false);
-                    SaveConfig();
-                }
-                const string ruleButtonInfo1 = "normal(click to shared)";
-                const string ruleButtonInfo2 = "shared(click to normal)";
-                if (GUILayout.Button(_isSharedRule ? ruleButtonInfo2 : ruleButtonInfo1, EditorStyles.toolbarButton))
-                {
-                    _changeRuleMode = true;
-                }
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("SaveConfig", EditorStyles.toolbarButton))
-                {
-                    SaveConfig();
-                }
-            }
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginVertical();
-            {
-                GUILayout.Space(10);
-                _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
-                {
-                    _list.DoLayoutList();
-                }
-                GUILayout.EndScrollView();
-            }
-            GUILayout.EndVertical();
-
-            if (GUI.changed)
-                EditorUtility.SetDirty(_config);
-        }
-
-        void SetAllRuleActive(bool active)
-        {
-            var ruleList = _isSharedRule ? _config.sharedBuildRules : _config.buildRules;
-            foreach (var rule in ruleList)
-            {
-                rule.active = active;
+                return _config.buildRules;
             }
         }
 
-        void AddRule()
+        public void CreateGUI()
         {
-            string path = SelectFolder();
+
+            try
+            {
+                _config = AssetBundleBuildConfig.LoadOrCreateConfig();
+
+                // Each editor window contains a root VisualElement object
+                VisualElement root = rootVisualElement;
+
+                var visualAsset = EditorHelper.LoadWindowUXML<BundleBuildSettingWindow>();
+                if (visualAsset == null)
+                {
+                    return;
+                }
+                visualAsset.CloneTree(root);
+
+                //≥ı ºªØ∞¥≈•
+                InitToolButtons();
+
+                _ruleTypeInfo = root.Q<Label>("RuleTypeInfo");
+
+                var togShared = root.Q<Toggle>("TogShared");
+                togShared.value = _isShareRuleMode;
+                togShared.RegisterValueChangedCallback(evt =>
+                {
+                    //À¢–¬œ‘ æƒ£ Ω
+                    _isShareRuleMode = evt.newValue;
+                    _lastSelectRuleIndex = 0;
+                    RefreshWindow();
+                });
+
+
+                _rulePreviewList = root.Q<ListView>("RulePreviewList");
+                _rulePreviewList.makeItem = MakeRulePreviewListItem;
+                _rulePreviewList.bindItem = BindRulePreviewListItem;
+                _rulePreviewList.itemsAdded += AddRulePreviewListItem;
+                _rulePreviewList.itemsRemoved += RemoveRulePreviewListItem;
+                _rulePreviewList.onSelectionChange += OnRulePreviewSelectionChange;
+
+                var detailContainer = root.Q<VisualElement>("BuildRuleContainer");
+                _ruleDetailContainer = new BuildRuleDetailContainer(this, detailContainer);
+
+
+                //À¢–¬¥∞ÃÂ
+                RefreshWindow();
+
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e.ToString());
+            }
+
+        }
+
+        void InitToolButtons()
+        {
+            VisualElement root = rootVisualElement;
+
+            var btnBuildForce = root.Q<Button>("BtnBuildForce");
+            btnBuildForce.clicked += () =>
+            {
+                AssetBundleMenuItem.StartBuildByMenu();
+            };
+
+            var btnBuildIncre = root.Q<Button>("BtnBuildIncre");
+            btnBuildIncre.clicked += () =>
+            {
+                AssetBundleMenuItem.StartBuildIncrementByMenu();
+            };
+
+            var btnCopyAssets = root.Q<Button>("BtnCopyAssets");
+            btnCopyAssets.clicked += () =>
+            {
+                AssetBundleMenuItem.CopyAssetBundlesToStreamingAssets();
+            };
+
+            var btnSave = root.Q<Button>("BtnSave");
+            btnSave.clicked += SaveConfig;
+
+            var btnDisableAllRule = root.Q<Button>("BtnDisableAll");
+            btnDisableAllRule.clicked += DisableAllRule;
+
+            var btnEnableAllRule = root.Q<Button>("BtnEnableAll");
+            btnEnableAllRule.clicked += EnableAllRule;
+        }
+
+        void RefreshWindow()
+        {
+            if (_isShareRuleMode)
+            {
+                _ruleTypeInfo.text = "ResShareRuleList";
+                _ruleTypeInfo.style.backgroundColor = new StyleColor(new Color(215f / 255, 168f / 255, 96f / 255));
+            }
+            else
+            {
+                _ruleTypeInfo.text = "ResBuildRuleList";
+                _ruleTypeInfo.style.backgroundColor = new StyleColor(new Color(89f / 255, 89f / 255, 89f / 255));
+            }
+
+            FillRulePreviewList();
+        }
+
+
+        #region RulePreviewList
+
+        void FillRulePreviewList()
+        {
+            _rulePreviewList.Clear();
+            _rulePreviewList.ClearSelection();
+            _rulePreviewList.itemsSource = GetCurModeRules();
+            _rulePreviewList.Rebuild();
+
+            if (_lastSelectRuleIndex >= 0 && _lastSelectRuleIndex < _rulePreviewList.itemsSource.Count)
+            {
+                _rulePreviewList.selectedIndex = _lastSelectRuleIndex;
+            }
+        }
+
+        VisualElement MakeRulePreviewListItem()
+        {
+            VisualElement element = new VisualElement();
+            element.style.flexDirection = FlexDirection.Row;
+
+            var toggle = new Toggle();
+            toggle.name = "toggleActive";
+            toggle.style.unityTextAlign = TextAnchor.MiddleLeft;
+            toggle.style.flexGrow = 0f;
+            toggle.style.height = 24f;
+            toggle.style.width = 30f;
+            toggle.text = "";
+            toggle.RegisterValueChangedCallback(evt =>
+            {
+                if (element.userData is BuildRule rule)
+                {
+                    rule.active = evt.newValue;
+                }
+            });
+            element.Add(toggle);
+
+            var label = new Label();
+            label.name = "labelRule";
+            label.style.unityTextAlign = TextAnchor.MiddleLeft;
+            label.style.flexGrow = 1f;
+            label.style.height = 24f;
+            label.style.paddingBottom = 2f;
+            label.style.paddingTop = 2f;
+            label.enableRichText = true;
+            element.Add(label);
+
+            return element;
+        }
+
+
+        void AddRulePreviewListItem(IEnumerable<int> collections)
+        {
+            var buildRules = GetCurModeRules();
+            var last = buildRules.Count - 1;
+            var filter = new BuildRule();
+            buildRules[last] = filter;
+
+            string path = EditorHelper.SelectFolder(this);
             if (!string.IsNullOrEmpty(path))
             {
-                var filter = new BuildRule();
                 filter.searchPath = path;
-                var ruleList = _isSharedRule ? _config.sharedBuildRules : _config.buildRules;
-                ruleList.Add(filter);
-            }
-        }
-
-        void OnListHeaderGUI(Rect rect)
-        {
-            EditorGUI.LabelField(rect, "Asset Build Rules");
-        }
-
-        void OnListElementGUI(Rect rect, int index, bool isactive, bool isfocused)
-        {
-            const int cap = 5;
-            const int heightCap = 25;
-
-            var ruleList = _isSharedRule ? _config.sharedBuildRules : _config.buildRules;
-            BuildRule rule = ruleList[index];
-            rect.y++;
-
-            Rect r = rect;
-            r.width = 50;
-            r.height = 20;
-            GUI.Label(r, "Active:");
-            r.x += r.width + cap;
-            r.width = 20;
-            rule.active = GUI.Toggle(r, rule.active, GUIContent.none);
-            r.x += r.width + cap;
-            r.width = 80;
-            GUI.Label(r, "RuleBuilType:");
-            r.x += r.width + cap;
-            r.width = Mathf.Max(0, rect.width - r.x);
-
-            rule.buildType = (RuleBuilType)EditorGUI.EnumPopup(r, rule.buildType);
-
-            if (rule.buildType == RuleBuilType.AssetBundleName)
-            {
-                r.y += heightCap;
-                r.x = 0;
-                r.width = 200;
-                GUI.Label(r, "Open Override AssetBundleName:");
-                r.x += r.width + cap;
-                r.width = 20;
-                rule.isOverrideBundleName = GUI.Toggle(r, rule.isOverrideBundleName, GUIContent.none);
-                r.x += r.width + cap;
-                r.width = 100;
-                GUI.Label(r, "Override Name:");
-                r.x += r.width + cap;
-                r.width = Mathf.Max(0, rect.width - r.x);
-                rule.overrideBundleName = GUI.TextField(r, rule.overrideBundleName);
-            }
-            r.y += heightCap;
-            r.x = 0;
-            r.width = 120;
-            GUI.Label(r, "AssetSearchPath:");
-
-            r.x += r.width + cap;
-            r.width = Mathf.Max(0, rect.width - 100 - 100 - cap - cap);
-            GUI.enabled = false;
-            rule.searchPath = GUI.TextField(r, rule.searchPath);
-            GUI.enabled = true;
-
-            r.x += r.width + cap;
-            r.width = 100;
-            if (GUI.Button(r, "SelectFolder"))
-            {
-                var path = SelectFolder();
-                if (!string.IsNullOrEmpty(path))
-                    rule.searchPath = path;
             }
 
-            r.y += heightCap;
-            r.x = 0;
-            r.width = 120;
-            GUI.Label(r, "AssetSearchPattern:");
-            r.x += r.width + cap;
-            r.width = 150;
-            rule.searchPattern = GUI.TextField(r, rule.searchPattern);
-            r.x += r.width + cap;
-            r.width = 120;
-            GUI.Label(r, "AssetSearchOption:");
-            r.x += r.width + cap;
-            r.width = Mathf.Max(0, rect.width - r.x);
-            rule.searchOption = (SearchOption)EditorGUI.EnumPopup(r, rule.searchOption);
-
-            r.y += heightCap;
-            r.x = 0;
-            r.width = 180;
-            GUI.Label(r, "Force Include Dep(Âãø‰π±ÈÄâ):");
-            r.x += r.width + cap;
-            r.width = 20;
-            rule.forceInclueDeps = GUI.Toggle(r, rule.forceInclueDeps, GUIContent.none);
-
-            r.x += r.width + cap;
-            r.width = 180;
-            GUI.Label(r, "Manifest Info Type(Âãø‰π±ÈÄâ):");
-            r.x += r.width;
-            r.width = 150;
-            rule.manifestWriteType = (ManifestWriteType)EditorGUI.EnumPopup(r, rule.manifestWriteType);
-
-            r.x += r.width + cap;
-            r.width = 160;
-            GUI.Label(r, "ÁâπÂÆöËØ≠Ë®Ä‰∏ã‰∏çË¢´‰æùËµñ(Âãø‰π±ÈÄâ):");
-            r.x += r.width;
-            r.width = 150;
-            rule.depCulling = EditorGUI.MaskField(r, rule.depCulling, Consts.BuildCullingLangTypeNames);
-
-            r.x += r.width + cap;
-            r.width = 120;
-            GUI.Label(r, "ÂøΩÁï•ËØ•ÂåÖÁöÑÂºïÁî®ÂâîÈô§:");
-            r.x += r.width;
-            r.width = 30;
-            rule.ignoreDepCulling = EditorGUI.Toggle(r, rule.ignoreDepCulling);
+            _rulePreviewList.selectedIndex = last;
         }
 
-        string SelectFolder()
+        void RemoveRulePreviewListItem(IEnumerable<int> collections)
         {
-            string dataPath = Application.dataPath.Replace('\\', '/');
-            string selectedPath = EditorUtility.OpenFolderPanel("AssetSearchPath", dataPath, "").Replace('\\', '/');
-            if (!string.IsNullOrEmpty(selectedPath))
+
+        }
+
+        void BindRulePreviewListItem(VisualElement element, int index)
+        {
+            var buildRules = GetCurModeRules();
+
+            BuildRule rule = buildRules[index];
+
+            //∞Û∂® ˝æ›
+            element.userData = rule;
+
+            var toggle = element.Q<Toggle>("toggleActive");
+            toggle.value = rule.active;
+
+            var textField1 = element.Q<Label>("labelRule");
+
+            string buildDesc = rule.buildDesc;
+            if (string.IsNullOrEmpty(buildDesc))
             {
-                if (selectedPath.StartsWith(dataPath))
+                buildDesc = "<color=#ff0000>Œ¥∂®“Â√Ë ˆ</color>";
+            }
+            string searchPath = rule.searchPath;
+            if (string.IsNullOrEmpty(rule.searchPath))
+            {
+                searchPath = "<color=#ff0000>Œ¥∂®“Â◊ ‘¥¬∑æ∂</color>";
+            }
+
+            textField1.text = $"[{buildDesc}]{searchPath}";
+        }
+
+
+        void OnRulePreviewSelectionChange(IEnumerable<object> objs)
+        {
+            var buildRules = GetCurModeRules();
+
+            var selectRule = _rulePreviewList.selectedItem as BuildRule;
+            if (selectRule == null)
+            {
+                if (buildRules.Count > 0)
                 {
-                    return "Assets/" + selectedPath.Substring(dataPath.Length + 1);
+                    _rulePreviewList.selectedIndex = buildRules.Count - 1;
+                    return;
                 }
-                else
-                {
-                    ShowNotification(new GUIContent("‰∏çËÉΩÂú®AssetsÁõÆÂΩï‰πãÂ§ñ!"));
-                }
+
+                _lastSelectRuleIndex = -1;
+                _ruleDetailContainer.RefreshRuleDetail(null,_isShareRuleMode);
+                return;
             }
-            return null;
+
+            _lastSelectRuleIndex = _rulePreviewList.selectedIndex;
+
+            _ruleDetailContainer.RefreshRuleDetail(selectRule, _isShareRuleMode, () =>
+            {
+                _rulePreviewList.RefreshItem(_lastSelectRuleIndex);
+            });
         }
+        #endregion
+
+        private void DisableAllRule()
+        {
+            var buildRules = GetCurModeRules();
+            foreach (var rule in buildRules)
+            {
+                rule.active = false;
+            }
+            SaveConfig();
+            RefreshWindow();
+        }
+
+        private void EnableAllRule()
+        {
+            var buildRules = GetCurModeRules();
+            foreach (var rule in buildRules)
+            {
+                rule.active = true;
+            }
+            SaveConfig();
+            RefreshWindow();
+        }
+
 
         void SaveConfig()
         {
-            string parentDir = Path.GetDirectoryName(Consts.BuildConfigPath);
-            if (Directory.Exists(parentDir) == false)
-            {
-                Directory.CreateDirectory(parentDir);
-            }
             if (_config)
             {
                 EditorUtility.SetDirty(_config);
                 AssetDatabase.SaveAssets();
             }
+
         }
     }
+
+
 }
+
+
+
+#endif

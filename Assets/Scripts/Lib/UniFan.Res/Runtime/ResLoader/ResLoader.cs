@@ -8,6 +8,7 @@ namespace UniFan.Res
 {
     public class ResLoader : IResLoader
     {
+
         private HashSet<IRes> _resSet = new HashSet<IRes>();
 
         private Dictionary<AsyncTaskSequence, Action<Object>> _asyncLoadMap = new Dictionary<AsyncTaskSequence, Action<Object>>();

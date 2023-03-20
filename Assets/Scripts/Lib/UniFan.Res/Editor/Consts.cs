@@ -10,9 +10,6 @@ namespace UniFan.Res.Editor
         //assetbundle资源的扩展名
         public static readonly string BundleExtensionName = ".ab";
 
-        //assetbundle打包的配置文件路径
-        public static readonly string BuildConfigPath = "Assets/Scripts/Framework/ResFramework/Editor/BuildConfig.asset";
-
         //打包的目标路径
         public const string AssetBundlesOutputPath = "AssetBundles";
 
@@ -59,14 +56,11 @@ namespace UniFan.Res.Editor
         //存储自定义格式的ab依赖信息文件
         public const string ResManifestBinaryConfigName = "resmanifest.bytes";
 
-        //存储自定义格式的ab依赖信息文件,明文显示,不打进包
-        public const string ResManifestTextConfigName = "resmanifest_text.txt";
+        //打包信息，用于debug或者查看这次打包详情用
+        public const string ResBuildReporterName = "build_report.txt";
 
         //最终存放到streamingassets下的哪个目录
         public const string AssetbundleLoadPath = "bundles";
-
-        //存储用户数据存放的目录
-        public const string EditorPersistentPath = "EditorPersistent/save_data/user_data";
 
         public static string GetPlatformName()
         {

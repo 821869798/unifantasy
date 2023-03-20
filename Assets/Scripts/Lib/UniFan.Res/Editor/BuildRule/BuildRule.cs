@@ -6,11 +6,12 @@ using UnityEditor;
 
 namespace UniFan.Res.Editor
 {
-    public enum RuleBuilType
+    public enum RulePackerType
     {
-        FileName = 0,           //每个文件单独一个ab包
-        DirectoryName = 1,      //每个文件夹一个ab包
-        AssetBundleName = 2,    //所有文件一个ab包
+        FileName = 0,               //每个文件单独一个ab包
+        DirectoryName = 1,          //每个文件夹一个ab包
+        AssetBundleName = 2,        //所有文件一个ab包
+        TobSubDirectoryName = 3,    //顶层的所有子文件各自一个ab包
     }
 
     public enum ManifestWriteType
@@ -35,8 +36,10 @@ namespace UniFan.Res.Editor
     {
         //是否开启该规则
         public bool active = true;
+        //该打包配置描述
+        public string buildDesc;
         //打包类型
-        public RuleBuilType buildType = RuleBuilType.FileName;
+        public RulePackerType buildType = RulePackerType.FileName;
         //是否覆盖AssetBundleName模式的Bundle名字
         public bool isOverrideBundleName = false;
         //覆盖的Bundle名字

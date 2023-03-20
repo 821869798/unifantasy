@@ -1,0 +1,56 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <uie:Toolbar name="Toolbar" style="flex-direction: row-reverse; height: 30px;">
+        <ui:Button text="SaveConfig" display-tooltip-when-elided="true" name="BtnSave" style="background-color: rgb(56, 147, 58);" />
+        <ui:Button text="Copy To StreamingAsset" display-tooltip-when-elided="true" name="BtnCopyAssets" style="background-color: rgb(56, 147, 58);" />
+        <ui:Button text="StartBuild Increment" display-tooltip-when-elided="true" name="BtnBuildIncre" style="background-color: rgb(56, 147, 58);" />
+        <ui:Button text="StartBuild" display-tooltip-when-elided="true" name="BtnBuildForce" style="background-color: rgb(56, 147, 58);" />
+    </uie:Toolbar>
+    <ui:VisualElement name="PublicContainer" style="height: 30px; flex-direction: row;">
+        <ui:Toggle label="Switch To Shared Rule" name="TogShared" style="-unity-text-align: middle-center; font-size: 14px; flex-shrink: 0;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="ContentContainer" style="height: auto; flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="RulePreviewListContainer" style="width: auto; flex-grow: 1; max-width: 400px; border-left-width: 5px; border-right-width: 5px; border-top-width: 5px; border-bottom-width: 5px;">
+            <ui:Label text="ResBuildRuleList" display-tooltip-when-elided="true" name="RuleTypeInfo" style="background-color: rgb(89, 89, 89); -unity-text-align: middle-center; height: auto; border-left-width: 5px; border-right-width: 5px; border-top-width: 5px; border-bottom-width: 5px; -unity-font-style: bold; color: rgb(255, 255, 255); font-size: 14px;" />
+            <ui:ListView focusable="true" name="RulePreviewList" virtualization-method="FixedHeight" reorder-mode="Animated" reorderable="true" show-add-remove-footer="true" show-foldout-header="false" style="flex-grow: 1;" />
+            <ui:VisualElement name="ControlEnableContainer" style="height: 35px; flex-direction: row; border-top-width: 5px;">
+                <ui:Button text="DisableAllRule(save)" display-tooltip-when-elided="true" name="BtnDisableAll" style="background-color: rgb(192, 115, 117);" />
+                <ui:Button text="EnableAllRule(save)" display-tooltip-when-elided="true" name="BtnEnableAll" style="background-color: rgb(56, 147, 58);" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="BuildRuleContainer" style="width: auto; flex-grow: 2; max-width: none; border-left-width: 5px; border-right-width: 5px; border-top-width: 5px; border-bottom-width: 5px;">
+            <ui:Label text="SelectRuleDetail" display-tooltip-when-elided="true" style="background-color: rgb(89, 89, 89); -unity-text-align: middle-center; height: auto; border-left-width: 5px; border-right-width: 5px; border-top-width: 5px; border-bottom-width: 5px; -unity-font-style: bold; color: rgb(255, 255, 255); font-size: 14px;" />
+            <ui:VisualElement name="RuleContainer" style="padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; -unity-paragraph-spacing: 0; letter-spacing: 0; word-spacing: 0; flex-grow: 0; align-items: stretch;">
+                <ui:VisualElement style="flex-direction: row; flex-grow: 1; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;">
+                    <ui:Toggle label="Active" name="TogActive" />
+                    <ui:TextField picking-mode="Ignore" label="BuildRule Name(描述)" value="filler text" name="DescName" style="flex-grow: 1; flex-direction: row; -unity-text-align: upper-right;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <uie:EnumField label="ResPackerType(资源分包规则)" value="FileName" include-obsolete-values="true" name="RulePackerType" type="UniFan.Res.Editor.RulePackerType, UniFan.Res.Editor" style="flex-grow: 1;" />
+                    <uie:ObjectField label="Object Field" allow-scene-objects="false" style="flex-grow: 1; display: none;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="OverrideBundleNameContainer" style="flex-direction: row; flex-grow: 1; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; display: flex; visibility: visible;">
+                    <ui:Toggle label="IsOverrideBundleName" name="TogOverrideBundleName" />
+                    <ui:TextField picking-mode="Ignore" label="Cutome Bundle Name(自定义bundle名)" value="filler text" name="CustomBundleName" style="flex-grow: 1; flex-direction: row; -unity-text-align: upper-right;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <ui:TextField picking-mode="Ignore" label="AssetSearchPath" value="filler text" name="AssetSearchPath" readonly="true" style="flex-grow: 1;" />
+                    <ui:Button text="SelectFolder" display-tooltip-when-elided="true" name="BtnSelectFolder" style="background-color: rgb(56, 147, 58);" />
+                </ui:VisualElement>
+                <ui:VisualElement name="FileSearchContainer" style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <uie:EnumField label="AssetSearchOption" name="AssetSearchOption" include-obsolete-values="false" type="System.IO.SearchOption" style="flex-grow: 1; -unity-text-align: upper-left;" />
+                    <ui:TextField picking-mode="Ignore" label="AssetSearchPattern" value="filler text" name="AssetSearchPattern" style="flex-grow: 3; -unity-text-align: upper-right;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <uie:EnumField label="Manifest Info Write(寻址信息写入)" name="ManifestInfoType" include-obsolete-values="false" type="UniFan.Res.Editor.ManifestWriteType, UniFan.Res.Editor" value="WriteAll" style="flex-grow: 1;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <ui:Toggle label="Force Include Dep(勿乱选,针对图集和Sprite打成同一个包)" name="ForceIncludeDep" style="color: rgb(210, 210, 210); flex-grow: 1; -unity-text-align: upper-left; font-size: 12px; -unity-font-style: normal; white-space: normal; -unity-text-outline-color: rgb(63, 63, 63); -unity-background-image-tint-color: rgb(255, 255, 255);" />
+                </ui:VisualElement>
+                <ui:Foldout text="Localization（多语言相关）" value="true" name="LocalizationFoldout" style="margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <uie:MaskField label="引用剔除（特定语言下不被依赖）" name="MaskDepCulling" style="flex-grow: 1;" />
+                    <ui:Toggle label="忽略该包的引用剔除" name="IgnoreDepCulling" style="color: rgb(210, 210, 210); flex-grow: 1; -unity-text-align: upper-left; font-size: 12px; -unity-font-style: normal; white-space: normal; -unity-text-outline-color: rgb(63, 63, 63); -unity-background-image-tint-color: rgb(255, 255, 255);" />
+                </ui:Foldout>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

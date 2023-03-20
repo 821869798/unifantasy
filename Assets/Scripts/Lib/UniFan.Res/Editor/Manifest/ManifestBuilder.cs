@@ -23,9 +23,9 @@ namespace UniFan.Res.Editor
             for (int i = 0; i < buildDataList.Count; i++)
             {
                 var depAbList = abManifest.GetDirectDependencies(buildDataList[i].assetBundleName);
-                
+
                 //根据引用剔除逻辑
-                if(depCullingIgnore.Contains(buildDataList[i].assetBundleName))
+                if (depCullingIgnore.Contains(buildDataList[i].assetBundleName))
                 {
                     buildDataList[i].dependencies.AddRange(depAbList);
                 }
@@ -63,14 +63,25 @@ namespace UniFan.Res.Editor
                 }
                 allBundleNameMap[buildDataList[i].assetBundleName] = i;
             }
+
+            //输出打包报告
+            if(!BuildReporterText(buildDataList))
+            {
+                return false;
+            }
+
             //检测ab循环引用
             if (!CheckCircularDependencies(buildDataList, allBundleNameMap))
             {
                 return false;
             }
-            //build数据
-            BuildManifestText(buildDataList);
-            BuildManifestBinary(buildDataList, allAssetNameMap, allAssetNames, allBundleNameMap);
+            
+            //build manifest数据，游戏加载依赖于改自定义manifest
+            if(!BuildManifestBinary(buildDataList, allAssetNameMap, allAssetNames, allBundleNameMap))
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -98,12 +109,12 @@ namespace UniFan.Res.Editor
             }
             for (int i = 0; i < bDeps.Length; i++)
             {
-                if(bDeps[i] == 0)
+                if (bDeps[i] == 0)
                 {
                     que.Enqueue(i);
                 }
             }
-            while(que.Count > 0)
+            while (que.Count > 0)
             {
                 int i = que.Dequeue();
                 wrong.Remove(i);
@@ -112,17 +123,17 @@ namespace UniFan.Res.Editor
                 {
                     var index = allBundleNameMap[dep];
                     bDeps[index]--;
-                    if(bDeps[index] == 0)
+                    if (bDeps[index] == 0)
                     {
                         que.Enqueue(index);
                     }
                 }
             }
-            if(wrong.Count > 0)
+            if (wrong.Count > 0)
             {
                 //打印冲突结果
                 Debug.LogError(wrong.Count + "个AB包存在循环引用(error):");
-                foreach(var i in wrong)
+                foreach (var i in wrong)
                 {
                     var buildData = buildDataList[i];
                     StringBuilder sb = new StringBuilder();
@@ -145,94 +156,118 @@ namespace UniFan.Res.Editor
             return true;
         }
 
-        public static void BuildManifestText(List<AssetBundleBuildData> buildDataList)
+        public static bool BuildReporterText(List<AssetBundleBuildData> buildDataList)
         {
-            string filePath = Path.Combine(Application.dataPath, Consts.ResManifestTextConfigName);
-            using (FileStream fs = File.Open(filePath, FileMode.Create))
+            try
             {
-                using (StreamWriter sw = new StreamWriter(fs))
+                string outputPath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
+                string filePath = Path.Combine(outputPath, Consts.ResBuildReporterName);
+                using (FileStream fs = File.Open(filePath, FileMode.Create))
                 {
-                    foreach (var item in buildDataList)
+                    using (StreamWriter sw = new StreamWriter(fs))
                     {
-                        sw.WriteLine(item.assetBundleName);
-                        sw.WriteLine(item.hashValue);
-                        sw.WriteLine(item.shortAssetNames.Count);
-                        foreach (var asset in item.shortAssetNames)
+                        foreach (var item in buildDataList)
                         {
-                            sw.WriteLine(asset);
+                            sw.WriteLine(item.assetBundleName);
+                            sw.WriteLine(item.hashValue);
+                            sw.WriteLine(item.shortAssetNames.Count);
+                            foreach (var asset in item.shortAssetNames)
+                            {
+                                sw.WriteLine(asset);
+                            }
+                            sw.WriteLine(item.dependencies.Count);
+                            foreach (var dep in item.dependencies)
+                            {
+                                sw.WriteLine(dep);
+                            }
+                            sw.WriteLine("");
                         }
-                        sw.WriteLine(item.dependencies.Count);
-                        foreach (var dep in item.dependencies)
-                        {
-                            sw.WriteLine(dep);
-                        }
-                        sw.WriteLine("");
                     }
                 }
+
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Build Reporter Text Failed:" + e.ToString());
+                return false;
             }
             AssetDatabase.Refresh();
+
+            return true;
         }
-        public static void BuildManifestBinary(List<AssetBundleBuildData> buildDataList, Dictionary<string, int> allAssetNameMap, List<string> allAssetNames, Dictionary<string, int> allBundleNameMap)
+
+        public static bool BuildManifestBinary(List<AssetBundleBuildData> buildDataList, Dictionary<string, int> allAssetNameMap, List<string> allAssetNames, Dictionary<string, int> allBundleNameMap)
         {
-            string filePath = Path.Combine(Application.dataPath, Consts.ResManifestBinaryConfigName);
-            using (FileStream fs = File.Open(filePath, FileMode.Create))
+            try
             {
-                using (BinaryWriter bw = new BinaryWriter(fs))
+                string filePath = Path.Combine(Application.dataPath, Consts.ResManifestBinaryConfigName);
+                using (FileStream fs = File.Open(filePath, FileMode.Create))
                 {
-                    //写入头,ABD为AssetBundleData 
-                    bw.Write(new char[] { 'A', 'B', 'D' });
-                    //写入数据格式版本
-                    bw.Write((int)1);
-                    bw.Write(allAssetNames.Count);
-                    for (int i = 0; i < allAssetNames.Count; i++)
+                    using (BinaryWriter bw = new BinaryWriter(fs))
                     {
-                        bw.Write(allAssetNames[i]);
-                    }
-                    bw.Write((int)buildDataList.Count);
-                    for (int i = 0; i < buildDataList.Count; i++)
-                    {
-                        AssetBundleBuildData buildData = buildDataList[i];
-                        bw.Write(buildData.assetBundleName);
-                        bw.Write(buildData.shortAssetNames.Count);
-                        for (int j = 0; j < buildData.shortAssetNames.Count; j++)
+                        //写入头,ABD为AssetBundleData 
+                        bw.Write(new char[] { 'A', 'B', 'D' });
+                        //写入数据格式版本
+                        bw.Write((int)1);
+                        bw.Write(allAssetNames.Count);
+                        for (int i = 0; i < allAssetNames.Count; i++)
                         {
-                            string assetName = buildData.shortAssetNames[j];
-                            bw.Write(allAssetNameMap[assetName]);
+                            bw.Write(allAssetNames[i]);
                         }
-                        bw.Write(buildData.dependencies.Count);
-                        for (int j = 0; j < buildData.dependencies.Count; j++)
+                        bw.Write((int)buildDataList.Count);
+                        for (int i = 0; i < buildDataList.Count; i++)
                         {
-                            string depName = buildData.dependencies[j];
-                            bw.Write(allBundleNameMap[depName]);
+                            AssetBundleBuildData buildData = buildDataList[i];
+                            bw.Write(buildData.assetBundleName);
+                            bw.Write(buildData.shortAssetNames.Count);
+                            for (int j = 0; j < buildData.shortAssetNames.Count; j++)
+                            {
+                                string assetName = buildData.shortAssetNames[j];
+                                bw.Write(allAssetNameMap[assetName]);
+                            }
+                            bw.Write(buildData.dependencies.Count);
+                            for (int j = 0; j < buildData.dependencies.Count; j++)
+                            {
+                                string depName = buildData.dependencies[j];
+                                bw.Write(allBundleNameMap[depName]);
+                            }
                         }
                     }
                 }
+                AssetDatabase.Refresh();
+                //打包储存AB包信息的文件
+                AssetBundleBuild build = new AssetBundleBuild();
+                build.assetBundleName = Consts.ResManifestFilePath;
+                build.assetNames = new string[] { string.Concat("Assets/", Consts.ResManifestBinaryConfigName) };
+                string outputPath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
+                var options = BuildAssetBundleOptions.None;
+
+                options |= BuildAssetBundleOptions.ChunkBasedCompression;
+
+                options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
+
+                BuildPipeline.BuildAssetBundles(outputPath, new AssetBundleBuild[] { build }, options, EditorUserBuildSettings.activeBuildTarget);
+
+                //删除多余文件
+                string manifestAsset = Path.Combine(outputPath, Consts.GetPlatformName());
+                string manifestText = Path.Combine(outputPath, Consts.GetPlatformName() + ".manifest");
+                if (File.Exists(manifestAsset))
+                {
+                    FileUtil.DeleteFileOrDirectory(manifestAsset);
+                }
+                if (File.Exists(manifestText))
+                {
+                    FileUtil.DeleteFileOrDirectory(manifestText);
+                }
             }
-            AssetDatabase.Refresh();
-            //打包储存AB包信息的文件
-            AssetBundleBuild build = new AssetBundleBuild();
-            build.assetBundleName = Consts.ResManifestFilePath;
-            build.assetNames = new string[] { string.Concat("Assets/", Consts.ResManifestBinaryConfigName) };
-            string outputPath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
-            var options = BuildAssetBundleOptions.None;
-
-            options |= BuildAssetBundleOptions.ChunkBasedCompression;
-
-            options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
-
-            BuildPipeline.BuildAssetBundles(outputPath, new AssetBundleBuild[] { build }, options, EditorUserBuildSettings.activeBuildTarget);
-
-            //删除多余文件
-            string manifestAsset = Path.Combine(outputPath, Consts.GetPlatformName());
-            string manifestText = Path.Combine(outputPath, Consts.GetPlatformName() + ".manifest");
-            if (File.Exists(manifestAsset))
+            catch (Exception e)
             {
-                FileUtil.DeleteFileOrDirectory(manifestAsset);
+                Debug.LogError("Build ManifestBinary Failed:" + e.ToString());
+                return false;
             }
-            if (File.Exists(manifestText))
-            {
-                FileUtil.DeleteFileOrDirectory(manifestText);
-            }
+
+
+            return true;
         }
     }
 }
