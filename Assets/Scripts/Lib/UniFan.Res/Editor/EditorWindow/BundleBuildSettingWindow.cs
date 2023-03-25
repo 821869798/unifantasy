@@ -20,9 +20,9 @@ namespace UniFan.Res.Editor
         private BuildRuleDetailContainer _ruleDetailContainer;
         private Label _ruleTypeInfo;
 
-        //ÉÏ´ÎÑ¡ÔñµÄ¹æÔòË÷Òı
+        //ä¸Šæ¬¡é€‰æ‹©çš„è§„åˆ™ç´¢å¼•
         private int _lastSelectRuleIndex;
-        //ÊÇ·ñÊÇ¹«ÓÃ×ÊÔ´°ü¹æÔò
+        //æ˜¯å¦æ˜¯å…¬ç”¨èµ„æºåŒ…è§„åˆ™
         private bool _isShareRuleMode = false;
 
         public List<BuildRule> GetCurModeRules()
@@ -54,7 +54,7 @@ namespace UniFan.Res.Editor
                 }
                 visualAsset.CloneTree(root);
 
-                //³õÊ¼»¯°´Å¥
+                //åˆå§‹åŒ–æŒ‰é’®
                 InitToolButtons();
 
                 _ruleTypeInfo = root.Q<Label>("RuleTypeInfo");
@@ -63,7 +63,7 @@ namespace UniFan.Res.Editor
                 togShared.value = _isShareRuleMode;
                 togShared.RegisterValueChangedCallback(evt =>
                 {
-                    //Ë¢ĞÂÏÔÊ¾Ä£Ê½
+                    //åˆ·æ–°æ˜¾ç¤ºæ¨¡å¼
                     _isShareRuleMode = evt.newValue;
                     _lastSelectRuleIndex = 0;
                     RefreshWindow();
@@ -81,7 +81,7 @@ namespace UniFan.Res.Editor
                 _ruleDetailContainer = new BuildRuleDetailContainer(this, detailContainer);
 
 
-                //Ë¢ĞÂ´°Ìå
+                //åˆ·æ–°çª—ä½“
                 RefreshWindow();
 
             }
@@ -218,7 +218,7 @@ namespace UniFan.Res.Editor
 
             BuildRule rule = buildRules[index];
 
-            //°ó¶¨Êı¾İ
+            //ç»‘å®šæ•°æ®
             element.userData = rule;
 
             var toggle = element.Q<Toggle>("toggleActive");
@@ -229,12 +229,12 @@ namespace UniFan.Res.Editor
             string buildDesc = rule.buildDesc;
             if (string.IsNullOrEmpty(buildDesc))
             {
-                buildDesc = "<color=#ff0000>Î´¶¨ÒåÃèÊö</color>";
+                buildDesc = "<color=#ff0000>æœªå®šä¹‰æè¿°</color>";
             }
             string searchPath = rule.searchPath;
             if (string.IsNullOrEmpty(rule.searchPath))
             {
-                searchPath = "<color=#ff0000>Î´¶¨Òå×ÊÔ´Â·¾¶</color>";
+                searchPath = "<color=#ff0000>æœªå®šä¹‰èµ„æºè·¯å¾„</color>";
             }
 
             textField1.text = $"[{buildDesc}]{searchPath}";

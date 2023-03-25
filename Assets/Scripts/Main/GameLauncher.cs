@@ -13,28 +13,28 @@ public class GameLauncher : MonoBehaviour
 
         GameGlobalSetting();
 
-        //TODO ÈÈ¸üÏà¹Ø
+        //TODO çƒ­æ›´ç›¸å…³
 
-        //³õÊ¼»¯×ÊÔ´¹ÜÀí
+        //åˆå§‹åŒ–èµ„æºç®¡ç†
         ResManager.Instance.InitAssetBundle();
         
         InitManager();
 
-        // ¿ªÊ¼¼ÓÔØdll
+        // å¼€å§‹åŠ è½½dll
         await LoadHotDll.StartLoadHotDllAsync();
 
         Destroy(this);
     }
 
     /// <summary>
-    /// Ò»Ğ©È«¾ÖÉèÖÃ
+    /// ä¸€äº›å…¨å±€è®¾ç½®
     /// </summary>
     private void GameGlobalSetting()
     {
         Application.targetFrameRate = 60;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        //»·¾³±£³ÖÒ»ÖÂ£¬²»ÊÜµØÇøÓ°Ïì
+        //ç¯å¢ƒä¿æŒä¸€è‡´ï¼Œä¸å—åœ°åŒºå½±å“
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
     }
 

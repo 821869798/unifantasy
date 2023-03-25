@@ -38,7 +38,7 @@ namespace HybridCLR.Editor
                 string srcDllPath = $"{aotAssembliesSrcDir}/{dll}.dll";
                 if (!File.Exists(srcDllPath))
                 {
-                    Debug.LogError($"abÖĞÌí¼ÓAOT²¹³äÔªÊı¾İdll:{srcDllPath} Ê±·¢Éú´íÎó,ÎÄ¼ş²»´æÔÚ¡£²Ã¼ôºóµÄAOT dllÔÚBuildPlayerÊ±²ÅÄÜÉú³É£¬Òò´ËĞèÒªÄãÏÈ¹¹½¨Ò»´ÎÓÎÏ·AppºóÔÙ´ò°ü¡£");
+                    Debug.LogError($"abä¸­æ·»åŠ AOTè¡¥å……å…ƒæ•°æ®dll:{srcDllPath} æ—¶å‘ç”Ÿé”™è¯¯,æ–‡ä»¶ä¸å­˜åœ¨ã€‚è£å‰ªåçš„AOT dllåœ¨BuildPlayeræ—¶æ‰èƒ½ç”Ÿæˆï¼Œå› æ­¤éœ€è¦ä½ å…ˆæ„å»ºä¸€æ¬¡æ¸¸æˆAppåå†æ‰“åŒ…ã€‚");
                     continue;
                 }
                 string dllBytesPath = $"{CodeOutputDir}/{dll}.dll.bytes";

@@ -4,7 +4,7 @@ namespace UniFan
     public abstract class ManagerBase
     {
         /// <summary>
-        /// manager updateÓÅÏÈ¼¶,ÊıÖµĞ¡µÄÓÅÏÈÖ´ĞĞ
+        /// manager updateä¼˜å…ˆçº§,æ•°å€¼å°çš„ä¼˜å…ˆæ‰§è¡Œ
         /// </summary>
         public abstract int managerPriority { get; }
 

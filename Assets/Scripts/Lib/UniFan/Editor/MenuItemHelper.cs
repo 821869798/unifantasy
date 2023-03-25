@@ -6,46 +6,46 @@ using System.IO;
 
 public static class MenuItemHelper
 {
-    //´æ´¢ÓÃ»§Êı¾İ´æ·ÅµÄÄ¿Â¼
+    //å­˜å‚¨ç”¨æˆ·æ•°æ®å­˜æ”¾çš„ç›®å½•
     public const string EditorPersistentPath = "EditorPersistent/save_data/user_data";
 
 
-    [MenuItem("GameEditor/SceneShortcut/²»±£´æµ±Ç°³¡¾°²¢½øÈëLauncher %h", priority = 30)]
+    [MenuItem("GameEditor/SceneShortcut/ä¸ä¿å­˜å½“å‰åœºæ™¯å¹¶è¿›å…¥Launcher %h", priority = 30)]
     static void OpenSceneLauncher()
     {
         EditorSceneManager.OpenScene("Assets/Scenes/Launcher.unity");
     }
 
-    [MenuItem("GameEditor/SceneShortcut/²»±£´æµ±Ç°³¡¾°²¢½øÈëÌØĞ§Ô¤ÀÀ³¡¾° %j", priority = 31)]
+    [MenuItem("GameEditor/SceneShortcut/ä¸ä¿å­˜å½“å‰åœºæ™¯å¹¶è¿›å…¥ç‰¹æ•ˆé¢„è§ˆåœºæ™¯ %j", priority = 31)]
     static void OpenSceneModTest()
     {
         EditorSceneManager.OpenScene("Assets/Test/ModTest/ModTest02.unity");
     }
 
-    [MenuItem("GameEditor/Clear Editor ProgressBar(·ÀÖ¹Òì³£¿¨×¡)", priority = 1000)]
+    [MenuItem("GameEditor/Clear Editor ProgressBar(é˜²æ­¢å¼‚å¸¸å¡ä½)", priority = 1000)]
     public static void ClearEditorProgressBar()
     {
         EditorUtility.ClearProgressBar();
     }
 
-    [MenuItem("GameEditor/Çå³ı±¾µØ»º´æÊı¾İ/Clear All PlayerPrefs(Çå³ı±¾µØ±£´æµÄÊı¾İ)")]
+    [MenuItem("GameEditor/æ¸…é™¤æœ¬åœ°ç¼“å­˜æ•°æ®/Clear All PlayerPrefs(æ¸…é™¤æœ¬åœ°ä¿å­˜çš„æ•°æ®)")]
     public static void ClearAllPlayerPrefs()
     {
         PlayerPrefs.DeleteAll();
     }
 
-    [MenuItem("GameEditor/Çå³ı±¾µØ»º´æÊı¾İ/Clear All EditorPrefs(Çå³ı±à¼­Æ÷±¾µØ±£´æµÄÊı¾İ)")]
+    [MenuItem("GameEditor/æ¸…é™¤æœ¬åœ°ç¼“å­˜æ•°æ®/Clear All EditorPrefs(æ¸…é™¤ç¼–è¾‘å™¨æœ¬åœ°ä¿å­˜çš„æ•°æ®)")]
     public static void ClearAllEditorPrefs()
     {
         EditorPrefs.DeleteAll();
     }
 
-    [MenuItem("GameEditor/Çå³ı±¾µØ»º´æÊı¾İ/Clear All UserData(Çå³ı±à¼­Æ÷±¾µØ±£´æµÄÓÃ»§Êı¾İ)")]
+    [MenuItem("GameEditor/æ¸…é™¤æœ¬åœ°ç¼“å­˜æ•°æ®/Clear All UserData(æ¸…é™¤ç¼–è¾‘å™¨æœ¬åœ°ä¿å­˜çš„ç”¨æˆ·æ•°æ®)")]
     public static void ClearAllUserData()
     {
         if (Application.isPlaying)
         {
-            EditorUtility.DisplayDialog("×´Ì¬´íÎó", "ÔËĞĞ×´Ì¬ÎŞ·¨µ÷ÓÃ±¾·½·¨,ÇëÍË³öºó½øĞĞµ÷ÓÃ", "È·ÈÏ");
+            EditorUtility.DisplayDialog("çŠ¶æ€é”™è¯¯", "è¿è¡ŒçŠ¶æ€æ— æ³•è°ƒç”¨æœ¬æ–¹æ³•,è¯·é€€å‡ºåè¿›è¡Œè°ƒç”¨", "ç¡®è®¤");
         }
         else
         {
