@@ -1,13 +1,13 @@
-﻿using UnityEngine;
-using UniFan.Res.Editor;
+﻿using UnityEditor.Build.Reporting;
+using UnityEngine;
 
-namespace Lib.UniFan.Res.Editor
+namespace UniFan.Res.Editor
 {
     internal class RulePackerByFileName : IRulePacker
     {
         public bool ResRulePacker(BuildRule rule)
         {
-            var files = RulePackerUtility.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
+            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
             for (int i = 0; i < files.Count; i++)
             {
                 var item = files[i];
@@ -16,22 +16,20 @@ namespace Lib.UniFan.Res.Editor
                     return false;
                 }
 
-                AssetBundleBuildData buildData = new AssetBundleBuildData();
-                buildData.assetBundleName = RulePackerUtility.BuildAssetBundleNameWithAssetPath(item);
-                if (!RulePackerUtility.CheckAssetBundleName(buildData.assetBundleName))
+                var assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(item);
+                var buildData = ABBuildCreator.TryNewBuildData(assetBundleName, rule);
+                if (!ABBuildUtility.CheckAssetBundleName(buildData.assetBundleName))
                 {
                     return false;
                 }
                 if (rule.forceInclueDeps)
                 {
-                    buildData.assetNames.AddRange(RulePackerUtility.GetAssetDependencies(item));
+                    buildData.assetNames.AddRange(ABBuildCreator.GetAssetDependencies(item));
                 }
                 buildData.assetNames.Add(item);
                 buildData.originAssetNames.Add(item);
-                buildData.manifestWriteType = rule.manifestWriteType;
-
                 ABBuildCreator.AddPackedAssets(buildData.assetNames);
-                ABBuildCreator.AddBuildData(buildData, rule);
+                buildData.manifestWriteType = rule.manifestWriteType;
             }
             return true;
         }

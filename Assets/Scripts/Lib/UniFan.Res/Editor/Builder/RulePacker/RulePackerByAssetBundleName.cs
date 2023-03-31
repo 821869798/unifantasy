@@ -1,9 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using static PlasticGui.Help.GuiHelp;
-using UnityEditor.Build.Reporting;
-using static UnityEditor.Progress;
-using Lib.UniFan.Res.Editor;
 
 namespace UniFan.Res.Editor
 {
@@ -11,12 +6,12 @@ namespace UniFan.Res.Editor
     {
         public bool ResRulePacker(BuildRule rule)
         {
-            if (ABBuildCreator.ShowRulePackerProgressBar(rule.searchPath,1,1))
+            if (ABBuildCreator.ShowRulePackerProgressBar(rule.searchPath, 1, 1))
             {
                 return false;
             }
 
-            var files = RulePackerUtility.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
+            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
             if (files.Count == 0)
             {
                 return true;
@@ -26,32 +21,31 @@ namespace UniFan.Res.Editor
             {
                 foreach (var item in files)
                 {
-                    assetNames.AddRange(RulePackerUtility.GetAssetDependencies(item));
+                    assetNames.AddRange(ABBuildCreator.GetAssetDependencies(item));
                 }
             }
             assetNames.AddRange(files);
 
 
-            AssetBundleBuildData buildData = new AssetBundleBuildData();
-            buildData.originAssetNames.AddRange(files);
+            string assetBundleName;
             if (rule.isOverrideBundleName && !string.IsNullOrEmpty(rule.overrideBundleName))
             {
-                buildData.assetBundleName = RulePackerUtility.BuildAssetBundleNameWithAssetPath(rule.overrideBundleName);
+                assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(rule.overrideBundleName);
             }
             else
             {
-                buildData.assetBundleName = RulePackerUtility.BuildAssetBundleNameWithAssetPath(rule.searchPath);
+                assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(rule.searchPath);
             }
-            if (!RulePackerUtility.CheckAssetBundleName(buildData.assetBundleName))
+
+            var buildData = ABBuildCreator.TryNewBuildData(assetBundleName, rule);
+            buildData.originAssetNames.AddRange(files);
+            if (!ABBuildUtility.CheckAssetBundleName(buildData.assetBundleName))
             {
                 return false;
             }
             buildData.assetNames.AddRange(assetNames);
-            buildData.manifestWriteType = rule.manifestWriteType;
-
             ABBuildCreator.AddPackedAssets(assetNames);
-            ABBuildCreator.AddBuildData(buildData, rule);
-
+            buildData.manifestWriteType = rule.manifestWriteType;
             return true;
         }
 
@@ -60,11 +54,11 @@ namespace UniFan.Res.Editor
             string assetBundleName = string.Empty;
             if (rule.isOverrideBundleName && !string.IsNullOrEmpty(rule.overrideBundleName))
             {
-                assetBundleName = RulePackerUtility.BuildAssetBundleNameWithAssetPath(rule.overrideBundleName, true);
+                assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(rule.overrideBundleName, true);
             }
             else
             {
-                assetBundleName = RulePackerUtility.BuildAssetBundleNameWithAssetPath(rule.searchPath, true);
+                assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(rule.searchPath, true);
             }
             return assetBundleName;
         }

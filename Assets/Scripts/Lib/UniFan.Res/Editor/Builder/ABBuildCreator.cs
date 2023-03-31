@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Sirenix.Utilities;
-using Lib.UniFan.Res.Editor;
 
 namespace UniFan.Res.Editor
 {
@@ -24,6 +23,12 @@ namespace UniFan.Res.Editor
         public static List<AssetBundleBuildData> buildDatas = new List<AssetBundleBuildData>();
         public static HashSet<string> depCullingBundles = new HashSet<string>();        //需要剔除依赖的
         public static HashSet<string> depCullingIgnoreBundles = new HashSet<string>();  //忽略剔除规则的包
+        //正则匹配过的数据，用来避免重复匹配相同文件
+        public static Dictionary<string, bool> regexMatched = new Dictionary<string, bool>();
+        //查找过的依赖数据，避免重复查找相同文件的依赖
+        public static Dictionary<string, string[]> dependenciesCache = new Dictionary<string, string[]>();
+        //相同包里面的文件放在一起，避免多个同名包
+        public static Dictionary<string, AssetBundleBuildData> newBuildDatas = new Dictionary<string, AssetBundleBuildData>();
 
         //筛选字典树
         public static PathTrieTree trieTreeFilter;
@@ -53,6 +58,10 @@ namespace UniFan.Res.Editor
             buildDatas.Clear();
             depCullingBundles.Clear();
             depCullingIgnoreBundles.Clear();
+            regexMatched.Clear();
+            dependenciesCache.Clear();
+            newBuildDatas.Clear();
+
             CurRuleIndex = 0;
             trieTreeFilter = BuildFilterConfig.GlobalBuildFilterConfig.GetTrieFilterData();
         }
@@ -170,26 +179,54 @@ namespace UniFan.Res.Editor
             packedAssets.AddRange(assetNames);
         }
 
-        public static void AddBuildData(AssetBundleBuildData buildData, BuildRule rule = null)
+        public static List<string> GetAssetDependencies(string item)
         {
-            buildDatas.Add(buildData);
+            if (!dependenciesCache.TryGetValue(item, out var dependencies))
+            {
+                dependencies = AssetDatabase.GetDependencies(item);
+                dependenciesCache[item] = dependencies;
+            }
+            List<string> depsList = new List<string>();
+            foreach (var assetPath in dependencies)
+            {
+                if (string.IsNullOrEmpty(assetPath))
+                {
+                    continue;
+                }
+                if (assetPath == item)
+                {
+                    continue;
+                }
+                //已经设置单独打包了，不需要再打包了
+                if (ContainPackedAssets(assetPath))
+                {
+                    continue;
+                }
+                bool isNeedPackFile = true;
+                //不打包.cs文件等类型的资源
+                if (Consts.NoPackedDependenciesFiles.Contains(Path.GetExtension(assetPath).ToLower()))
+                {
+                    isNeedPackFile = false;
+                }
 
-            if (rule == null)
-            {
-                return;
+                if (!regexMatched.TryGetValue(assetPath, out var match))
+                {
+                    match = onlyBuildCurLang && buildLangRegex.IsMatch(assetPath);
+                    regexMatched[assetPath] = match;
+                }
+
+                if (match)
+                {
+                    isNeedPackFile = false;
+                }
+                if (!isNeedPackFile)
+                {
+                    continue;
+                }
+                depsList.Add(assetPath);
             }
-            if (((int)cullingLangType & rule.depCulling) > 0)
-            {
-                //需要剔除引用的
-                depCullingBundles.Add(buildData.assetBundleName);
-            }
-            if (rule.ignoreDepCulling)
-            {
-                //忽略引用剔除规则的包
-                depCullingIgnoreBundles.Add(buildData.assetBundleName);
-            }
+            return depsList;
         }
-
 
         public static void CollectDependencies()
         {
@@ -198,7 +235,7 @@ namespace UniFan.Res.Editor
             {
                 count++;
                 UnityEditor.EditorUtility.DisplayProgressBar(string.Format("Collecting Dependencies... [{0}/{1}]", count, packedAssets.Count), item, count * 1f / packedAssets.Count);
-                var dependencies = RulePackerUtility.GetAssetDependencies(item);
+                var dependencies = GetAssetDependencies(item);
                 foreach (var assetPath in dependencies)
                 {
                     if (!allDependencies.ContainsKey(assetPath))
@@ -237,7 +274,6 @@ namespace UniFan.Res.Editor
 
             //开始打包共享依赖资源
 
-            Dictionary<string, AssetBundleBuildData> sharedBuildDatas = new Dictionary<string, AssetBundleBuildData>();
             Regex[] shareRegexList = new Regex[shareRules.Count];
 
             //生成正则匹配对象
@@ -266,18 +302,16 @@ namespace UniFan.Res.Editor
                             }
                             string assetBundleName = packer.GetShareRulePackerName(rule, shareAssetName);
 
-                            if (!RulePackerUtility.CheckAssetBundleName(assetBundleName))
+                            if (!ABBuildUtility.CheckAssetBundleName(assetBundleName))
                             {
                                 return false;
                             }
-                            if (!sharedBuildDatas.TryGetValue(assetBundleName, out var sharebuildData))
+                            if (!ABBuildUtility.CheckAssetBundleName(assetBundleName))
                             {
-                                sharebuildData = new AssetBundleBuildData();
-                                sharebuildData.isCommonAssetBundle = true;
-                                sharebuildData.assetBundleName = assetBundleName;
-                                AddBuildData(sharebuildData, rule);
-                                sharedBuildDatas.Add(assetBundleName, sharebuildData);
+                                return false;
                             }
+                            var sharebuildData = TryNewBuildData(assetBundleName);
+                            sharebuildData.isCommonAssetBundle = true;
                             sharebuildData.assetNames.Add(shareAssetName);
                             isInBuild = true;
                             break;
@@ -288,19 +322,57 @@ namespace UniFan.Res.Editor
                 //如果没进共享资源包规则，就自成一包
                 if (!isInBuild)
                 {
-                    AssetBundleBuildData sharebuildData = new AssetBundleBuildData();
-                    sharebuildData.isCommonAssetBundle = true;
-                    sharebuildData.assetBundleName = RulePackerUtility.BuildAssetBundleNameWithAssetPath(shareAssetName, true);
-                    if (!RulePackerUtility.CheckAssetBundleName(sharebuildData.assetBundleName))
+                    var assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(shareAssetName, true);
+                    if (!ABBuildUtility.CheckAssetBundleName(assetBundleName))
                     {
                         return false;
                     }
+
+                    var sharebuildData = TryNewBuildData(assetBundleName);
+                    sharebuildData.isCommonAssetBundle = true;
                     sharebuildData.assetNames.Add(shareAssetName);
-                    AddBuildData(sharebuildData);
                 }
             }
 
             return true;
+        }
+
+        public static AssetBundleBuildData TryNewBuildData(string assetBundleName, BuildRule rule = null)
+        {
+            var isNew = false;
+            if (!newBuildDatas.TryGetValue(assetBundleName, out var buildData))
+            {
+                buildData = new AssetBundleBuildData
+                {
+                    assetBundleName = assetBundleName
+                };
+                buildDatas.Add(buildData);
+                newBuildDatas.Add(assetBundleName, buildData);
+                isNew = true;
+            }
+
+            if (rule != null)
+            {
+                if (((int)cullingLangType & rule.depCulling) > 0)
+                {
+                    //需要剔除引用的
+                    depCullingBundles.Add(buildData.assetBundleName);
+                    if (!isNew)
+                    {
+                        Debug.LogError($"depCullingBundles {buildData.assetBundleName}");
+                    }
+                }
+                if (rule.ignoreDepCulling)
+                {
+                    //忽略引用剔除规则的包
+                    depCullingIgnoreBundles.Add(buildData.assetBundleName);
+                    if (!isNew)
+                    {
+                        Debug.LogError($"depCullingIgnoreBundles {buildData.assetBundleName}");
+                    }
+                }
+            }
+            return buildData;
         }
 
         public static bool GenBuildList(AssetBundleBuildData buildData)
@@ -312,7 +384,7 @@ namespace UniFan.Res.Editor
                 {
                     withoutShareAssets.AddRange(GetAssetDependenciesWithoutShare(item));
                 }
-                int sceneCount = RulePackerUtility.GetSceneAssetCount(buildData.assetNames);
+                int sceneCount = ABBuildUtility.GetSceneAssetCount(buildData.assetNames);
                 if (sceneCount > 0)
                 {
                     if (sceneCount != buildData.assetNames.Count)
@@ -334,10 +406,62 @@ namespace UniFan.Res.Editor
 
         public static List<string> GetAssetDependenciesWithoutShare(string item)
         {
-            var files = RulePackerUtility.GetAssetDependencies(item);
+            var files = ABBuildCreator.GetAssetDependencies(item);
             var removeAll = files.RemoveAll((string assetPath) =>
             {
                 return Consts.NoPackDependFiles.Contains(Path.GetExtension(assetPath).ToLower()) || (allDependencies.ContainsKey(assetPath) && allDependencies[assetPath].Count >= Consts.CommonAssetRelyCount);
+            });
+            return files;
+        }
+
+        public static List<string> GetFilesWithoutPacked(string searchPath, string searchPattern, SearchOption searchOption)
+        {
+            var files = ABBuildUtility.GetFilesWithoutDirectories(searchPath, searchPattern, searchOption);
+            var removeAll = files.RemoveAll((string obj) =>
+            {
+                bool needRemove = false;
+                do
+                {
+                    if (Consts.NoPackedFiles.Contains(Path.GetExtension(obj).ToLower()))
+                    {
+                        needRemove = true;
+                        break;
+                    }
+                    if (!regexMatched.TryGetValue(obj, out var match))
+                    {
+                        match = onlyBuildCurLang && buildLangRegex.IsMatch(obj);
+                        regexMatched[obj] = match;
+                    }
+                    if (match)
+                    {
+                        needRemove = true;
+                        break;
+                    }
+                    string path = obj.Replace("\\", "/");
+                    if (trieTreeFilter.GetPathValueType(path) == PathTrieTree.PathValueType.BlackList)
+                    {
+                        needRemove = true;
+                        break;
+                    }
+                    if (!needRemove)
+                    {
+                        foreach (var noPackDir in Consts.NoPackedDirs)
+                        {
+                            if (path.Contains(noPackDir))
+                            {
+                                needRemove = true;
+                                break;
+                            }
+                        }
+                    }
+
+                } while (false);
+
+                if (needRemove)
+                {
+                    return true;
+                }
+                return ContainPackedAssets(obj);
             });
             return files;
         }

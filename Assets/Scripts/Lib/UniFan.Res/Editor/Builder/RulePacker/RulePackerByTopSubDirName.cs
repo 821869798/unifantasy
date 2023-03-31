@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using static PlasticGui.Help.GuiHelp;
-using static UnityEditor.Progress;
+
 
 namespace UniFan.Res.Editor
 {
@@ -10,14 +8,14 @@ namespace UniFan.Res.Editor
     {
         public bool ResRulePacker(BuildRule rule)
         {
-            var files = RulePackerUtility.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
+            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
 
             Dictionary<string, List<string>> bundles = new Dictionary<string, List<string>>();
             Dictionary<string, List<string>> originBundleAssets = new Dictionary<string, List<string>>();
 
 
             int searchPathLength = rule.searchPath.Length;
-            if(!rule.searchPath.EndsWith("/"))
+            if (!rule.searchPath.EndsWith("/"))
             {
                 searchPathLength++;
             }
@@ -48,7 +46,7 @@ namespace UniFan.Res.Editor
                 originBundleAssets[topSubPath].Add(item);
                 if (rule.forceInclueDeps)
                 {
-                    bundles[topSubPath].AddRange(RulePackerUtility.GetAssetDependencies(item));
+                    bundles[topSubPath].AddRange(ABBuildCreator.GetAssetDependencies(item));
                 }
             }
             int count = 0;
@@ -62,17 +60,15 @@ namespace UniFan.Res.Editor
                 }
 
                 AssetBundleBuildData buildData = new AssetBundleBuildData();
-                buildData.assetBundleName = RulePackerUtility.BuildAssetBundleNameWithAssetPath(item.Key);
-                if (!RulePackerUtility.CheckAssetBundleName(buildData.assetBundleName))
+                buildData.assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(item.Key);
+                if (!ABBuildUtility.CheckAssetBundleName(buildData.assetBundleName))
                 {
                     return false;
                 }
                 buildData.assetNames.AddRange(item.Value);
                 buildData.originAssetNames.AddRange(originBundleAssets[item.Key]);
-                buildData.manifestWriteType = rule.manifestWriteType;
-
                 ABBuildCreator.AddPackedAssets(item.Value);
-                ABBuildCreator.AddBuildData(buildData, rule);
+                buildData.manifestWriteType = rule.manifestWriteType;
             }
             return true;
         }
@@ -97,7 +93,7 @@ namespace UniFan.Res.Editor
                 topSubPath = Path.GetDirectoryName(shareAssetName);
             }
 
-            string assetBundleName = RulePackerUtility.BuildAssetBundleNameWithAssetPath(topSubPath, true);
+            string assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(topSubPath, true);
             return assetBundleName;
         }
 
