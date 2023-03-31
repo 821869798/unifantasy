@@ -35,11 +35,16 @@ namespace UniFan
         StreamingAssetsPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
         PersistentDataPathForWWW = string.Format("file:///{0}/StreamingAssets/", Application.dataPath);
         PersistentDataPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
-#elif UNITY_ANDROID && !UNITY_EDITOR
-        StreamingAssetsPathForWWW = string.Format("jar:file://{0}!/assets/", Application.dataPath);
-        StreamingAssetsPath = string.Format("{0}!assets/", Application.dataPath);
-        PersistentDataPathForWWW = string.Format("file://{0}/", Application.persistentDataPath);
-        PersistentDataPath = string.Concat(Application.persistentDataPath,"/");
+#elif UNITY_ANDROID
+            StreamingAssetsPathForWWW = string.Format("jar:file://{0}!/assets/", Application.dataPath);
+            StreamingAssetsPath = string.Format("{0}!/assets/", Application.dataPath);
+#if UNITY_2021_1_OR_NEWER
+            StreamingAssetsPath = string.Concat(Application.streamingAssetsPath, "/");
+#else
+            StreamingAssetsPath = string.Format("{0}!/assets/", Application.dataPath);
+#endif
+            PersistentDataPathForWWW = string.Format("file://{0}/", Application.persistentDataPath);
+            PersistentDataPath = string.Concat(Application.persistentDataPath, "/");
 #elif UNITY_IOS && !UNITY_EDITOR
         StreamingAssetsPathForWWW = string.Format("file://{0}/Raw/", Application.dataPath);
         StreamingAssetsPath = string.Format("{0}/Raw/", Application.dataPath);
@@ -114,7 +119,7 @@ namespace UniFan
 #elif UNITY_STANDALONE_OSX
         return "OSX";
 #elif UNITY_ANDROID
-        return "Android";
+            return "Android";
 #elif UNITY_IOS
         return "iOS";
 #endif
