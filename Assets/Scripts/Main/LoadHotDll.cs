@@ -44,7 +44,7 @@ public static class LoadHotDll
             var handle = resloader.LoadABAssetAsyncAwait(DllPath + aotDllName);
             await handle;
             var text = handle.Result as TextAsset;
-            if(text == null)
+            if (text == null)
             {
                 return;
             }
@@ -66,7 +66,7 @@ public static class LoadHotDll
 
         if (!ResManager.Instance.ContainsAsset(filePath))
         {
-            Debug.LogError($"not find:{filePath},please use MenuItem : HybridCLR/BuildCodesAndCopy");
+            Debug.LogError($"Not find:{filePath},please use MenuItem : HybridCLR/BuildCodesAndCopy");
             return;
         }
 
@@ -75,6 +75,7 @@ public static class LoadHotDll
         var text = handle.Result as TextAsset;
         if (text == null)
         {
+            Debug.LogError("Load Assembly-CSharp.dll.bytes Failed");
             return;
         }
         byte[] assemblyData = text.bytes;
@@ -84,6 +85,11 @@ public static class LoadHotDll
         if (t != null)
         {
             t.InvokeMember("EnterHotMain", BindingFlags.InvokeMethod, null, null, null);
+            Debug.Log("LoadHotUpdateAssembly Success!");
+        }
+        else
+        {
+            Debug.LogError("Not find type HotMain");
         }
     }
 

@@ -146,13 +146,16 @@ namespace UniFan.Res.Editor
         void FillRulePreviewList()
         {
             _rulePreviewList.Clear();
-            _rulePreviewList.ClearSelection();
             _rulePreviewList.itemsSource = GetCurModeRules();
             _rulePreviewList.Rebuild();
 
             if (_lastSelectRuleIndex >= 0 && _lastSelectRuleIndex < _rulePreviewList.itemsSource.Count)
             {
                 _rulePreviewList.selectedIndex = _lastSelectRuleIndex;
+            }
+            else
+            {
+                _rulePreviewList.selectedIndex = -1;
             }
         }
 
@@ -173,6 +176,7 @@ namespace UniFan.Res.Editor
                 if (element.userData is BuildRule rule)
                 {
                     rule.active = evt.newValue;
+                    OnRulePreviewSelectionChange(null);
                 }
             });
             element.Add(toggle);
@@ -255,7 +259,7 @@ namespace UniFan.Res.Editor
                 }
 
                 _lastSelectRuleIndex = -1;
-                _ruleDetailContainer.RefreshRuleDetail(null,_isShareRuleMode);
+                _ruleDetailContainer.RefreshRuleDetail(null, _isShareRuleMode);
                 return;
             }
 

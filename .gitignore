@@ -60,3 +60,6 @@ crashlytics-build.properties
 
 .vsconfig
 .idea
+UserSettings
+HybridCLRData
+AssetBundles

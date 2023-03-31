@@ -33,8 +33,7 @@ namespace UniFan.Res.Editor
         {
             if (StartBuild(LanguageGlobal.LanguageEditorMode, true) && EditorUtility.DisplayDialog("提示", "AssetBundle打包完成!\nCopy AssetBundles to StreamingAssets?", "确认", "取消"))
                 CopyAssetBundlesToStreamingAssets();
-            else
-                EditorUtility.ClearProgressBar();
+            EditorUtility.ClearProgressBar();
         }
 
         [MenuItem("GameEditor/AssetBundle/Start Build(增量打包)", priority = 11)]
@@ -42,8 +41,7 @@ namespace UniFan.Res.Editor
         {
             if (StartBuild(LanguageGlobal.LanguageEditorMode, true, false, true) && EditorUtility.DisplayDialog("提示", "AssetBundle打包完成!\nCopy AssetBundles to StreamingAssets?", "确认", "取消"))
                 CopyAssetBundlesToStreamingAssets();
-            else
-                EditorUtility.ClearProgressBar();
+            EditorUtility.ClearProgressBar();
         }
 
 
@@ -62,6 +60,7 @@ namespace UniFan.Res.Editor
                 return false;
             }
             bool isOk = ABBuildCreator.GetBuilds(language, onlyBuildCurLang, out var builds);
+            EditorUtility.ClearProgressBar();
             if (!isOk)
             {
                 Debug.LogError("打包AssetBundle失败,请查看控制台!");
@@ -101,8 +100,8 @@ namespace UniFan.Res.Editor
             }
             catch (Exception e)
             {
-               Debug.LogError(e);
-               return false;
+                Debug.LogError(e);
+                return false;
             }
 
             return true;
@@ -138,13 +137,13 @@ namespace UniFan.Res.Editor
 
         const string kRuntimeMode = "GameEditor/AssetBundle/Editor Bundle Mode";
 
-        [MenuItem(kRuntimeMode,false,100)]
+        [MenuItem(kRuntimeMode, false, 100)]
         public static void ToggleRuntimeMode()
         {
             AssetBundleUtility.ActiveBundleMode = !AssetBundleUtility.ActiveBundleMode;
         }
 
-        [MenuItem(kRuntimeMode, true,100)]
+        [MenuItem(kRuntimeMode, true, 100)]
         public static bool ToggleRuntimeModeValidate()
         {
             Menu.SetChecked(kRuntimeMode, AssetBundleUtility.ActiveBundleMode);
@@ -153,13 +152,13 @@ namespace UniFan.Res.Editor
 
         const string kSimulationAsyncLoad = "GameEditor/AssetBundle/Editor Simulation AsyncLoad";
 
-        [MenuItem(kSimulationAsyncLoad, false,100)]
+        [MenuItem(kSimulationAsyncLoad, false, 100)]
         public static void ToggleSimulationAsyncLoad()
         {
             AssetBundleUtility.SimulationAsyncLoad = !AssetBundleUtility.SimulationAsyncLoad;
         }
 
-        [MenuItem(kSimulationAsyncLoad, true,100)]
+        [MenuItem(kSimulationAsyncLoad, true, 100)]
         public static bool ToggleSimulationAsyncLoadValidate()
         {
             Menu.SetChecked(kSimulationAsyncLoad, AssetBundleUtility.SimulationAsyncLoad);

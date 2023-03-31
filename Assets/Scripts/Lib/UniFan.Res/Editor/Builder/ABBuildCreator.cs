@@ -5,11 +5,8 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Runtime.CompilerServices;
 using Sirenix.Utilities;
-using static UnityEditor.Progress;
 using Lib.UniFan.Res.Editor;
-using UnityEditor.Sprites;
 
 namespace UniFan.Res.Editor
 {
@@ -260,7 +257,7 @@ namespace UniFan.Res.Editor
                     {
                         if (shareRegexList[k].IsMatch(shareAssetName))
                         {
-                            
+
                             IRulePacker packer = rulePackers[(int)rule.buildType];
                             if (packer == null)
                             {

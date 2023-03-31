@@ -14,18 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildRules:
   - active: 1
-    buildDesc: 
-    buildType: 0
-    isOverrideBundleName: 0
-    overrideBundleName: 
-    searchPath: Assets/Res
-    searchPattern: 
-    searchOption: 1
-    forceInclueDeps: 0
-    manifestWriteType: 0
-    depCulling: 0
-    ignoreDepCulling: 0
-  - active: 0
     buildDesc: "\u4EE3\u7801\u76F8\u5173"
     buildType: 2
     isOverrideBundleName: 0

@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class HotMain
 {
+
     public static void EnterHotMain()
     {
-        Debug.Log("Enter HotMain");
+        Debug.LogError("Enter HotMain");
+        var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        go.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+
     }
 
 
