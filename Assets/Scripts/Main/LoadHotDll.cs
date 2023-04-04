@@ -12,7 +12,7 @@ public static class LoadHotDll
 
     public static string DllPath = "Res/Codes/";
 
-    public static async Task StartLoadHotDllAsync()
+    public static async UniTask StartLoadHotDllAsync()
     {
         ResLoader resloader = ResLoader.Create();
         await LoadMetadataForAOTAssemblies(resloader);
@@ -25,7 +25,7 @@ public static class LoadHotDll
     /// 为aot assembly加载原始metadata， 这个代码放aot或者热更新都行。
     /// 一旦加载后，如果AOT泛型函数对应native实现不存在，则自动替换为解释模式执行
     /// </summary>
-    static async Task LoadMetadataForAOTAssemblies(ResLoader resloader)
+    static async UniTask LoadMetadataForAOTAssemblies(ResLoader resloader)
     {
         //AOT泛型添加处
         List<string> aotMetaAssemblyFiles = new List<string>()
@@ -60,7 +60,7 @@ public static class LoadHotDll
     /// 加载更新assembly
     /// </summary>
     /// <returns></returns>
-    static async Task LoadHotUpdateAssembly(ResLoader resloader)
+    static async UniTask LoadHotUpdateAssembly(ResLoader resloader)
     {
         var filePath = DllPath + "Assembly-CSharp.dll.bytes";
 

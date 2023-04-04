@@ -3,11 +3,12 @@ using UniFan;
 using System.Threading.Tasks;
 using System.Globalization;
 using UniFan.Res;
+using Cysharp.Threading.Tasks;
 
 public class GameLauncher : MonoBehaviour
 {
     // Start is called before the first frame update
-    private async Task Start()
+    private async UniTaskVoid Start()
     {
         UniFantasy.InitUniFantasy(this.gameObject);
 
@@ -17,7 +18,7 @@ public class GameLauncher : MonoBehaviour
 
         //初始化资源管理
         ResManager.Instance.InitAssetBundle();
-        
+
         InitManager();
 
         // 开始加载dll
