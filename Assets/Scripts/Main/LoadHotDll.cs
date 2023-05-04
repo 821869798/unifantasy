@@ -5,7 +5,6 @@ using UniFan.Res;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System.Reflection;
-using System.Threading.Tasks;
 
 public static class LoadHotDll
 {
@@ -41,9 +40,7 @@ public static class LoadHotDll
         foreach (var aotDllName in aotMetaAssemblyFiles)
         {
             //byte[] dllBytes = BetterStreamingAssets.ReadAllBytes(aotDllName + ".bytes");
-            var handle = resloader.LoadABAssetAsyncAwait(DllPath + aotDllName);
-            await handle;
-            var text = handle.Result as TextAsset;
+            var text = await resloader.LoadABAssetAwait<TextAsset>(DllPath + aotDllName);
             if (text == null)
             {
                 return;
@@ -70,9 +67,7 @@ public static class LoadHotDll
             return;
         }
 
-        var handle = resloader.LoadABAssetAsyncAwait(filePath);
-        await handle;
-        var text = handle.Result as TextAsset;
+        var text = await resloader.LoadABAssetAwait<TextAsset>(filePath);
         if (text == null)
         {
             Debug.LogError("Load Assembly-CSharp.dll.bytes Failed");

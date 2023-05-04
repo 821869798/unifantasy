@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.U2D;
 using Object = UnityEngine.Object;
+using Cysharp.Threading.Tasks;
 
 namespace UniFan.Res
 {
@@ -11,7 +12,12 @@ namespace UniFan.Res
 
         private HashSet<IRes> _resSet = new HashSet<IRes>();
 
-        private Dictionary<AsyncTaskSequence, Action<Object>> _asyncLoadMap = new Dictionary<AsyncTaskSequence, Action<Object>>();
+        private Dictionary<AsyncTaskSequence, object> _asyncLoadMap = new Dictionary<AsyncTaskSequence, object>();
+
+        /// <summary>
+        /// 用来判断是async await的加载任务
+        /// </summary>
+        private static object _uniTaskObject = new object();
 
         /// <summary>
         /// 解决SpriteAtlas调用GetSprite内存泄露问题
@@ -24,8 +30,10 @@ namespace UniFan.Res
             return ABAssetRes.GetAbAssetAtlasSprite(atlas, spriteName);
         }
 
+        #region function
+
         //添加资源的引用计数
-        public void AddResRefCount(IRes res)
+        private void AddResRefCount(IRes res)
         {
             if (res == null)
             {
@@ -37,6 +45,46 @@ namespace UniFan.Res
                 res.Retain();
             }
         }
+
+        public void ReleaseAllRes()
+        {
+            if (_asyncLoadMap.Count > 0)
+            {
+                foreach (var item in _asyncLoadMap)
+                {
+                    AsyncTaskSequence task = item.Key;
+                    if (task == null)
+                    {
+                        continue;
+                    }
+                    if (item.Value == _uniTaskObject)
+                    {
+                        //这类是Unitask创建的加载，自动完成即可
+                        task.InterruptTaskSoft();
+                    }
+                    else
+                    {
+                        task.Put2Pool();
+                    }
+                }
+                _asyncLoadMap.Clear();
+            }
+
+            if (_resSet.Count > 0)
+            {
+                foreach (var item in _resSet)
+                {
+                    item.Release();
+                }
+                _resSet.Clear();
+                ResManager.NotifyResManagerClear();
+            }
+
+        }
+
+        #endregion
+
+        #region Load Res Sync
 
         public T LoadABAsset<T>(string assetName) where T : Object
         {
@@ -127,6 +175,9 @@ namespace UniFan.Res
             res.Load();
         }
 
+        #endregion
+
+        #region Load Res Async With Callback
 
         public void LoadABAssetAsync(string assetName, Action<Object> loadCompleteCallback)
         {
@@ -160,7 +211,7 @@ namespace UniFan.Res
             AsyncTaskSequence asyncTask = AsyncTaskSequence.Create();
             AddResRefCount(res);
             Add2AsyncLoad(res, asyncTask);
-            asyncTask.OnAllTaskFinish += OnResLoadFinish;
+            asyncTask.OnAllTaskFinish += OnResLoadAsyncFinish;
             asyncTask.Append(res);
             _asyncLoadMap.Add(asyncTask, loadCompleteCallback);
             asyncTask.Start();
@@ -196,15 +247,15 @@ namespace UniFan.Res
             }
         }
 
-        private void OnResLoadFinish(AsyncTaskSequence asyncTask)
+        private void OnResLoadAsyncFinish(AsyncTaskSequence asyncTask)
         {
             if (_asyncLoadMap.ContainsKey(asyncTask))
             {
-                Action<Object> assetCallback = _asyncLoadMap[asyncTask];
+                Action<Object> assetCallback = _asyncLoadMap[asyncTask] as Action<Object>;
                 if (assetCallback != null)
                 {
                     List<IAsyncTask> lastTask = asyncTask.GetLastSequence();
-                    if (lastTask.Count > 0)
+                    if (lastTask != null && lastTask.Count > 0)
                     {
                         IRes res = lastTask[0] as IRes;
                         if (res != null)
@@ -229,24 +280,96 @@ namespace UniFan.Res
             }
         }
 
-        public AsyncWait LoadABAssetAsyncAwait(string assetName, Action<Object> loadCompleteCallback = null)
+        #endregion
+
+        #region Load Res Async await
+
+        public async UniTask<T> LoadABAssetAwait<T>(string assetName) where T : Object
         {
-            return DoLoadAsyncAwait(assetName, ResType.ABAsset, loadCompleteCallback);
+            return await DoLoadAsyncAwait<T>(assetName, ResType.ABAsset);
         }
 
-        public AsyncWait LoadAssetBundleAsyncAwait(string bundleName, Action<Object> loadCompleteCallback = null)
+        public async UniTask<T> LoadAssetBundleAwait<T>(string assetName) where T : Object
         {
-            return DoLoadAsyncAwait(bundleName.ToLower(), ResType.AssetBundle, loadCompleteCallback);
+            return await DoLoadAsyncAwait<T>(assetName, ResType.AssetBundle);
         }
 
-        public AsyncWait LoadResourceAssetAwait(string assetName, Action<Object> loadCompleteCallback = null)
+        public async UniTask<T> LoadResourceAssetAwait<T>(string assetName) where T : Object
         {
-            return DoLoadAsyncAwait(assetName, ResType.Resource, loadCompleteCallback);
+            return await DoLoadAsyncAwait<T>(assetName, ResType.Resource);
         }
 
-        private AsyncWait DoLoadAsyncAwait(string assetName, ResType resType, Action<Object> loadCompleteCallback)
+        private async UniTask<T> DoLoadAsyncAwait<T>(string assetName, ResType resType) where T : Object
         {
+            IRes res = ResManager.Instance.GetRes(assetName, resType, true);
+            if (res == null)
+            {
+                return null;
+            }
 
+            //准备加载数据
+            AsyncTaskSequence asyncTask = AsyncTaskSequence.Create();
+            AddResRefCount(res);
+            Add2AsyncLoad(res, asyncTask);
+#pragma warning disable CS4014
+            asyncTask.Append(res);
+            _asyncLoadMap.Add(asyncTask, _uniTaskObject);
+            asyncTask.Start();
+#pragma warning restore CS4014
+
+            //等待加载完成
+            await asyncTask;
+
+            //移除自己
+            if (_asyncLoadMap.ContainsKey(asyncTask))
+            {
+                _asyncLoadMap.Remove(asyncTask);
+            }
+
+            //获取结果
+            T result;
+            List<IAsyncTask> lastTask = asyncTask.GetLastSequence();
+            if (lastTask != null && lastTask.Count > 0)
+            {
+                IRes curRes = lastTask[0] as IRes;
+                result = curRes.Asset as T;
+            }
+            else
+            {
+                result = null;
+            }
+
+            //清除自己
+            asyncTask.Put2Pool();
+
+            return result;
+        }
+
+        #endregion 
+
+        #region [Obsolete] Load Res Async With IEnumerator
+
+        //[Obsolete]
+        //public AsyncWait LoadABAssetAsyncLagacy(string assetName)
+        //{
+        //    return DoLoadAsyncLagacy(assetName, ResType.ABAsset, null);
+        //}
+
+        //[Obsolete]
+        //public AsyncWait LoadAssetBundleAsyncLagacy(string bundleName)
+        //{
+        //    return DoLoadAsyncLagacy(bundleName.ToLower(), ResType.AssetBundle, null);
+        //}
+
+        //[Obsolete]
+        //public AsyncWait LoadResourceAssetAsyncLagacy(string assetName)
+        //{
+        //    return DoLoadAsyncLagacy(assetName, ResType.Resource, null);
+        //}
+
+        [Obsolete]
+        public AsyncWait DoLoadAsyncLagacy(string assetName, ResType resType, Action<Object> loadCompleteCallback)
+        {
             AsyncWait wait = new AsyncWait();
 
             IRes res = ResManager.Instance.GetRes(assetName, resType, true);
@@ -264,11 +387,12 @@ namespace UniFan.Res
             Add2AsyncLoad(res, asyncTask);
             asyncTask.OnAllTaskFinish += (ats) =>
             {
-                if (_asyncLoadMap.TryGetValue(ats, out var assetCallback))
+                if (_asyncLoadMap.TryGetValue(ats, out var obj))
                 {
                     Object asset = null;
+                    Action<Object> assetCallback = obj as Action<Object>;
                     List<IAsyncTask> lastTask = ats.GetLastSequence();
-                    if (lastTask.Count > 0)
+                    if (lastTask != null && lastTask.Count > 0)
                     {
                         IRes curRes = lastTask[0] as IRes;
                         asset = curRes.Asset;
@@ -296,32 +420,7 @@ namespace UniFan.Res
             return wait;
         }
 
-        public void ReleaseAllRes()
-        {
-            if (_asyncLoadMap.Count > 0)
-            {
-                foreach (var item in _asyncLoadMap)
-                {
-                    AsyncTaskSequence task = item.Key;
-                    if (task != null)
-                    {
-                        task.Put2Pool();
-                    }
-                }
-                _asyncLoadMap.Clear();
-            }
-
-            if (_resSet.Count > 0)
-            {
-                foreach (var item in _resSet)
-                {
-                    item.Release();
-                }
-                _resSet.Clear();
-                ResManager.NotifyResManagerClear();
-            }
-
-        }
+        #endregion
 
         #region Class Pool
         public uint MaxStore => 50;

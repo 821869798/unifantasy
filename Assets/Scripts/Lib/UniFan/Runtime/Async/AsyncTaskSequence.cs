@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace UniFan
 {
     //异步任务序列,风格类似DOTween的Sequence
     //同一序列一起执行,同一序列全部执行完,才执行下一个序列
-    public class AsyncTaskSequence : IReusableClass
+    public class AsyncTaskSequence : IReusableClass, IEnumerator
     {
         //有一个任务失败的时候是否终止
         public bool IsFailTermination
@@ -117,6 +118,7 @@ namespace UniFan
             if (SequenceCount == 0)
             {
                 Debug.LogWarning("no async task to do!");
+                IsDone = true;
                 if (OnAllTaskFinish != null)
                 {
                     OnAllTaskFinish(this);
@@ -180,6 +182,7 @@ namespace UniFan
             if (FinishTaskCount >= TaskCount)
             {
                 IsRunning = false;
+                IsDone = true;
                 if (OnAllTaskFinish != null)
                 {
                     OnAllTaskFinish(this);
@@ -199,6 +202,7 @@ namespace UniFan
             SequenceCount = 0;
             CurSequenceTaskCount = 0;
             FinishTaskCount = 0;
+            IsDone = false;
             foreach (var task in _allTask)
             {
                 if (!task.Value)
@@ -218,6 +222,8 @@ namespace UniFan
         #region Class Pool
         public uint MaxStore => 20;
 
+        public object Current => throw new NotImplementedException();
+
         public static AsyncTaskSequence Create(bool isFailTermination = false)
         {
             AsyncTaskSequence ts = ClassPool.Get<AsyncTaskSequence>();
@@ -230,6 +236,30 @@ namespace UniFan
             ClassPool.Put<AsyncTaskSequence>(this);
         }
         #endregion
+
+        #region IEnumerator
+        public bool IsDone { get; private set; }
+
+        public bool MoveNext()
+        {
+            return !IsDone;
+        }
+
+        public void Reset()
+        {
+            OnReset();
+        }
+
+        /// <summary>
+        /// 供UniTask打断用,让IsDone为true，让这次加载完成
+        /// </summary>
+        public void InterruptTaskSoft()
+        {
+            OnReset();
+            IsDone = true;
+        }
+        #endregion
+
     }
 
 }
