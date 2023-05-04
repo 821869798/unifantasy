@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -60,23 +60,23 @@ namespace UniFan
 #endif
         }
 
-        public string GetBundlePath(string bundlePath, out ResPathType pathType)
+        public string GetBundlePath(string bundleParentPath, string bundlePath, out ResPathType pathType)
         {
-            var path = string.Concat(PersistentDataPath, PathConsts.AssetbundleLoadPath, bundlePath);
+            var path = string.Concat(PersistentDataPath, bundleParentPath, bundlePath);
             if (File.Exists(path))
                 pathType = ResPathType.Persistent;
             else
             {
                 pathType = ResPathType.StreamingAssets;
-                path = string.Concat(StreamingAssetsPath, PathConsts.AssetbundleLoadPath, bundlePath);
+                path = string.Concat(StreamingAssetsPath, bundleParentPath, bundlePath);
             }
             return path;
         }
 
 
-        public string GetBundlePathForWWW(string bundlePath)
+        public string GetBundlePathForWWW(string bundleParentPath, string bundlePath)
         {
-            return string.Concat(StreamingAssetsPathForWWW, PathConsts.AssetbundleLoadPath, bundlePath);
+            return string.Concat(StreamingAssetsPathForWWW, bundleParentPath, bundlePath);
         }
 
         public string GetStreamingPath(string path)
@@ -101,7 +101,7 @@ namespace UniFan
 
         public string GetAssetNameInBundle(string assetPath)
         {
-            return Path.GetFileName(assetPath);
+            return string.Concat(EditorAssetPathHead, assetPath);
         }
 
         public const string EditorAssetPathHead = "Assets/";

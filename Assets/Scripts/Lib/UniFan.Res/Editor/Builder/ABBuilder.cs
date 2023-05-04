@@ -1,56 +1,32 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public static class ABBuilder
     {
 
-        public static bool BuildAssetBundles(List<AssetBundleBuild> builds, bool isABEncrypt,bool isIncrement, ref AssetBundleManifest manifest)
+        public static bool BuildAssetBundles(List<AssetBundleBuild> builds, IResBuildAdapter resBuildAdapter)
         {
 
             string outputPath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
 
-            var options = BuildAssetBundleOptions.None;
 
-            options |= BuildAssetBundleOptions.ChunkBasedCompression;
-
-            if (!isIncrement)
-            {
-                //非增量打包方式
-                options |= BuildAssetBundleOptions.ForceRebuildAssetBundle;
-            }
-
-            options |= BuildAssetBundleOptions.DeterministicAssetBundle;
-
-            //设置AssetBundle加密
-            if (isABEncrypt)
-            {
-                Type typeBuildAssetBundleOptions = typeof(BuildAssetBundleOptions);
-                var fieldEnableProtection = typeBuildAssetBundleOptions.GetField("EnableProtection");
-                if (fieldEnableProtection != null)
-                {
-                    var valueEnableProtection = System.Convert.ToInt32(fieldEnableProtection.GetValue(null));
-                    options |= (BuildAssetBundleOptions)valueEnableProtection;
-                }
-                AssetBundleUtility.SetAssetBundleEncryptKey(AssetBundleUtility.GetAssetBundleKey());
-            }
-            else
-            {
-                AssetBundleUtility.SetAssetBundleEncryptKey(null);
-            }
 
             if (builds == null || builds.Count == 0)
             {
                 EditorUtility.DisplayDialog("打包错误", "打包的资源数量为0!", "确认");
                 return false;
             }
-            else
+
+            var ok = resBuildAdapter.BuildAssetBundles(outputPath, builds.ToArray(), EditorUserBuildSettings.activeBuildTarget);
+            if (!ok)
             {
-                manifest = BuildPipeline.BuildAssetBundles(outputPath, builds.ToArray(), options, EditorUserBuildSettings.activeBuildTarget);
+                EditorUtility.DisplayDialog("打包错误", "请查看控制台信息", "确认");
+                return false;
             }
             //移动manifest文件
             string manifestAsset = Path.Combine(outputPath, Consts.GetPlatformName());
@@ -59,7 +35,7 @@ namespace UniFan.Res.Editor
             string manifestTextDst = Path.Combine(outputPath, Consts.ManifestFilePath + ".manifest");
             if (File.Exists(manifestAsset))
             {
-                if(File.Exists(manifestAssetDst))
+                if (File.Exists(manifestAssetDst))
                 {
                     File.Delete(manifestAssetDst);
                 }

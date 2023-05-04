@@ -1,12 +1,13 @@
-﻿using ICSharpCode.SharpZipLib.Checksum;
+using ICSharpCode.SharpZipLib.Checksum;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UniFan.Res;
 using UnityEditor;
 using UnityEngine;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     /// <summary>
     /// 打包资源自动分包
@@ -40,7 +41,7 @@ namespace UniFan.Res.Editor
         /// 分包时，按顺序移除的路径
         /// </summary>
         static string[] ResSplitRemovePath = {
-            PathConsts.MediaPath,
+            ResPathConsts.MediaPath,
             Path.Combine(Consts.AssetbundleLoadPath,"res","images"),
         };
 

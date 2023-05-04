@@ -1,11 +1,12 @@
-﻿using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UniFan;
+using UniFan.Res;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public static class AssetBundleMenuItem
     {
@@ -31,7 +32,8 @@ namespace UniFan.Res.Editor
         [MenuItem("GameEditor/AssetBundle/Start Build", priority = 10)]
         public static void StartBuildByMenu()
         {
-            if (StartBuild(LanguageGlobal.LanguageEditorMode, true) && EditorUtility.DisplayDialog("提示", "AssetBundle打包完成!\nCopy AssetBundles to StreamingAssets?", "确认", "取消"))
+            IResBuildAdapter adapter = new ResBuildAdapterSBP(LanguageGlobal.LanguageEditorMode, false);
+            if (StartBuild(adapter) && EditorUtility.DisplayDialog("提示", "AssetBundle打包完成!\nCopy AssetBundles to StreamingAssets?", "确认", "取消"))
                 CopyAssetBundlesToStreamingAssets();
             EditorUtility.ClearProgressBar();
         }
@@ -39,7 +41,8 @@ namespace UniFan.Res.Editor
         [MenuItem("GameEditor/AssetBundle/Start Build(增量打包)", priority = 11)]
         public static void StartBuildIncrementByMenu()
         {
-            if (StartBuild(LanguageGlobal.LanguageEditorMode, true, false, true) && EditorUtility.DisplayDialog("提示", "AssetBundle打包完成!\nCopy AssetBundles to StreamingAssets?", "确认", "取消"))
+            IResBuildAdapter adapter = new ResBuildAdapterSBP(LanguageGlobal.LanguageEditorMode, true);
+            if (StartBuild(adapter) && EditorUtility.DisplayDialog("提示", "AssetBundle打包完成!\nCopy AssetBundles to StreamingAssets?", "确认", "取消"))
                 CopyAssetBundlesToStreamingAssets();
             EditorUtility.ClearProgressBar();
         }
@@ -53,27 +56,26 @@ namespace UniFan.Res.Editor
         /// <param name="isABEncrypt">是否加密AB包</param>
         /// <param name="isIncrement">是否是增量打包模式</param>
         /// <returns></returns>
-        public static bool StartBuild(eLanguageType language, bool onlyBuildCurLang, bool isABEncrypt = false, bool isIncrement = false)
+        public static bool StartBuild(IResBuildAdapter resBuildAdapter)
         {
-            if (!ABBuilder.CreateNewAssetBundleDirectory(!isIncrement))
+            if (!ABBuilder.CreateNewAssetBundleDirectory(!resBuildAdapter.isIncrement))
             {
                 return false;
             }
-            bool isOk = ABBuildCreator.GetBuilds(language, onlyBuildCurLang, out var builds);
+            bool isOk = ABBuildCreator.GetBuilds(resBuildAdapter.languageType, resBuildAdapter.onlyBuildCurLang, out var builds);
             EditorUtility.ClearProgressBar();
             if (!isOk)
             {
                 Debug.LogError("打包AssetBundle失败,请查看控制台!");
                 return false;
             }
-            AssetBundleManifest manifest = null;
-            isOk = ABBuilder.BuildAssetBundles(builds, isABEncrypt, isIncrement, ref manifest);
-            if (!isOk || manifest == null)
+            isOk = ABBuilder.BuildAssetBundles(builds, resBuildAdapter);
+            if (!isOk)
             {
                 Debug.LogError("打包AssetBundle失败");
                 return false;
             }
-            isOk = ManifestBuilder.BuildManifest(manifest);
+            isOk = ManifestBuilder.BuildManifest(resBuildAdapter);
             if (!isOk)
             {
                 Debug.LogError("打包AssetBundle失败:BuildManifest");

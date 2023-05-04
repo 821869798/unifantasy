@@ -63,3 +63,11 @@ crashlytics-build.properties
 UserSettings
 HybridCLRData
 AssetBundles
+/Assets/Res/99_Codes/*.bytes
+/Assets/Res/99_Codes/*.bytes.meta
+Assets/resmanifest.bytes
+Assets/resmanifest.bytes.meta
+Assets/StreamingAssets/bundles
+Assets/StreamingAssets/bundles.meta
+Assets/HybridCLRData
+Assets/HybridCLRData.meta

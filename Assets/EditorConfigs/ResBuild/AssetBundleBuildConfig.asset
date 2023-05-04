@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa1bcc5ae70d5454da35501aabd147e0, type: 3}
+  m_Name: AssetBundleBuildConfig
+  m_EditorClassIdentifier: 
+  buildRules:
+  - active: 1
+    buildDesc: "\u70ED\u66F4\u4EE3\u7801"
+    buildType: 1
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/99_Codes
+    searchPattern: '*.bytes'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 2
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildDesc: "\u56FE\u96C6"
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/04_SpriteAtlas
+    searchPattern: '*.spriteatlasv2'
+    searchOption: 1
+    forceInclueDeps: 1
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildDesc: UIPrefab
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/02_UIPrefabs
+    searchPattern: '*.prefab'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 2
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
+    buildDesc: "\u6253\u5305\u573A\u666F"
+    buildType: 0
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/01_Scenes
+    searchPattern: '*.unity'
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  sharedBuildRules: []

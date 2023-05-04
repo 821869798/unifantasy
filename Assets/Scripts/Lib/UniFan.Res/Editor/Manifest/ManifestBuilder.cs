@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Text;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public static class ManifestBuilder
     {
-        public static bool BuildManifest(AssetBundleManifest abManifest)
+        public static bool BuildManifest(IResBuildAdapter resBuildAdapter)
         {
             List<AssetBundleBuildData> buildDataList = ABBuildCreator.buildDatas;
             HashSet<string> depCulling = ABBuildCreator.depCullingBundles;
@@ -22,7 +22,7 @@ namespace UniFan.Res.Editor
 
             for (int i = 0; i < buildDataList.Count; i++)
             {
-                var depAbList = abManifest.GetDirectDependencies(buildDataList[i].assetBundleName);
+                var depAbList = resBuildAdapter.GetDirectDependencies(buildDataList[i].assetBundleName);
 
                 //根据引用剔除逻辑
                 if (depCullingIgnore.Contains(buildDataList[i].assetBundleName))
@@ -40,7 +40,7 @@ namespace UniFan.Res.Editor
                     }
                 }
 
-                buildDataList[i].hashValue = abManifest.GetAssetBundleHash(buildDataList[i].assetBundleName).ToString();
+                buildDataList[i].hashValue = resBuildAdapter.GetAssetBundleHash(buildDataList[i].assetBundleName).ToString();
                 switch (buildDataList[i].manifestWriteType)
                 {
                     case ManifestWriteType.WriteAll:
@@ -65,7 +65,7 @@ namespace UniFan.Res.Editor
             }
 
             //输出打包报告
-            if(!BuildReporterText(buildDataList))
+            if (!BuildReporterText(buildDataList))
             {
                 return false;
             }
@@ -75,9 +75,9 @@ namespace UniFan.Res.Editor
             {
                 return false;
             }
-            
+
             //build manifest数据，游戏加载依赖于改自定义manifest
-            if(!BuildManifestBinary(buildDataList, allAssetNameMap, allAssetNames, allBundleNameMap))
+            if (!BuildManifestBinary(buildDataList, allAssetNameMap, allAssetNames, allBundleNameMap))
             {
                 return false;
             }

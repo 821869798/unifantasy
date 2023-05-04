@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public static class Consts
     {

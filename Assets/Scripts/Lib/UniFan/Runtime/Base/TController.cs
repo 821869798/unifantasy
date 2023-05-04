@@ -1,4 +1,4 @@
-﻿
+
 namespace UniFan
 {
     public abstract class TController : TObject

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
 
     [System.Serializable]

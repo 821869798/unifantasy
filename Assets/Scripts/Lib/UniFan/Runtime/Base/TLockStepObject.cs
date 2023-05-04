@@ -1,4 +1,4 @@
-﻿
+
 namespace UniFan
 {
     //帧同步对象基类

@@ -1,7 +1,7 @@
-﻿using UnityEditor.Build.Reporting;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     internal class RulePackerByFileName : IRulePacker
     {

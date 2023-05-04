@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public class AssetBundleBuildData
     {

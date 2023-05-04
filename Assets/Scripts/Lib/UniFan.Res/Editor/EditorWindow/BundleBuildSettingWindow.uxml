@@ -25,7 +25,7 @@
                     <ui:TextField picking-mode="Ignore" label="BuildRule Name(描述)" value="filler text" name="DescName" style="flex-grow: 1; flex-direction: row; -unity-text-align: upper-right;" />
                 </ui:VisualElement>
                 <ui:VisualElement style="flex-direction: row; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
-                    <uie:EnumField label="ResPackerType(资源分包规则)" value="FileName" include-obsolete-values="true" name="RulePackerType" type="UniFan.Res.Editor.RulePackerType, UniFan.Res.Editor" style="flex-grow: 1;" />
+                    <uie:EnumField label="ResPackerType(资源分包规则)" value="FileName" include-obsolete-values="true" name="RulePackerType" type="UniFan.ResEditor.RulePackerType, UniFan.ResEditor" style="flex-grow: 1;" />
                     <uie:ObjectField label="Object Field" allow-scene-objects="false" style="flex-grow: 1; display: none;" />
                 </ui:VisualElement>
                 <ui:VisualElement name="OverrideBundleNameContainer" style="flex-direction: row; flex-grow: 1; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; display: flex; visibility: visible;">
@@ -41,7 +41,7 @@
                     <ui:TextField picking-mode="Ignore" label="AssetSearchPattern" value="filler text" name="AssetSearchPattern" style="flex-grow: 3; -unity-text-align: upper-right;" />
                 </ui:VisualElement>
                 <ui:VisualElement style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
-                    <uie:EnumField label="Manifest Info Write(寻址信息写入)" name="ManifestInfoType" include-obsolete-values="false" type="UniFan.Res.Editor.ManifestWriteType, UniFan.Res.Editor" value="WriteAll" style="flex-grow: 1;" />
+                    <uie:EnumField label="Manifest Info Write(寻址信息写入)" name="ManifestInfoType" include-obsolete-values="false" type="UniFan.ResEditor.ManifestWriteType, UniFan.ResEditor" value="WriteAll" style="flex-grow: 1;" />
                 </ui:VisualElement>
                 <ui:VisualElement style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
                     <ui:Toggle label="Force Include Dep(勿乱选,针对图集和Sprite打成同一个包)" name="ForceIncludeDep" style="color: rgb(210, 210, 210); flex-grow: 1; -unity-text-align: upper-left; font-size: 12px; -unity-font-style: normal; white-space: normal; -unity-text-outline-color: rgb(63, 63, 63); -unity-background-image-tint-color: rgb(255, 255, 255);" />

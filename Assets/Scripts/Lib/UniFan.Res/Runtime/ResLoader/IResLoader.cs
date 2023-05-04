@@ -1,4 +1,4 @@
-﻿using UniFan;
+using UniFan;
 
 namespace UniFan.Res
 {

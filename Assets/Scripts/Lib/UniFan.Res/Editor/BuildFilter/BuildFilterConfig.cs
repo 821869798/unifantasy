@@ -1,11 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.OdinInspector;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     [CreateAssetMenu(fileName = "BundleBuildFilterConfig", menuName = "Create Scriptable Config/打包配置/AssetBundle打包筛选配置")]
     public class BuildFilterConfig : SerializedScriptableObject

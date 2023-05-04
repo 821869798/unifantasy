@@ -1,10 +1,10 @@
-﻿using System.IO;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public enum RulePackerType
     {

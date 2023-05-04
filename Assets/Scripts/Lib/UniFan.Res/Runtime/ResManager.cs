@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -61,14 +61,14 @@ namespace UniFan.Res
             //加载AssetBundle信息
             _resManifest = new ResManifest();
             AssetBundle bundle;
-            var filePath = FilePathHelper.Instance.GetBundlePath(PathConsts.ResManifestFilePath, out _);
+            var filePath = FilePathHelper.Instance.GetBundlePath(ResPathConsts.AssetbundleLoadPath, ResPathConsts.ResManifestFilePath, out _);
             bundle = AssetBundle.LoadFromFile(filePath);
 
             if (bundle == null)
             {
                 return false;
             }
-            TextAsset ta = bundle.LoadAsset<TextAsset>(PathConsts.ResManifestBinaryConfigName);
+            TextAsset ta = bundle.LoadAsset<TextAsset>(ResPathConsts.ResManifestBinaryConfigName);
             if (ta == null)
             {
                 bundle.Unload(true);

@@ -8,7 +8,7 @@ using System.Linq;
 using NUnit.Framework;
 using PlasticPipe.PlasticProtocol.Messages;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public class BundleBuildSettingWindow : EditorWindow
     {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Sirenix.Utilities;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public static class ABBuildCreator
     {

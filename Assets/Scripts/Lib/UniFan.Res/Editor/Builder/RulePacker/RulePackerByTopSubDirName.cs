@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     internal class RulePackerByTopSubDirName : IRulePacker
     {
@@ -59,8 +59,8 @@ namespace UniFan.Res.Editor
                     return false;
                 }
 
-                AssetBundleBuildData buildData = new AssetBundleBuildData();
-                buildData.assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(item.Key);
+                var assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(item.Key);
+                AssetBundleBuildData buildData = ABBuildCreator.TryNewBuildData(assetBundleName, rule);
                 if (!ABBuildUtility.CheckAssetBundleName(buildData.assetBundleName))
                 {
                     return false;

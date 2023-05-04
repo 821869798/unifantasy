@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -322,7 +322,7 @@ namespace UniFan.Res
                     yield break;
                 }
 
-                string shortAssetName = FilePathHelper.Instance.GetAssetNameInBundle(AssetName);
+                string assetNameInAB = FilePathHelper.Instance.GetAssetNameInBundle(AssetName);
                 AssetBundle ab = bundleRes.AssetBundle;
                 if (ab == null)
                 {
@@ -331,7 +331,7 @@ namespace UniFan.Res
                     finishCallback();
                     yield break;
                 }
-                var assetRequest = ab.LoadAssetAsync(shortAssetName);
+                var assetRequest = ab.LoadAssetAsync(assetNameInAB);
                 _assetBundleRequest = assetRequest;
                 yield return assetRequest;
                 _assetBundleRequest = null;

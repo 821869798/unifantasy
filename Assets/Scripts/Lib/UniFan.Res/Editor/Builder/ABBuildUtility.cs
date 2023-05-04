@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     internal static class ABBuildUtility
     {

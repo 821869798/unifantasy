@@ -1,0 +1,3211 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00668fd727de9bb4081a8a202ce24c3b, type: 3}
+  m_Name: Settings
+  m_EditorClassIdentifier: 
+  globalData:
+    showActiveToggles: 1
+    activeSwiping: 1
+    swipeSameState: 1
+    swipeSelectionOnly: 1
+    depthMode: 0
+    showLayers: 1
+    clickToSelectLayer: 1
+    applyChildLayers: 1
+    showAllComponents: 1
+    showBreadcrumbs: 1
+    instanceBreadcrumbs:
+      show: 1
+      color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      style: 0
+      displayHorizontal: 1
+    fullDepthBreadcrumbs:
+      show: 1
+      color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+      style: 1
+      displayHorizontal: 0
+  styleData:
+    displayLayers: 1
+    displayIcons: 1
+    styles:
+    - prefix: =
+      name: Header (Centered)
+      font: {fileID: 0}
+      fontSize: 11
+      fontAlignment: 4
+      fontStyle: 1
+      textFormatting: 0
+      modes:
+      - fontColour: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 1}
+        backgroundColour: {r: 0.6666667, g: 0.6666667, b: 0.6666667, a: 1}
+      - fontColour: {r: 1, g: 1, b: 1, a: 1}
+        backgroundColour: {r: 0.1764706, g: 0.1764706, b: 0.1764706, a: 1}
+      style:
+        m_Name: Header (Centered)
+        m_Normal:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 1, g: 1, b: 1, a: 1}
+        m_Hover:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Active:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Focused:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnNormal:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnHover:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnActive:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnFocused:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Border:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Margin:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Padding:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Overflow:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Font: {fileID: 0}
+        m_FontSize: 11
+        m_FontStyle: 1
+        m_Alignment: 4
+        m_WordWrap: 0
+        m_RichText: 1
+        m_TextClipping: 0
+        m_ImagePosition: 0
+        m_ContentOffset: {x: 0, y: 0}
+        m_FixedWidth: 0
+        m_FixedHeight: 0
+        m_StretchWidth: 1
+        m_StretchHeight: 0
+    - prefix: '-'
+      name: Subheader
+      font: {fileID: 0}
+      fontSize: 10
+      fontAlignment: 3
+      fontStyle: 1
+      textFormatting: 0
+      modes:
+      - fontColour: {r: 0.245283, g: 0.245283, b: 0.245283, a: 1}
+        backgroundColour: {r: 0.7960785, g: 0.7960785, b: 0.7960785, a: 1}
+      - fontColour: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 1}
+        backgroundColour: {r: 0.2352941, g: 0.2352941, b: 0.2352941, a: 1}
+      style:
+        m_Name: Subheader
+        m_Normal:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 1}
+        m_Hover:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Active:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Focused:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnNormal:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnHover:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnActive:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnFocused:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Border:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Margin:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Padding:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Overflow:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Font: {fileID: 0}
+        m_FontSize: 10
+        m_FontStyle: 1
+        m_Alignment: 3
+        m_WordWrap: 0
+        m_RichText: 1
+        m_TextClipping: 0
+        m_ImagePosition: 0
+        m_ContentOffset: {x: 0, y: 0}
+        m_FixedWidth: 0
+        m_FixedHeight: 0
+        m_StretchWidth: 1
+        m_StretchHeight: 0
+    - prefix: +
+      name: Mini Header (Centered)
+      font: {fileID: 0}
+      fontSize: 10
+      fontAlignment: 4
+      fontStyle: 1
+      textFormatting: 0
+      modes:
+      - fontColour: {r: 1, g: 1, b: 1, a: 1}
+        backgroundColour: {r: 0.38568, g: 0.6335747, b: 0.764151, a: 1}
+      - fontColour: {r: 1, g: 1, b: 1, a: 1}
+        backgroundColour: {r: 0.2671325, g: 0.4473481, b: 0.6509434, a: 1}
+      style:
+        m_Name: Mini Header (Centered)
+        m_Normal:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 1, g: 1, b: 1, a: 1}
+        m_Hover:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Active:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Focused:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnNormal:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnHover:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnActive:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_OnFocused:
+          m_Background: {fileID: 0}
+          m_ScaledBackgrounds: []
+          m_TextColor: {r: 0, g: 0, b: 0, a: 1}
+        m_Border:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Margin:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Padding:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Overflow:
+          m_Left: 0
+          m_Right: 0
+          m_Top: 0
+          m_Bottom: 0
+        m_Font: {fileID: 0}
+        m_FontSize: 10
+        m_FontStyle: 1
+        m_Alignment: 4
+        m_WordWrap: 0
+        m_RichText: 1
+        m_TextClipping: 0
+        m_ImagePosition: 0
+        m_ContentOffset: {x: 0, y: 0}
+        m_FixedWidth: 0
+        m_FixedHeight: 0
+        m_StretchWidth: 1
+        m_StretchHeight: 0
+    twoToneBackground: 1
+    lightMode:
+      colorOne: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+      colorTwo: {r: 0.765, g: 0.765, b: 0.765, a: 1}
+    darkMode:
+      colorOne: {r: 0.245, g: 0.245, b: 0.245, a: 1}
+      colorTwo: {r: 0.225, g: 0.225, b: 0.225, a: 1}
+  components:
+    enableIcons: 1
+    showMissingScriptWarning: 1
+    showAll: 3
+    stackMonoBehaviours: 0
+    unityGroups:
+    - name: Animation
+      components:
+      - name: AimConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Animation
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Animator
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LookAtConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ParentConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PositionConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RotationConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ScaleConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_SpriteAnimator
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    - name: 2D
+      components:
+      - name: AnchoredJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AreaEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BoxCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BuoyancyEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CapsuleCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CircleCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Collider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CompositeCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ConstantForce2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CustomCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: DistanceJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: EdgeCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Effector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: FixedJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: FrictionJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: HingeJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Joint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Light2DBase
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Physics2DRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PhysicsUpdateBehaviour2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlatformEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PointEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PolygonCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RectMask2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RelativeJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Rigidbody2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SliderJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpringJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpriteShapeRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SurfaceEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TargetJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TilemapCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: WheelJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    - name: General
+      components:
+      - name: ArticulationBody
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Camera
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CharacterController
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Cloth
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ConstantForce
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: DropdownItem
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: DropdownItem
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: EventTrigger
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: FlareLayer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Grid
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: GridLayout
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Halo
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LensFlare
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Light
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LightProbeGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LightProbeProxyVolume
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LODGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: OcclusionArea
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: OcclusionPortal
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ParticleSystem
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ParticleSystemForceField
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlayableDirector
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlayerQuitHandler
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlayModeRunnerCallback
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlaymodeTestsController
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Projector
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RectTransform
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ReflectionProbe
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RemoteTestResultSender
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SignalReceiver
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Skybox
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SortingGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpriteMask
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: StreamingController
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Terrain
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Tilemap
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_ScrollbarEventHandler
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Transform
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Tree
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: UIDocument
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: VideoPlayer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: VisualEffect
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: WindZone
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    - name: UI
+      components:
+      - name: AspectRatioFitter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BaseInput
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BaseInputModule
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BaseRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Behaviour
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Button
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Canvas
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CanvasGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CanvasScaler
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ContentSizeFitter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Dropdown
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: EventSystem
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Graphic
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: GraphicRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: GridLayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: HorizontalLayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: HorizontalOrVerticalLayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Image
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: InputField
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LayoutElement
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Mask
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MaskableGraphic
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MonoBehaviour
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Outline
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PanelEventHandler
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PanelRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PhysicsRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PointerInputModule
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PositionAsUV1
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RawImage
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Scrollbar
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ScrollRect
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Selectable
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Shadow
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Slider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: StandaloneInputModule
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Text
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TextContainer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_Dropdown
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_InputField
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_SelectionCaret
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_Text
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Toggle
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ToggleGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TouchInputModule
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: UIBehaviour
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: VerticalLayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    - name: Audio
+      components:
+      - name: AudioBehaviour
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioChorusFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioDistortionFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioEchoFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioHighPassFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioListener
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioLowPassFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioReverbFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioReverbZone
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioSource
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    - name: Mesh
+      components:
+      - name: BaseMeshEffect
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BillboardRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CanvasRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LineRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MeshCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MeshFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MeshRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: NavMeshAgent
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: NavMeshObstacle
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: OffMeshLink
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ParticleSystemRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Renderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SkinnedMeshRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpriteRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TestResultRendererCallback
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TextMesh
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TextMeshPro
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TextMeshProUGUI
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TilemapRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_SubMesh
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_SubMeshUI
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TrailRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: VFXRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    - name: Physics
+      components:
+      - name: BoxCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CapsuleCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CharacterJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Collider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ConfigurableJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: FixedJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: HingeJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Joint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Rigidbody
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SphereCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpringJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TerrainCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: WheelCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    - name: Network
+      components:
+      - name: NetworkMatch
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: NetworkView
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    customGroups: []
+    allCustomComponents:
+      name: All
+      components: []
+    excludedComponents:
+      name: Excluded
+      components:
+      - name: AimConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AnchoredJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Animation
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Animator
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AreaEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ArticulationBody
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AspectRatioFitter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioBehaviour
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioChorusFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioDistortionFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioEchoFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioHighPassFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioListener
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioLowPassFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioReverbFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioReverbZone
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: AudioSource
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BaseInput
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BaseInputModule
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BaseMeshEffect
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BaseRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Behaviour
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BillboardRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BoxCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BoxCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: BuoyancyEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Button
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Camera
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Canvas
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CanvasGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CanvasRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CanvasScaler
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CapsuleCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CapsuleCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CharacterController
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CharacterJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CircleCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Cloth
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Collider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Collider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CompositeCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ConfigurableJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ConstantForce
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ConstantForce2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ContentSizeFitter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: CustomCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: DistanceJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Dropdown
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: DropdownItem
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: DropdownItem
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: EdgeCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Effector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: EventSystem
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: EventTrigger
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: FixedJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: FixedJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: FlareLayer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: FrictionJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Graphic
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: GraphicRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Grid
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: GridLayout
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: GridLayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Halo
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: HingeJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: HingeJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: HorizontalLayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: HorizontalOrVerticalLayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Image
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: InputField
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Joint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Joint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LayoutElement
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LensFlare
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Light
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Light2DBase
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LightProbeGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LightProbeProxyVolume
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LineRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LODGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: LookAtConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Mask
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MaskableGraphic
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MeshCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MeshFilter
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MeshRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: MonoBehaviour
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: NavMeshAgent
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: NavMeshObstacle
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: NetworkMatch
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: NetworkView
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: OcclusionArea
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: OcclusionPortal
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: OffMeshLink
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Outline
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PanelEventHandler
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PanelRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ParentConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ParticleSystem
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ParticleSystemForceField
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ParticleSystemRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Physics2DRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PhysicsRaycaster
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PhysicsUpdateBehaviour2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlatformEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlayableDirector
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlayerQuitHandler
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlayModeRunnerCallback
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PlaymodeTestsController
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PointEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PointerInputModule
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PolygonCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PositionAsUV1
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: PositionConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Projector
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RawImage
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RectMask2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RectTransform
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ReflectionProbe
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RelativeJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RemoteTestResultSender
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Renderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Rigidbody
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Rigidbody2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: RotationConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ScaleConstraint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Scrollbar
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ScrollRect
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Selectable
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Shadow
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SignalReceiver
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SkinnedMeshRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Skybox
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Slider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SliderJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SortingGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SphereCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpringJoint
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpringJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpriteMask
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpriteRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SpriteShapeRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: StandaloneInputModule
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: StreamingController
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: SurfaceEffector2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TargetJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Terrain
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TerrainCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TestResultRendererCallback
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Text
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TextContainer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TextMesh
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TextMeshPro
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TextMeshProUGUI
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Tilemap
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TilemapCollider2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TilemapRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_Dropdown
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_InputField
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_ScrollbarEventHandler
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_SelectionCaret
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_SpriteAnimator
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_SubMesh
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_SubMeshUI
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TMP_Text
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Toggle
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: ToggleGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TouchInputModule
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: TrailRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Transform
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: Tree
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: UIBehaviour
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: UIDocument
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: VerticalLayoutGroup
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: VFXRenderer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: VideoPlayer
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: VisualEffect
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: WheelCollider
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: WheelJoint2D
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+      - name: WindZone
+        content:
+          m_Text: 
+          m_Image: {fileID: 0}
+          m_Tooltip: 
+        shown: 0
+        isBuiltIn: 1
+        script: {fileID: 0}
+    unityVersion: 2021.3.16f1
+    isDirty: 0
+    UnityCount: 181

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     internal class BuildRuleDetailContainer
     {

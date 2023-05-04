@@ -60,12 +60,9 @@ namespace UniFan.Res
                     if (item.Value == _uniTaskObject)
                     {
                         //这类是Unitask创建的加载，自动完成即可
-                        task.InterruptTaskSoft();
+                        task.CancelAwait();
                     }
-                    else
-                    {
-                        task.Put2Pool();
-                    }
+                    task.Put2Pool();
                 }
                 _asyncLoadMap.Clear();
             }
@@ -289,9 +286,9 @@ namespace UniFan.Res
             return await DoLoadAsyncAwait<T>(assetName, ResType.ABAsset);
         }
 
-        public async UniTask<T> LoadAssetBundleAwait<T>(string assetName) where T : Object
+        public async UniTask<AssetBundle> LoadAssetBundleAwait(string assetName)
         {
-            return await DoLoadAsyncAwait<T>(assetName, ResType.AssetBundle);
+            return await DoLoadAsyncAwait<AssetBundle>(assetName.ToLower(), ResType.AssetBundle);
         }
 
         public async UniTask<T> LoadResourceAssetAwait<T>(string assetName) where T : Object
@@ -314,11 +311,13 @@ namespace UniFan.Res
 #pragma warning disable CS4014
             asyncTask.Append(res);
             _asyncLoadMap.Add(asyncTask, _uniTaskObject);
+            //等待加载完成
+            var task = asyncTask.StartAwait();
             asyncTask.Start();
+            await task;
 #pragma warning restore CS4014
 
-            //等待加载完成
-            await asyncTask;
+
 
             //移除自己
             if (_asyncLoadMap.ContainsKey(asyncTask))

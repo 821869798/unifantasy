@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -102,7 +102,7 @@ namespace UniFan.Res
 
                 State = ResState.Loading;
 
-                var filePath = FilePathHelper.Instance.GetBundlePath(AssetName, out var pathType);
+                var filePath = FilePathHelper.Instance.GetBundlePath(ResPathConsts.AssetbundleLoadPath, AssetName, out var pathType);
                 AssetBundle ab;
                 ab = AssetBundle.LoadFromFile(filePath);
 
@@ -174,7 +174,7 @@ namespace UniFan.Res
                     yield break;
                 }
 
-                var filePath = FilePathHelper.Instance.GetBundlePath(AssetName, out var pathType);
+                var filePath = FilePathHelper.Instance.GetBundlePath(ResPathConsts.AssetbundleLoadPath, AssetName, out var pathType);
                 AssetBundleCreateRequest abCreateRequest;
                 abCreateRequest = AssetBundle.LoadFromFileAsync(filePath);
 

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     internal class RulePackerByAssetBundleName : IRulePacker
     {

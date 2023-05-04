@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - UICamera
   layers:
   - Default
   - TransparentFX
@@ -40,4 +41,28 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Bottom
+    uniqueID: 4124137663
+    locked: 0
+  - name: Normal
+    uniqueID: 3764686425
+    locked: 0
+  - name: Middle
+    uniqueID: 692256401
+    locked: 0
+  - name: Upper
+    uniqueID: 656924753
+    locked: 0
+  - name: High
+    uniqueID: 3653819595
+    locked: 0
+  - name: Top
+    uniqueID: 2788215801
+    locked: 0
+  - name: Msg
+    uniqueID: 231593591
+    locked: 0
+  - name: Max
+    uniqueID: 2112962097
     locked: 0

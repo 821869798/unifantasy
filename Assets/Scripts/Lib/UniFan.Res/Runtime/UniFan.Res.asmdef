@@ -1,6 +1,6 @@
 {
     "name": "UniFan.Res",
-    "rootNamespace": "",
+    "rootNamespace": "UniFan.Res",
     "references": [
         "GUID:5ec7fe36951adcd4fad26566e757c41b",
         "GUID:f51ebe6a0ceec4240a699833d6309b23"

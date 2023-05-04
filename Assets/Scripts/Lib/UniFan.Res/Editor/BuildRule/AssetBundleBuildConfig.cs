@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public class AssetBundleBuildConfig : ScriptableObject
     {

@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ namespace UniFan
 {
     //异步任务序列,风格类似DOTween的Sequence
     //同一序列一起执行,同一序列全部执行完,才执行下一个序列
-    public class AsyncTaskSequence : IReusableClass, IEnumerator
+    public class AsyncTaskSequence : IReusableClass
     {
         //有一个任务失败的时候是否终止
         public bool IsFailTermination
@@ -118,7 +119,10 @@ namespace UniFan
             if (SequenceCount == 0)
             {
                 Debug.LogWarning("no async task to do!");
-                IsDone = true;
+                if (_taskCompletionSource != null)
+                {
+                    _taskCompletionSource.TrySetResult();
+                }
                 if (OnAllTaskFinish != null)
                 {
                     OnAllTaskFinish(this);
@@ -182,7 +186,10 @@ namespace UniFan
             if (FinishTaskCount >= TaskCount)
             {
                 IsRunning = false;
-                IsDone = true;
+                if (_taskCompletionSource != null)
+                {
+                    _taskCompletionSource.TrySetResult();
+                }
                 if (OnAllTaskFinish != null)
                 {
                     OnAllTaskFinish(this);
@@ -202,7 +209,7 @@ namespace UniFan
             SequenceCount = 0;
             CurSequenceTaskCount = 0;
             FinishTaskCount = 0;
-            IsDone = false;
+            _taskCompletionSource = null;
             foreach (var task in _allTask)
             {
                 if (!task.Value)
@@ -222,8 +229,6 @@ namespace UniFan
         #region Class Pool
         public uint MaxStore => 20;
 
-        public object Current => throw new NotImplementedException();
-
         public static AsyncTaskSequence Create(bool isFailTermination = false)
         {
             AsyncTaskSequence ts = ClassPool.Get<AsyncTaskSequence>();
@@ -237,26 +242,27 @@ namespace UniFan
         }
         #endregion
 
-        #region IEnumerator
-        public bool IsDone { get; private set; }
+        #region UniTask Support
+        private AutoResetUniTaskCompletionSource _taskCompletionSource;
 
-        public bool MoveNext()
+        public UniTask StartAwait()
         {
-            return !IsDone;
+            if (_taskCompletionSource != null)
+            {
+                Debug.LogError("Start Await Error:already has AutoResetUniTaskCompletionSource");
+                return UniTask.CompletedTask;
+            }
+            _taskCompletionSource = AutoResetUniTaskCompletionSource.Create();
+
+            return _taskCompletionSource.Task;
         }
 
-        public void Reset()
+        public void CancelAwait()
         {
-            OnReset();
-        }
-
-        /// <summary>
-        /// 供UniTask打断用,让IsDone为true，让这次加载完成
-        /// </summary>
-        public void InterruptTaskSoft()
-        {
-            OnReset();
-            IsDone = true;
+            if (_taskCompletionSource != null)
+            {
+                _taskCompletionSource.TrySetCanceled();
+            }
         }
         #endregion
 

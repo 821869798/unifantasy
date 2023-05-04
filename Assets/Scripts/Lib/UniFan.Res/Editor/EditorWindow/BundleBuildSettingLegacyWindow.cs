@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using System.IO;
 
-namespace UniFan.Res.Editor
+namespace UniFan.ResEditor
 {
     public class BundleBuildSettingLegacyWindow : EditorWindow
     {
