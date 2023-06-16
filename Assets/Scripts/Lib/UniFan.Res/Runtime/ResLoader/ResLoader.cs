@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 
 namespace UniFan.Res
 {
-    public class ResLoader : IResLoader
+    public class ResLoader : IResLoader, IDisposable
     {
 
         private HashSet<IRes> _resSet = new HashSet<IRes>();
@@ -440,6 +440,29 @@ namespace UniFan.Res
         {
             _resSet.Clear();
             _asyncLoadMap.Clear();
+        }
+        #endregion
+
+
+        #region Dispose
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// 释放非托管资源
+        /// </summary>
+        /// <param name="disposing">disposing表示是否调用其他Dispose</param>
+        public virtual void Dispose(bool disposing)
+        {
+            ReleaseAllRes();
+        }
+
+        ~ResLoader()
+        {
+            Dispose(false);
         }
         #endregion
 
