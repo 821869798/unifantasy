@@ -1,9 +1,9 @@
 {
 	"name": "com.unifan.unifantasy",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"unity": "2019.4",
-	"displayName": "UniFantasy Core",
-	"description": "unifantasy core library",
+	"displayName": "UniFantasy Framwork",
+	"description": "unifantasy Framwork library",
 	"keywords": [
 		"framework",
 		"hybridclr",

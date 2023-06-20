@@ -15,6 +15,9 @@
     "com.unity.ugui": "1.0.0",
     "com.wooshii.hierarchydecorator": "0.9.0",
     "org.icsharpcode.sharpziplib": "1.4.1",
+    "org.nuget.scriban": "5.7.0",
+    "org.nuget.system.runtime.compilerservices.unsafe": "6.0.0",
+    "org.nuget.system.threading.tasks.extensions": "4.5.4",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -55,8 +58,11 @@
         "com.cysharp.unitask",
         "org.icsharpcode.sharpziplib",
         "com.focus-creative-games.hybridclr_unity",
-        "com.shniqq.hierarchy-labels",
-        "com.wooshii.hierarchydecorator"
+        "org.nuget.system.threading.tasks.extensions",
+        "org.nuget.system.runtime.compilerservices.unsafe",
+        "org.nuget.scriban",
+        "com.wooshii.hierarchydecorator",
+        "com.shniqq.hierarchy-labels"
       ]
     }
   ]

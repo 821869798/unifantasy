@@ -1,9 +1,0 @@
-{
-	"name": "org.nuget.scriban",
-	"version": "5.7.0",
-	"unity": "2019.1",
-	"description": "Scriban is a fast, powerful, safe and lightweight scripting language and engine for .NET, which was primarily developed for text templating with a compatibility mode for parsing liquid templates.",
-	"keywords": ["nuget", "templating", "handlebars", "liquid"],
-	"category": null,
-	"dependencies": {}
-}

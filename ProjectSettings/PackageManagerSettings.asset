@@ -33,8 +33,11 @@ MonoBehaviour:
     - com.cysharp.unitask
     - org.icsharpcode.sharpziplib
     - com.focus-creative-games.hybridclr_unity
-    - com.shniqq.hierarchy-labels
+    - org.nuget.system.threading.tasks.extensions
+    - org.nuget.system.runtime.compilerservices.unsafe
+    - org.nuget.scriban
     - com.wooshii.hierarchydecorator
+    - com.shniqq.hierarchy-labels
     m_IsDefault: 0
     m_Capabilities: 0
     m_ConfigSource: 4

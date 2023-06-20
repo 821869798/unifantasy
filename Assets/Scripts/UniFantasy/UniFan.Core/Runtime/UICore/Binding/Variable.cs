@@ -1,5 +1,7 @@
+#if UNITY_EDITOR
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+#endif
 using UnityEngine;
 
 namespace UniFan
