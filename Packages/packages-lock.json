@@ -21,6 +21,16 @@
       "dependencies": {},
       "url": "https://package.openupm.cn"
     },
+    "com.unifan.unifantasy": {
+      "version": "file:UniFantasy",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.cysharp.unitask": "2.3.3",
+        "org.icsharpcode.sharpziplib": "1.4.1",
+        "com.unity.scriptablebuildpipeline": "1.20.2"
+      }
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
