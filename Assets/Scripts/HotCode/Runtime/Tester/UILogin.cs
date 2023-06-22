@@ -3,7 +3,10 @@ using HotCode.Framework;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UniFan.Network;
+using System.Text;
+using System.Net;
+using Cysharp.Threading.Tasks;
 
 namespace HotCode.FrameworkPlay
 {
@@ -68,6 +71,59 @@ namespace HotCode.FrameworkPlay
         protected override void OnInit()
         {
             this.ui.button.onClick.AddListener(BtnClicked);
+            //TestNetwork();
+        }
+
+        NetChannel netChannel;
+        private void TestNetwork()
+        {
+            ISocket socket = SocketFactory.Instance.Create("kcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
+            //ISocket socket = SocketFactory.Instance.Create("frame.tcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
+            netChannel = new NetChannel(socket, new LTVMsgCodec());
+            MonoDriver.Instance.updateHandle += (t) =>
+            {
+                if (netChannel != null)
+                {
+                    netChannel.OnUpdate(t, Time.unscaledDeltaTime);
+                }
+            };
+            netChannel.OnPacket += (net, p) =>
+            {
+                if (p is LTVMsgData msgData)
+                {
+                    var rawData = msgData.ByteData.GetRawBytes();
+                    var str = Encoding.UTF8.GetString(rawData.Array, rawData.Offset, rawData.Count);
+                    Debug.Log($"recv message:{str}");
+                    msgData.Put();
+                }
+            };
+            netChannel.OnConnecting += (net, ip) =>
+            {
+                Debug.Log($"start connecting!");
+            };
+            netChannel.OnConnected += (net) =>
+            {
+                Debug.Log($"net connected!");
+                TestSendMsg("hello server!");
+                TestSendMsg("test message1!");
+                TestSendMsg("test message2!");
+                TestSendMsg("test message3!");
+                TestSendMsg("test message4!");
+                TestSendMsg("test message5!");
+            };
+            netChannel.OnClosed += (net, e) =>
+            {
+                Debug.Log($"net disconnected:{e}");
+            };
+            netChannel.Connect();
+        }
+
+        private void TestSendMsg(string str)
+        {
+            var msgData = LTVMsgData.Get();
+            msgData.Encode(Encoding.UTF8.GetBytes(str));
+            netChannel.Send(msgData);
+            msgData.Put();
         }
 
         private void BtnClicked()
