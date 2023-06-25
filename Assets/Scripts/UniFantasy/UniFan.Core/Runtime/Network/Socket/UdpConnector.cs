@@ -68,11 +68,8 @@ namespace UniFan.Network
             try
             {
                 states.Socket.BeginReceive(states.Receive, 0, states.Receive.Length, SocketFlags.None, EndReceive, states);
-                lock (SyncRoot)
-                {
-                    receiveTimeout = timestamp + CfgReceiveTimeout;
-                    receiving = true;
-                }
+                receiveTimeout = timestamp + CfgReceiveTimeout;
+                receiving = true;
             }
             catch (Exception ex)
             {
