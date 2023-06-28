@@ -77,9 +77,11 @@ namespace HotCode.FrameworkPlay
         NetChannel netChannel;
         private void TestNetwork()
         {
-            ISocket socket = SocketFactory.Instance.Create("kcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
-            //ISocket socket = SocketFactory.Instance.Create("frame.tcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
-            netChannel = new NetChannel(socket, new LTVMsgCodec());
+            ISocket socket = SocketFactory.Instance.Create("ws", new Uri("ws://127.0.0.1:7801"));
+            netChannel = new NetChannel(socket, new WSMsgCodec());
+            //ISocket socket = SocketFactory.Instance.Create("kcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
+            //ISocket socket = SocketFactory.Instance.Create("tcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
+            //netChannel = new NetChannel(socket, new LTVMsgCodec());
             MonoDriver.Instance.updateHandle += (t) =>
             {
                 if (netChannel != null)
@@ -87,15 +89,12 @@ namespace HotCode.FrameworkPlay
                     netChannel.OnUpdate(t, Time.unscaledDeltaTime);
                 }
             };
-            netChannel.OnPacket += (net, p) =>
+            netChannel.OnPacket += (net, packet) =>
             {
-                if (p is LTVMsgData msgData)
-                {
-                    var rawData = msgData.ByteData.GetRawBytes();
-                    var str = Encoding.UTF8.GetString(rawData.Array, rawData.Offset, rawData.Count);
-                    Debug.Log($"recv message:{str}");
-                    msgData.Put();
-                }
+                var rawData = packet.Output();
+                var str = Encoding.UTF8.GetString(rawData.Array, rawData.Offset, rawData.Count);
+                Debug.Log($"recv message:{str}");
+                packet.Put();
             };
             netChannel.OnConnecting += (net, ip) =>
             {
@@ -120,15 +119,22 @@ namespace HotCode.FrameworkPlay
 
         private void TestSendMsg(string str)
         {
-            var msgData = LTVMsgData.Get();
-            msgData.Encode(Encoding.UTF8.GetBytes(str));
-            netChannel.Send(msgData);
-            msgData.Put();
+            if (netChannel == null || !netChannel.Connected)
+            {
+                return;
+            }
+            IMsgPacket packet = netChannel.MsgCodec.CreatePacket();
+            packet.Encode(Encoding.UTF8.GetBytes(str));
+            netChannel.Send(packet);
+            packet.Put();
         }
+
+
 
         private void BtnClicked()
         {
             Debug.Log("Button Clicked");
+            TestSendMsg("Button Clicked");
             this.ui.image.color = Color.blue;
         }
 

@@ -20,7 +20,7 @@ namespace UniFan.Network
     {
         Pending,
         Closed,
-        BeClosed
+        InClosing,
     }
 
 
@@ -29,6 +29,7 @@ namespace UniFan.Network
         Initial = 1,
         Connecting,
         Establish,
+        Closing,
         Closed
     }
 

@@ -16,6 +16,8 @@ namespace UniFan.Network
 
         long ReceiveBytes { get; }
 
+        IMsgCodec MsgCodec { get; }
+
         event Action<INetChannel, IPEndPoint> OnConnecting;
 
         event Action<INetChannel> OnConnected;
@@ -26,11 +28,11 @@ namespace UniFan.Network
 
         event Action<INetChannel> OnReconnected;
 
-        event Action<INetChannel, object> OnPacket;
+        event Action<INetChannel, IMsgPacket> OnPacket;
 
         event Action<INetChannel, Exception> OnError;
 
-        SendResults Send(object packet);
+        SendResults Send(IMsgPacket packet);
 
         SendResults Send(byte[] source);
 
@@ -49,5 +51,6 @@ namespace UniFan.Network
         INetChannel SetPlugins(INetworkPlugin plugs);
 
         void OnUpdate(float deltaTime, float unscaleTime);
+
     }
 }

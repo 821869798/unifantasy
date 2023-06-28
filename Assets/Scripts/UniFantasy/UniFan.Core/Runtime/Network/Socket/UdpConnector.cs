@@ -17,7 +17,7 @@ namespace UniFan.Network
             this.CfgReceiveTimeout = receiveTimeout;
         }
 
-        public override IAsyncResult Connect(IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback = null)
+        public override void Connect(Action<ConnectResults, Exception> callback = null)
         {
             lock (SyncRoot)
             {
@@ -25,27 +25,22 @@ namespace UniFan.Network
                 {
                     throw new InvalidOperationException("Current statu [" + Status + "] can not connect");
                 }
-                if (ipEndPoint == null)
-                {
-                    throw new ArgumentException("Params [ipEndPoint] cannot be null", "ipEndPoint");
-                }
-                LastIpEndPort = ipEndPoint;
                 connectTimeout = timestamp + CfgConnectTimeout;
                 Status = SocketStatus.Connecting;
                 Reset();
             }
             Socket = MakeSocket();
-            TriggerOnConnecting(ipEndPoint);
+            TriggerOnConnecting(LastIpEndPort);
             try
             {
                 ConnectDataStates.Callback = callback;
-                Socket.ConnectAsync(ipEndPoint);
+                Socket.Connect(LastIpEndPort);
                 if (Socket.Connected)
                 {
 
                     if (Status != SocketStatus.Connecting)
                     {
-                        return null;
+                        return;
                     }
                     Status = SocketStatus.Establish;
                     TriggerConnectCallback(ConnectDataStates, null);
@@ -57,10 +52,9 @@ namespace UniFan.Network
             {
                 TriggerConnectCallback(ConnectDataStates, ex);
                 Close(ex, Socket);
-                return null;
+                return;
             }
 
-            return null;
         }
 
         protected override void BeginReceive(SocketReceiveStates states)

@@ -29,7 +29,7 @@ namespace UniFan.Network
 
         private ISocket Socket { get; set; }
 
-        private IMsgCodec Codec { get; }
+        public IMsgCodec MsgCodec { get; }
 
         public bool Connected => Socket.Connected;
 
@@ -87,7 +87,7 @@ namespace UniFan.Network
 
         public event Action<INetChannel> OnReconnected;
 
-        public event Action<INetChannel, object> OnPacket;
+        public event Action<INetChannel, IMsgPacket> OnPacket;
 
         public event Action<INetChannel, Exception> OnError;
 
@@ -102,7 +102,7 @@ namespace UniFan.Network
                 throw new ArgumentNullException("codec", "Param [codec] cannot be null");
             }
             Socket = socket;
-            Codec = codec;
+            MsgCodec = codec;
             //sendState = new SendState(Codec);
             SyncRoot = new object();
             SyncNetworkEventQueue = new Queue<NetworkEventMsg>(32);
@@ -119,8 +119,8 @@ namespace UniFan.Network
         {
             if (HeartBeat != null)
                 HeartBeat.Reset();
-            if (Codec != null)
-                Codec.Reset();
+            if (MsgCodec != null)
+                MsgCodec.Reset();
         }
 
         public void Dispose()
@@ -184,7 +184,8 @@ namespace UniFan.Network
         public void Connect(IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback = null)
         {
             Reset();
-            Socket.Connect(ipEndPoint, MakeConnectInlineAction(callback));
+            Socket.ChangeIpEndPoint(ipEndPoint);
+            Socket.Connect(MakeConnectInlineAction(callback));
         }
 
         private Action<ConnectResults, Exception> MakeConnectInlineAction(Action<ConnectResults, Exception> callback)
@@ -203,11 +204,11 @@ namespace UniFan.Network
             };
         }
 
-        public SendResults Send(object packet)
+        public SendResults Send(IMsgPacket packet)
         {
             try
             {
-                ArraySegment<byte> result = Codec.Pack(packet);
+                ArraySegment<byte> result = MsgCodec.Pack(packet);
                 return Send(result.Array, result.Offset, result.Count);
             }
             catch (Exception ex)
@@ -264,11 +265,12 @@ namespace UniFan.Network
             return Socket.Send(source, offset, count);
         }
 
-        protected virtual void OnChannelConnecting(ISocket channel, IPEndPoint ipEndPoint)
+
+        protected virtual void OnChannelConnecting(ISocket channel)
         {
             if (!Connected)
             {
-                EnqueueNetworkEvent(NetworkEventTypes.Connecting, ipEndPoint);
+                EnqueueNetworkEvent(NetworkEventTypes.Connecting);
             }
         }
 
@@ -317,14 +319,14 @@ namespace UniFan.Network
             {
                 Exception ex;
                 int count = source.Count;
-                while (Codec.Input(source.Array, source.Offset, count, out var receive, out ex))
+                while (MsgCodec.Input(source.Array, source.Offset, count, out var receive, out ex))
                 {
                     if (HeartBeat != null)
                     {
                         HeartBeat.Reset();
                     }
 
-                    object packet = Codec.Unpack(receive);
+                    IMsgPacket packet = MsgCodec.Unpack(receive);
                     try
                     {
                         if (NetPing != null)
@@ -447,7 +449,7 @@ namespace UniFan.Network
             switch (delivery.DeliveryType)
             {
                 case NetworkEventTypes.Packet:
-                    DeliveryPacket(delivery.Context);
+                    DeliveryPacket(delivery.Context as IMsgPacket);
                     break;
                 case NetworkEventTypes.ConnectingInline:
                     DeliveryConnectingInline(delivery.Context as Action);
@@ -476,7 +478,7 @@ namespace UniFan.Network
         }
 
 
-        protected virtual void DeliveryPacket(object packet)
+        protected virtual void DeliveryPacket(IMsgPacket packet)
         {
             if (this.OnPacket != null)
             {

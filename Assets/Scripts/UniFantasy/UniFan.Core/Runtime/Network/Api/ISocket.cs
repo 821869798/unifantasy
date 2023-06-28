@@ -25,7 +25,7 @@ namespace UniFan.Network
             get;
         }
 
-        event Action<ISocket, IPEndPoint> OnConnecting;
+        event Action<ISocket> OnConnecting;
 
         event Action<ISocket> OnConnected;
 
@@ -35,9 +35,9 @@ namespace UniFan.Network
 
         event Action<ISocket, Exception> OnError;
 
-        IAsyncResult Connect(Action<ConnectResults, Exception> callback = null);
+        void ChangeIpEndPoint(IPEndPoint ipEndPoint);
 
-        IAsyncResult Connect(IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback = null);
+        void Connect(Action<ConnectResults, Exception> callback = null);
 
         SendResults Send(byte[] data);
 

@@ -1,6 +1,5 @@
 using System;
 
-
 namespace UniFan.Network
 {
     /// <summary>
@@ -14,7 +13,7 @@ namespace UniFan.Network
 
         protected int packetLength;
 
-        private readonly ByteArray byteArray;
+        protected readonly ByteArray byteArray;
 
         protected IByteOrder byteOrder;
 
@@ -86,8 +85,19 @@ namespace UniFan.Network
             packetLength = 0;
         }
 
-        public abstract ArraySegment<byte> Pack(object packet);
+        public abstract IMsgPacket CreatePacket();
 
-        public abstract object Unpack(ArraySegment<byte> packet);
+        public virtual ArraySegment<byte> Pack(IMsgPacket packet)
+        {
+            return packet.Output();
+        }
+
+        public virtual IMsgPacket Unpack(ArraySegment<byte> rawData)
+        {
+            var packet = CreatePacket();
+            packet.Input(rawData);
+            return packet;
+        }
+
     }
 }

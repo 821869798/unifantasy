@@ -55,13 +55,13 @@ namespace UniFan.Network
             kcp.SetStreamMode(true);
         }
 
-        public override IAsyncResult Connect(IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback = null)
+        public override void Connect(Action<ConnectResults, Exception> callback = null)
         {
             if (kcp == null)
             {
                 InitKcp();
             }
-            return base.Connect(ipEndPoint, callback);
+            base.Connect(callback);
         }
 
         protected override void OnReset()
@@ -86,7 +86,7 @@ namespace UniFan.Network
             }
             lock (SyncRoot)
             {
-                if (!Connected || closing)
+                if (!Connected || needToClose)
                 {
                     return SendResults.Faild;
                 }

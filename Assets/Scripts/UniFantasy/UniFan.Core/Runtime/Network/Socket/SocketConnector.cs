@@ -112,7 +112,7 @@ namespace UniFan.Network
         /// </summary>
         protected object SyncRoot { get; private set; }
 
-        public event Action<ISocket, IPEndPoint> OnConnecting;
+        public event Action<ISocket> OnConnecting;
 
         public event Action<ISocket> OnConnected;
 
@@ -130,7 +130,7 @@ namespace UniFan.Network
 
         protected bool sending;
 
-        protected bool closing;
+        protected bool needToClose;
 
         protected long sentBytes;
 
@@ -163,34 +163,33 @@ namespace UniFan.Network
             ConnectDataStates = new ConnectStates();
         }
 
-        public IAsyncResult Connect(Action<ConnectResults, Exception> callback = null)
+        public virtual void ChangeIpEndPoint(IPEndPoint ipEndPoint)
+        {
+            if (ipEndPoint == null)
+            {
+                throw new ArgumentException("Params [ipEndPoint] cannot be null", "ipEndPoint");
+            }
+            LastIpEndPort = ipEndPoint;
+        }
+
+        public virtual void Connect(Action<ConnectResults, Exception> callback = null)
         {
             if (LastIpEndPort == null)
             {
-                throw new InvalidOperationException("Please call Connect(IPEndPoint,AddressFamily) first");
+                throw new InvalidOperationException("Current IpEndPort is null,can't to connect,please call ChangeIpEndPoint to set");
             }
-            return Connect(LastIpEndPort, callback);
-        }
-
-        public virtual IAsyncResult Connect(IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback = null)
-        {
             lock (SyncRoot)
             {
                 if (Status != SocketStatus.Initial && Status != SocketStatus.Closed)
                 {
                     throw new InvalidOperationException("Current statu [" + status + "] can not connect");
                 }
-                if (ipEndPoint == null)
-                {
-                    throw new ArgumentException("Params [ipEndPoint] cannot be null", "ipEndPoint");
-                }
-                LastIpEndPort = ipEndPoint;
                 connectTimeout = timestamp + CfgConnectTimeout;
                 Status = SocketStatus.Connecting;
                 Reset();
             }
             Socket = MakeSocket();
-            return BeginConnect(Socket, ipEndPoint, callback);
+            BeginConnect(Socket, LastIpEndPort, callback);
         }
 
 
@@ -199,7 +198,9 @@ namespace UniFan.Network
             timestamp += unsacaleTime;
             if (Status == SocketStatus.Connecting && connectTimeout <= timestamp)
             {
-                Close(new TimeoutException("Socket connect timeout"), Socket);
+                var ex = new TimeoutException("Socket connect timeout");
+                TriggerConnectCallback(ConnectDataStates, ex);
+                Close(ex, Socket);
             }
         }
 
@@ -229,7 +230,7 @@ namespace UniFan.Network
             }
             lock (SyncRoot)
             {
-                if (!Connected || closing)
+                if (!Connected || needToClose)
                 {
                     return SendResults.Faild;
                 }
@@ -312,7 +313,7 @@ namespace UniFan.Network
 
         protected virtual void PendingClosing(Socket socket)
         {
-            if (closing)
+            if (needToClose)
             {
                 Close(null, socket);
             }
@@ -336,18 +337,17 @@ namespace UniFan.Network
             {
                 if (socket != Socket)
                 {
-                    return CloseResults.BeClosed;
+                    return CloseResults.Closed;
                 }
                 if (Status == SocketStatus.Initial || Status == SocketStatus.Closed || Socket == null)
                 {
-                    return CloseResults.BeClosed;
+                    return CloseResults.Closed;
                 }
                 if (exception == null && sending)
                 {
-                    closing = true;
+                    needToClose = true;
                     return CloseResults.Pending;
                 }
-                Status = SocketStatus.Closed;
             }
             try
             {
@@ -368,6 +368,7 @@ namespace UniFan.Network
                 }
                 finally
                 {
+                    Status = SocketStatus.Closed;
                     Reset();
                     TriggerOnClosed(exception);
                 }
@@ -389,25 +390,25 @@ namespace UniFan.Network
             Socket = null;
             PendingSentBuffer.Flush();
             sending = false;
-            closing = false;
+            needToClose = false;
             sentBytes = 0L;
             receiveBytes = 0L;
         }
 
-        private IAsyncResult BeginConnect(Socket socket, IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback)
+        private void BeginConnect(Socket socket, IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback)
         {
             TriggerOnConnecting(ipEndPoint);
             try
             {
                 ConnectDataStates.Socket = socket;
                 ConnectDataStates.Callback = callback;
-                return socket.BeginConnect(ipEndPoint, EndConnect, ConnectDataStates);
+                socket.BeginConnect(ipEndPoint, EndConnect, ConnectDataStates);
             }
             catch (Exception ex)
             {
                 TriggerConnectCallback(ConnectDataStates, ex);
                 Close(ex, socket);
-                return null;
+                return;
             }
         }
 
@@ -439,7 +440,7 @@ namespace UniFan.Network
 
         protected void TriggerConnectCallback(ConnectStates states, Exception ex)
         {
-            if (states.Callback != null)
+            if (states != null && states.Callback != null)
             {
                 try
                 {
@@ -459,7 +460,7 @@ namespace UniFan.Network
             {
                 try
                 {
-                    this.OnConnecting(this, ipEndPoint);
+                    this.OnConnecting(this);
                 }
                 catch (Exception ex)
                 {

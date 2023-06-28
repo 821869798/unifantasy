@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 
 
@@ -8,7 +8,9 @@ namespace UniFan.Network
     {
         ISocket Create(string protocol, IPEndPoint ipEndPoint = null);
 
-        void Extend(string protocol, Func<IPEndPoint, ISocket> maker);
+        ISocket Create(string protocol, Uri uri = null);
+
+        void Extend(string protocol, Func<object, ISocket> maker);
 
     }
 }

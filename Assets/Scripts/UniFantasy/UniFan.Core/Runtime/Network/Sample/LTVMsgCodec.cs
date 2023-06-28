@@ -8,20 +8,9 @@ namespace UniFan.Network
         {
         }
 
-        public override ArraySegment<byte> Pack(object packet)
+        public override IMsgPacket CreatePacket()
         {
-            if (packet is LTVMsgData msgData)
-            {
-                return msgData.Output();
-            }
-            return new ArraySegment<byte>();
-        }
-
-        public override object Unpack(ArraySegment<byte> packet)
-        {
-            LTVMsgData msgData = LTVMsgData.Get();
-            msgData.Input(packet);
-            return msgData;
+            return LTVMsgPacket.Get();
         }
     }
 }
