@@ -77,11 +77,13 @@ namespace HotCode.FrameworkPlay
         NetChannel netChannel;
         private void TestNetwork()
         {
-            ISocket socket = SocketFactory.Instance.Create("ws", new Uri("ws://127.0.0.1:7801"));
-            netChannel = new NetChannel(socket, new WSMsgCodec());
+            //ISocket socket = SocketFactory.Instance.Create("ws", new Uri("ws://127.0.0.1:7801"));
+            //netChannel = new NetChannel(socket, new WSMsgCodec());
+
+            ISocket socket = SocketFactory.Instance.Create("tcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
             //ISocket socket = SocketFactory.Instance.Create("kcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
-            //ISocket socket = SocketFactory.Instance.Create("tcp", new System.Net.IPEndPoint(IPAddress.Parse("127.0.0.1"), 7801));
-            //netChannel = new NetChannel(socket, new LTVMsgCodec());
+            netChannel = new NetChannel(socket, new LTVMsgCodec());
+
             MonoDriver.Instance.updateHandle += (t) =>
             {
                 if (netChannel != null)

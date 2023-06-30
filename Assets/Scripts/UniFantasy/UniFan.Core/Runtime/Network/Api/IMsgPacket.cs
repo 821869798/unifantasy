@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 namespace UniFan.Network
 {
-
+    /// <summary>
+    /// 消息包
+    /// </summary>
     public interface IMsgPacket
     {
         void Input(ArraySegment<byte> rawData);

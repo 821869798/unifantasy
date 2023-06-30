@@ -280,34 +280,31 @@ namespace UniFan.Network
             {
                 while (sendBuffSizes.Count > 0 && this.Connected && !needToClose)
                 {
-                    if (this.Connected && !needToClose)
+                    int buffsize = sendBuffSizes.Peek();
+                    bool endMessage = buffsize <= SentState.Length;
+                    if (endMessage)
                     {
-                        int buffsize = sendBuffSizes.Peek();
-                        bool endMessage = buffsize <= SentState.Length;
-                        if (endMessage)
+                        //一次性发完
+                        int read = PendingSentBuffer.Read(SentState, 0, buffsize);
+                        var buffer = new ArraySegment<byte>(SentState, 0, read);
+                        await this.Socket.SendAsync(buffer, this.MessageType, endMessage, cancellationToken);
+                    }
+                    else
+                    {
+                        //需要多次发送
+                        int lastSendSize = buffsize;
+                        while (lastSendSize > 0)
                         {
-                            //一次性发完
-                            int read = PendingSentBuffer.Read(SentState, 0, buffsize);
+                            int sentSize = Math.Min(SentState.Length, lastSendSize);
+                            int read = PendingSentBuffer.Read(SentState, 0, sentSize);
                             var buffer = new ArraySegment<byte>(SentState, 0, read);
+                            lastSendSize -= read;
+                            endMessage = lastSendSize <= 0;
                             await this.Socket.SendAsync(buffer, this.MessageType, endMessage, cancellationToken);
                         }
-                        else
-                        {
-                            //需要多次发送
-                            int lastSendSize = buffsize;
-                            while (lastSendSize > 0)
-                            {
-                                int sentSize = Math.Min(SentState.Length, lastSendSize);
-                                int read = PendingSentBuffer.Read(SentState, 0, sentSize);
-                                var buffer = new ArraySegment<byte>(SentState, 0, read);
-                                lastSendSize -= read;
-                                endMessage = lastSendSize <= 0;
-                                await this.Socket.SendAsync(buffer, this.MessageType, endMessage, cancellationToken);
-                            }
 
-                        }
-                        Interlocked.Add(ref sentBytes, buffsize);
                     }
+                    Interlocked.Add(ref sentBytes, buffsize);
                     sendBuffSizes.Dequeue();
                 }
             }

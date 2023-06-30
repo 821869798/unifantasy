@@ -5,7 +5,6 @@ namespace UniFan.Network
 {
     public interface INetChannel
     {
-
         string Name { get; }
 
         bool Connected { get; }

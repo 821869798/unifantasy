@@ -26,7 +26,7 @@ namespace UniFan.Network
         }
 
 
-        public void Reset()
+        public virtual void Reset()
         {
 
         }

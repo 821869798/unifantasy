@@ -6,8 +6,18 @@ namespace UniFan.Network
     public class WSMsgPacket : BaseMsgPacket<WSMsgPacket>
     {
 
-        public ByteArray ByteData { private set; get; } = new ByteArray(BigEndianOrder.Instance);
+        public ByteArray ByteData { private set; get; }
 
+        public WSMsgPacket()
+        {
+            CreateByteArray();
+        }
+
+        public virtual void CreateByteArray()
+        {
+            ByteData = new ByteArray(BigEndianOrder.Instance);
+
+        }
 
         public override void Input(ArraySegment<byte> packet)
         {

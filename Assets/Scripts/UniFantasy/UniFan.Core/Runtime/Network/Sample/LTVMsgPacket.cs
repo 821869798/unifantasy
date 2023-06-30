@@ -5,10 +5,19 @@ namespace UniFan.Network
 {
     public partial class LTVMsgPacket : BaseMsgPacket<LTVMsgPacket>
     {
-
-        public ByteArray ByteData { private set; get; } = new ByteArray(BigEndianOrder.Instance);
+        public ByteArray ByteData { private set; get; }
 
         public const int TotalPackHeadLen = 8;
+
+        public LTVMsgPacket()
+        {
+            CreateByteArray();
+        }
+
+        public virtual void CreateByteArray()
+        {
+            ByteData = new ByteArray(BigEndianOrder.Instance);
+        }
 
         public override void Input(ArraySegment<byte> packet)
         {
