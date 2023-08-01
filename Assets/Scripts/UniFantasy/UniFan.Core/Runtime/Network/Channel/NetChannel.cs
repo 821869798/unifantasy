@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 
@@ -25,7 +26,7 @@ namespace UniFan.Network
             public object Context;
         }
 
-        protected Queue<NetworkEventMsg> SyncNetworkEventQueue { get; private set; }
+        protected ConcurrentQueue<NetworkEventMsg> SyncNetworkEventQueue { get; private set; }
 
         private ISocket Socket { get; set; }
 
@@ -71,8 +72,6 @@ namespace UniFan.Network
             set { reconnecting = value; }
         }
 
-        protected object SyncRoot { get; private set; }
-
         public long SentBytes => Socket.SentBytes;
 
         public long ReceiveBytes => Socket.ReceiveBytes;
@@ -104,8 +103,7 @@ namespace UniFan.Network
             Socket = socket;
             MsgCodec = codec;
             //sendState = new SendState(Codec);
-            SyncRoot = new object();
-            SyncNetworkEventQueue = new Queue<NetworkEventMsg>(32);
+            SyncNetworkEventQueue = new ConcurrentQueue<NetworkEventMsg>();
             Reconnecting = false;
             BeConnected = false;
             Socket.OnMessage += OnChannelMessage;
@@ -276,22 +274,20 @@ namespace UniFan.Network
 
         protected virtual void OnChannelConnected(ISocket channel)
         {
-            lock (SyncRoot)
+
+            BeConnected = true;
+            if (Reconnecting)
             {
-                BeConnected = true;
-                if (Reconnecting)
+                try
                 {
-                    try
-                    {
-                        Reconnection.Reconnected();
-                    }
-                    finally
-                    {
-                        Reconnecting = false;
-                        EnqueueNetworkEvent(NetworkEventTypes.Reconnected);
-                    }
-                    return;
+                    Reconnection.Reconnected();
                 }
+                finally
+                {
+                    Reconnecting = false;
+                    EnqueueNetworkEvent(NetworkEventTypes.Reconnected);
+                }
+                return;
             }
 
             EnqueueNetworkEvent(NetworkEventTypes.Connected);
@@ -299,10 +295,7 @@ namespace UniFan.Network
 
         protected virtual void OnChannelClosed(ISocket socket, Exception ex)
         {
-            lock (SyncRoot)
-            {
-                Reconnecting = false;
-            }
+            Reconnecting = false;
             EnqueueNetworkEvent(NetworkEventTypes.Closed, ex);
 
         }
@@ -407,23 +400,20 @@ namespace UniFan.Network
 
         private void SyncNetworkLoop()
         {
-            if (SyncNetworkEventQueue.Count > 0)
+
+            while (SyncNetworkEventQueue.TryDequeue(out var data))
             {
-                lock (SyncRoot)
+                try
                 {
-                    while (SyncNetworkEventQueue.Count > 0)
-                    {
-                        try
-                        {
-                            OnNetworkEvent(SyncNetworkEventQueue.Dequeue());
-                        }
-                        catch (Exception ex)
-                        {
-                            EnqueueNetworkEvent(NetworkEventTypes.Error, ex);
-                        }
-                    }
+
+                    OnNetworkEvent(data);
+                }
+                catch (Exception ex)
+                {
+                    EnqueueNetworkEvent(NetworkEventTypes.Error, ex);
                 }
             }
+
         }
 
         protected virtual void EnqueueNetworkEvent(NetworkEventTypes networkType, object context = null)
@@ -438,10 +428,7 @@ namespace UniFan.Network
 
         protected virtual void EnqueueNetworkEvent(NetworkEventTypes networkType, ref NetworkEventMsg netEvent)
         {
-            lock (SyncRoot)
-            {
-                SyncNetworkEventQueue.Enqueue(netEvent);
-            }
+            SyncNetworkEventQueue.Enqueue(netEvent);
         }
 
         protected virtual void OnNetworkEvent(NetworkEventMsg delivery)

@@ -77,7 +77,7 @@ namespace UniFan.Network
                 status = value;
             }
         }
-        private SocketStatus status;
+        private volatile SocketStatus status;
 
         /// <summary>
         /// 是否连接
@@ -186,8 +186,8 @@ namespace UniFan.Network
                 }
                 connectTimeout = timestamp + CfgConnectTimeout;
                 Status = SocketStatus.Connecting;
-                Reset();
             }
+            Reset();
             Socket = MakeSocket();
             BeginConnect(Socket, LastIpEndPort, callback);
         }
