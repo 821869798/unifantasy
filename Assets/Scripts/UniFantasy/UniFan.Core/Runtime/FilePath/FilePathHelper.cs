@@ -35,7 +35,7 @@ namespace UniFan
         StreamingAssetsPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
         PersistentDataPathForWWW = string.Format("file:///{0}/StreamingAssets/", Application.dataPath);
         PersistentDataPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && !UNITY_EDITOR
             StreamingAssetsPathForWWW = string.Format("jar:file://{0}!/assets/", Application.dataPath);
             StreamingAssetsPath = string.Format("{0}!/assets/", Application.dataPath);
 #if UNITY_2021_1_OR_NEWER
