@@ -1,14 +1,14 @@
 {
   "dependencies": {
-    "com.cysharp.unitask": {
-      "version": "2.3.3",
+    "com.code-philosophy.hybridclr": {
+      "version": "3.4.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://package.openupm.cn"
     },
-    "com.focus-creative-games.hybridclr_unity": {
-      "version": "2.4.2",
+    "com.cysharp.unitask": {
+      "version": "2.3.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

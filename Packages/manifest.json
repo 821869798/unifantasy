@@ -1,7 +1,7 @@
 {
   "dependencies": {
+    "com.code-philosophy.hybridclr": "3.4.0",
     "com.cysharp.unitask": "2.3.3",
-    "com.focus-creative-games.hybridclr_unity": "2.4.2",
     "com.shniqq.hierarchy-labels": "1.0.1-preview.2",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.collab-proxy": "1.17.7",
@@ -57,7 +57,7 @@
       "scopes": [
         "com.cysharp.unitask",
         "org.icsharpcode.sharpziplib",
-        "com.focus-creative-games.hybridclr_unity",
+        "com.code-philosophy.hybridclr",
         "org.nuget.system.threading.tasks.extensions",
         "org.nuget.system.runtime.compilerservices.unsafe",
         "org.nuget.scriban",

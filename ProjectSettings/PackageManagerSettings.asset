@@ -32,7 +32,7 @@ MonoBehaviour:
     m_Scopes:
     - com.cysharp.unitask
     - org.icsharpcode.sharpziplib
-    - com.focus-creative-games.hybridclr_unity
+    - com.code-philosophy.hybridclr
     - org.nuget.system.threading.tasks.extensions
     - org.nuget.system.runtime.compilerservices.unsafe
     - org.nuget.scriban
@@ -46,6 +46,6 @@ MonoBehaviour:
   m_RegistryInfoDraft:
     m_Modified: 0
     m_ErrorMessage: 
-    m_UserModificationsInstanceId: -830
-    m_OriginalInstanceId: -834
+    m_UserModificationsInstanceId: -826
+    m_OriginalInstanceId: -830
   m_LoadAssets: 0
