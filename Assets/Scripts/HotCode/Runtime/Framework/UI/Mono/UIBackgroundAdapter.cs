@@ -86,10 +86,10 @@ namespace HotCode.Framework
                 UnityEngine.Object.Destroy(rt);
             }
         }
-		
+
         private void OnDestroy()
         {
-			if (renderTexture != null)
+            if (renderTexture != null)
             {
                 UnityEngine.Object.Destroy(renderTexture);
                 renderTexture = null;
