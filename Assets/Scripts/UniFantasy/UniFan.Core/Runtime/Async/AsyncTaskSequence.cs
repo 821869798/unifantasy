@@ -37,13 +37,21 @@ namespace UniFan
         protected List<List<IAsyncTask>> _taskSequence = new List<List<IAsyncTask>>();
         //任务事件
         public event Action<AsyncTaskSequence, bool, IAsyncTask> OnOneTaskFinish;
-
-
+        //所有任务完成的事件
         public event Action<AsyncTaskSequence> OnAllTaskFinish;
 
         //是否正在运行
         private bool _isRunning = false;
         public bool IsRunning { protected set { this._isRunning = value; } get { return this._isRunning; } }
+
+        //资源加载回调,初始化创建一次，优化GC
+        private Action<bool, IAsyncTask> _onAsyncTaskCallback;
+
+        public AsyncTaskSequence()
+        {
+            this._onAsyncTaskCallback = OnAsyncTaskCallback;
+        }
+
 
         public List<IAsyncTask> GetLastSequence()
         {
@@ -151,8 +159,9 @@ namespace UniFan
             CurSequenceIndex++;
             for (int i = 0; i < taskList.Count; i++)
             {
-                taskList[i].RegisterAsyncTaskCallback(OnAsyncTaskCallback);
-                taskList[i].DoAsyncTask();
+                var task = taskList[i];
+                task.RegisterAsyncTaskCallback(this._onAsyncTaskCallback);
+                task.DoAsyncTask();
                 //下面别再做操作，防止瞬间完成任务,去清空taskList,导致异常
             }
         }
@@ -170,7 +179,7 @@ namespace UniFan
             }
             _allTask[task] = true;
             FinishTaskCount++;
-            task.RemoveAsyncTaskCallback(OnAsyncTaskCallback);
+            task.RemoveAsyncTaskCallback(this._onAsyncTaskCallback);
             if (OnOneTaskFinish != null)
             {
                 OnOneTaskFinish(this, result, task);
@@ -213,7 +222,7 @@ namespace UniFan
             foreach (var task in _allTask)
             {
                 if (!task.Value)
-                    task.Key?.RemoveAsyncTaskCallback(OnAsyncTaskCallback);
+                    task.Key?.RemoveAsyncTaskCallback(this._onAsyncTaskCallback);
             }
             _allTask.Clear();
             for (int i = 0; i < _taskSequence.Count; i++)
