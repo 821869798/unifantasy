@@ -11,8 +11,6 @@ namespace UniFan.Res
     public static class AssetBundleUtility
     {
 
-
-
         #region 编辑器使用相关
 #if UNITY_EDITOR
         [InitializeOnLoadMethod]
@@ -21,50 +19,11 @@ namespace UniFan.Res
             Debug.Log("Init->activeBundleMode: " + ActiveBundleMode);
         }
 
+        // 编辑器开启真实 AssetBundle模式
+        public static EditorPreferenceBool ActiveBundleMode { get; } = new EditorPreferenceBool(nameof(ActiveBundleMode));
 
-        static int activeBundleMode = -1;
-        const string kActiveBundleMode = "ActiveBundleMode";
-
-        public static bool ActiveBundleMode
-        {
-            get
-            {
-                if (activeBundleMode == -1)
-                    activeBundleMode = EditorPrefs.GetBool(kActiveBundleMode, false) ? 1 : 0;
-                return activeBundleMode != 0;
-            }
-            set
-            {
-                int newValue = value ? 1 : 0;
-                if (newValue != activeBundleMode)
-                {
-                    activeBundleMode = newValue;
-                    EditorPrefs.SetBool(kActiveBundleMode, value);
-                }
-            }
-        }
-
-        static int simulationAsyncLoad = -1;
-        const string kSimulationAsyncLoad = "SimulationAsyncLoad";
-
-        public static bool SimulationAsyncLoad
-        {
-            get
-            {
-                if (simulationAsyncLoad == -1)
-                    simulationAsyncLoad = EditorPrefs.GetBool(kSimulationAsyncLoad, false) ? 1 : 0;
-                return simulationAsyncLoad != 0;
-            }
-            set
-            {
-                int newValue = value ? 1 : 0;
-                if (newValue != simulationAsyncLoad)
-                {
-                    simulationAsyncLoad = newValue;
-                    EditorPrefs.SetBool(kSimulationAsyncLoad, value);
-                }
-            }
-        }
+        // 编辑器模拟 AssetBundle的异步加载
+        public static EditorPreferenceBool SimulationAsyncLoad { get; } = new EditorPreferenceBool(nameof(SimulationAsyncLoad));
 #endif
 
         #endregion

@@ -142,7 +142,7 @@ namespace UniFan.ResEditor
         [MenuItem(kRuntimeMode, false, 100)]
         public static void ToggleRuntimeMode()
         {
-            AssetBundleUtility.ActiveBundleMode = !AssetBundleUtility.ActiveBundleMode;
+            AssetBundleUtility.ActiveBundleMode.Value = !AssetBundleUtility.ActiveBundleMode.Value;
         }
 
         [MenuItem(kRuntimeMode, true, 100)]
@@ -157,7 +157,7 @@ namespace UniFan.ResEditor
         [MenuItem(kSimulationAsyncLoad, false, 100)]
         public static void ToggleSimulationAsyncLoad()
         {
-            AssetBundleUtility.SimulationAsyncLoad = !AssetBundleUtility.SimulationAsyncLoad;
+            AssetBundleUtility.SimulationAsyncLoad.Value = !AssetBundleUtility.SimulationAsyncLoad.Value;
         }
 
         [MenuItem(kSimulationAsyncLoad, true, 100)]

@@ -279,7 +279,7 @@ namespace UniFan.Res
                 if (AssetBundleUtility.SimulationAsyncLoad)
                 {
                     //编辑器下模拟异步加载
-                    float time = UnityEngine.Random.Range(0, 0.2f) + 0.4f;
+                    float time = UnityEngine.Random.Range(0, 0.3f) + 0.2f;
                     yield return new WaitForSecondsRealtime(time);
                 }
 
