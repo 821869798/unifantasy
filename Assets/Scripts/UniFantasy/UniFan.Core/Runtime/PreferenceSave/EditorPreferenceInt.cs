@@ -2,7 +2,7 @@
 
 namespace UniFan
 {
-    public class EditorPreferenceInt : EditorPreferenceBase<int>
+    public class EditorPreferenceInt : PreferenceBase<int>
     {
         public EditorPreferenceInt(string key, int defaultValue = 0) : base(key, defaultValue)
         {

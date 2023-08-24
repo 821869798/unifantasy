@@ -457,6 +457,10 @@ namespace UniFan.Res
         /// <param name="disposing">disposing表示是否调用其他Dispose</param>
         public virtual void Dispose(bool disposing)
         {
+            if (_resSet.Count > 0)
+            {
+                Debug.LogError("[ResLoader|Dispose] No manual release resource,resCount:" + _resSet.Count);
+            }
             ReleaseAllRes();
         }
 

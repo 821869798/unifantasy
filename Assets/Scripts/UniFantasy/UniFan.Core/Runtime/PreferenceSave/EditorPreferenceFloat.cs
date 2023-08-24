@@ -2,7 +2,7 @@
 
 namespace UniFan
 {
-    public class EditorPreferenceFloat : EditorPreferenceBase<float>
+    public class EditorPreferenceFloat : PreferenceBase<float>
     {
         public EditorPreferenceFloat(string key, float defaultValue = 0) : base(key, defaultValue)
         {

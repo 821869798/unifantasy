@@ -2,7 +2,7 @@
 
 namespace UniFan
 {
-    public class EditorPreferenceBool : EditorPreferenceBase<bool>
+    public class EditorPreferenceBool : PreferenceBase<bool>
     {
         public EditorPreferenceBool(string key, bool defaultValue = false) : base(key, defaultValue)
         {

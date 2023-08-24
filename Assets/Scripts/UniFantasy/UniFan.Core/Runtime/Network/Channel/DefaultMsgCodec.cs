@@ -17,7 +17,7 @@ namespace UniFan.Network
 
         protected IByteOrder byteOrder;
 
-        protected DefaultMsgCodec(bool isLittleEndian = false)
+        protected DefaultMsgCodec(bool isLittleEndian)
         {
             byteOrder = isLittleEndian ? LittleEndianOrder.Instance : BigEndianOrder.Instance;
             byteArray = new ByteArray(isLittleEndian, MaxPackageSize);

@@ -1,15 +1,16 @@
-#if UNITY_EDITOR
+
+using UnityEngine.AI;
 
 namespace UniFan
 {
-    public abstract class EditorPreferenceBase<T> where T : System.IEquatable<T>
+    public abstract class PreferenceBase<T> where T : System.IEquatable<T>
     {
         private bool inited = false;
         private T value;
         private T defaultValue { get; }
         public string key { private set; get; }
 
-        public EditorPreferenceBase(string key, T defaultValue)
+        public PreferenceBase(string key, T defaultValue)
         {
             this.key = key;
             this.defaultValue = defaultValue;
@@ -35,6 +36,12 @@ namespace UniFan
             set
             {
                 T newValue = value;
+                if (!inited)
+                {
+                    SaveValue(value);
+                    inited = true;
+                    return;
+                }
                 if (!newValue.Equals(this.value))
                 {
                     this.value = newValue;
@@ -51,5 +58,3 @@ namespace UniFan
 
     }
 }
-
-#endif
