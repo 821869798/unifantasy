@@ -1,6 +1,4 @@
 
-using UnityEngine.AI;
-
 namespace UniFan
 {
     public abstract class PreferenceBase<T> where T : System.IEquatable<T>
