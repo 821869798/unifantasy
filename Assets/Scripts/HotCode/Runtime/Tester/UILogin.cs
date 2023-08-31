@@ -1,14 +1,12 @@
-using UniFan;
-using HotCode.Framework;
-using System;
-using UnityEngine;
-using UnityEngine.UI;
-using UniFan.Network;
-using System.Text;
-using System.Net;
 using Cysharp.Threading.Tasks;
+using HotCode.Framework;
+using System.Net;
+using System.Text;
+using UniFan;
+using UniFan.Network;
+using UnityEngine;
 
-namespace HotCode.FrameworkPlay
+namespace HotCode.Game
 {
     public class UILogin : UIBaseWindow
     {
@@ -71,7 +69,19 @@ namespace HotCode.FrameworkPlay
         protected override void OnInit()
         {
             this.ui.button.onClick.AddListener(BtnClicked);
+            TestTimer().Forget();
+
             //TestNetwork();
+        }
+
+        private async UniTaskVoid TestTimer()
+        {
+            var timerId = TimerManager.Instance.StartOneTimer(1f);
+            await timerId.AwaitTimer();
+            Debug.Log("Timer Complete");
+
+            // stop timer,can call timerId.StopTimer()
+            // timerId.StopTimer();
         }
 
         NetChannel netChannel;
@@ -130,7 +140,6 @@ namespace HotCode.FrameworkPlay
             netChannel.Send(packet);
             packet.Put();
         }
-
 
 
         private void BtnClicked()

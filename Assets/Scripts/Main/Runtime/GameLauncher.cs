@@ -72,7 +72,7 @@ namespace Main
                 Debug.LogError("Load HotUpdate Assembly Assembly-CSharp.dll.bytes failed!");
                 return;
             }
-            var t = assembly.GetType("HotMain");
+            var t = assembly.GetType("HotCode.Game.HotMain");
             if (t != null)
             {
                 t.InvokeMember("EnterHotMain", BindingFlags.InvokeMethod, null, null, null);

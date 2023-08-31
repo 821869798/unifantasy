@@ -42,7 +42,7 @@ namespace HotCode.Framework
         /// </summary>
         public static ISceneLoaderProcess defaultLoaderProcess { get; set; } = new SceneLoaderProcessDefault();
 
-        public override int managerPriority => throw new NotImplementedException();
+        public override int managerPriority => 30;
 
         public event Action<GSceneUnit> onSceneLoaded;
         public event Action<GSceneUnit> onSceneUnLoaded;

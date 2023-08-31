@@ -91,7 +91,7 @@ namespace HotCode.FrameworkEditor
         {
             var obj = base.GenerateTemplateObject();
             obj["cs_code_head"] = "using UniFan;\nusing HotCode.Framework;\nusing System;\nusing UnityEngine;\nusing UnityEngine.UI;";
-            obj["code_namespace"] = "HotCode.FrameworkPlay";
+            obj["code_namespace"] = "HotCode.Game";
             obj["parent_path"] = "string.Empty";
             obj["baseclass_fullname"] = OriginBaseClassName;
             obj["uib_prefix"] = UIBPrefix;
