@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.code-philosophy.hybridclr": "3.4.0",
+    "com.code-philosophy.hybridclr": "3.4.2",
     "com.cysharp.unitask": "2.3.3",
     "com.shniqq.hierarchy-labels": "1.0.1-preview.2",
     "com.unity.2d.sprite": "1.0.0",
