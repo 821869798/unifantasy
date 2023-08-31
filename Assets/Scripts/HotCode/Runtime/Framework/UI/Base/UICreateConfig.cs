@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace HotCode.Framework
 {
     /// <summary>
@@ -24,6 +21,11 @@ namespace HotCode.Framework
         /// 该UI是否是常驻的，不会被UIManager普通的DeleteAll删除掉
         /// </summary>
         public bool permanent { get; }
+
+        /// <summary>
+        /// UI模糊配置，null表示没有
+        /// </summary>
+        public UIBlurConfig blurConfig { get; }
     }
 
     public class UICreateConfig : IUICreateConfig
@@ -33,5 +35,14 @@ namespace HotCode.Framework
         public EUILayer layer { get; set; }
         public bool permanent { get; set; }
 
+        public UIBlurConfig blurConfig { get; set; }
+    }
+
+    public class UIBlurConfig
+    {
+        /// <summary>
+        /// rt的降采样尺寸
+        /// </summary>
+        public int downSampling { get; set; } = 2;
     }
 }

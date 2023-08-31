@@ -35,7 +35,7 @@ namespace HotCode.Framework
             {
                 RemoveWindowInternal(type);
 #if UNITY_EDITOR
-                Debug.Log($"UIWindow load failed:{type.FullName}");
+                Debug.LogWarning($"UIWindow load failed:{type.FullName}");
 #endif
                 return null;
             }
@@ -60,6 +60,7 @@ namespace HotCode.Framework
             window.winSetting.permanent = setting.permanent;
             window.winSetting.layer = setting.layer;
             window.winSetting.sortOrder = sortOrder;
+            window.winSetting.resloader = _allWindowResloader[type];
             window.Init(go);
 
             _allWindows.Add(type, window);
@@ -198,6 +199,10 @@ namespace HotCode.Framework
             {
                 return null;
             }
+            if (setting.blurConfig != null)
+            {
+                Debug.LogWarning("同步加载不支持模糊背景!");
+            }
             var prefab = resloader.LoadABAsset<GameObject>(PathConstant.GetUIPrefabPath(preafbPath));
             return InitWindowInternal<T>(window, prefab, setting);
         }
@@ -221,11 +226,48 @@ namespace HotCode.Framework
             {
                 return null;
             }
+
+            //RenderTexture blurRt = null;
+            //if (setting.blurConfig != null)
+            //{
+            //    if (CVolumeManager.instance.TryGetVolumeComponent(CPostProcessingUtil.GenVolumeComponentId("UICamera", UnityEngine.Rendering.Universal.RenderPassEvent.BeforeRenderingPostProcessing, nameof(BlurVolume)), out var cv) && cv is BlurVolume bv)
+            //    {
+            //        int width = (int)(this.BackgroundStretchSize.x / setting.blurConfig.downSampling);
+            //        int height = (int)(this.BackgroundStretchSize.y / setting.blurConfig.downSampling);
+            //        blurRt = new RenderTexture(width, height, 0, RenderTextureFormat.ARGB32);
+            //        bv.SetRenderTexureTarget(blurRt);
+            //        await UniTask.Yield();
+            //        bv.ClearRenderTextureTarget();
+            //    }
+            //    else
+            //    {
+            //        LogGame.LogWarning("Cant't find UICamera Blur Component");
+            //    }
+            //}
+
+
             //异步加载中的
             AddAsyncLoading(type);
             var prefab = await resloader.LoadABAssetAwait<GameObject>(PathConstant.GetUIPrefabPath(preafbPath));
             RemoveAsyncLoading(type);
-            return InitWindowInternal<T>(window, prefab, setting);
+
+            var result = InitWindowInternal<T>(window, prefab, setting);
+
+            //添加模糊效果
+            //if (blurRt != null)
+            //{
+            //    var blackGround = window.gameObject.GetComponentInChildren<UIBackgroundAdapter>();
+            //    if (blackGround != null)
+            //    {
+            //        blackGround.SetBGBlurTexture(blurRt);
+            //    }
+            //    else
+            //    {
+            //        UnityEngine.Object.Destroy(blurRt);
+            //    }
+            //}
+
+            return result;
         }
 
         /// <summary>
@@ -287,15 +329,20 @@ namespace HotCode.Framework
             }
         }
 
+        public void CloseWindow(Type type)
+        {
+            var window = GetWindow(type);
+            if (window != null)
+            {
+                RemoveWindowInternal(type);
+            }
+            RemoveAsyncLoading(type);
+        }
+
 
         public void CloseWindow<T>()
         {
             var type = typeof(T);
-            CloseWindow(type);
-        }
-
-        public void CloseWindow(Type type)
-        {
             var window = GetWindow(type);
             if (window != null)
             {

@@ -1,4 +1,4 @@
-
+using UniFan.Res;
 
 namespace HotCode.Framework
 {
@@ -10,5 +10,6 @@ namespace HotCode.Framework
         public EUILayer layer { get; internal set; }
         public int sortOrder { get; internal set; }
         public bool permanent { get; internal set; }
+        public ResLoader resloader { get; internal set; }
     }
 }
