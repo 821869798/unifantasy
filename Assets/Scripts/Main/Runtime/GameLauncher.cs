@@ -11,7 +11,7 @@ namespace Main
     public class GameLauncher : MonoBehaviour
     {
         // Start is called before the first frame update
-        private async void Start()
+        private void Start()
         {
             UniFantasy.InitUniFantasy(this.gameObject);
 
@@ -25,7 +25,7 @@ namespace Main
             InitManager();
 
             // 开始加载dll
-            await StartLoadHotDllAsync();
+            StartLoadHotDllAsync().Forget();
 
             Destroy(this);
         }

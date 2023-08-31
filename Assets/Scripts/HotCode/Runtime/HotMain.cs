@@ -1,7 +1,7 @@
+using Cysharp.Threading.Tasks;
 using HotCode.Framework;
 using HotCode.FrameworkPlay;
 using UniFan;
-using UnityEngine;
 
 public class HotMain
 {
@@ -10,7 +10,7 @@ public class HotMain
     {
         BindManagerInHot();
 
-        LoadTestScene();
+        LoadTestScene().Forget();
     }
 
     private static void BindManagerInHot()
@@ -18,7 +18,7 @@ public class HotMain
         ManagerCenter.Instance.BindManage(UIManager.Instance);
     }
 
-    private static async void LoadTestScene()
+    private static async UniTaskVoid LoadTestScene()
     {
         await GSceneManager.Instance.LoadAbSceneAsync("Test01");
         await UIManager.Instance.ShowWindowAsync<UILogin>();
