@@ -9,12 +9,12 @@ namespace UniFan
 
         protected override float ReadValue(float defaultValue)
         {
-            return UnityEditor.EditorPrefs.GetFloat(key, defaultValue);
+            return UnityEngine.PlayerPrefs.GetFloat(key, defaultValue);
         }
 
         protected override void SaveValue(float value)
         {
-            UnityEditor.EditorPrefs.SetFloat(key, value);
+            UnityEngine.PlayerPrefs.SetFloat(key, value);
         }
 
         public static implicit operator float(PlayerPreferenceFloat pref)

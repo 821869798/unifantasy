@@ -10,12 +10,12 @@ namespace UniFan
 
         protected override string ReadValue(string defaultValue)
         {
-            return UnityEditor.EditorPrefs.GetString(key, defaultValue);
+            return UnityEngine.PlayerPrefs.GetString(key, defaultValue);
         }
 
         protected override void SaveValue(string value)
         {
-            UnityEditor.EditorPrefs.SetString(key, value);
+            UnityEngine.PlayerPrefs.SetString(key, value);
         }
 
         public static implicit operator string(PlayerPreferenceString pref)

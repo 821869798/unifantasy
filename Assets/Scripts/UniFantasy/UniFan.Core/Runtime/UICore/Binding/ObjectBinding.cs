@@ -39,7 +39,7 @@ namespace UniFan
 
         private void Awake()
         {
-            variableMap = new Dictionary<string, Variable>();
+            variableMap = new Dictionary<string, Variable>(variables.Count);
             foreach (var variable in variables)
             {
                 variableMap.Add(variable.name, variable);
