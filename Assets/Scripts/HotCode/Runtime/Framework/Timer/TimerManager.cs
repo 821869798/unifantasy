@@ -35,7 +35,7 @@ namespace HotCode.Framework
                 _idGenerator++;
             }
             while (_idGenerator == 0 || _timers.ContainId(_idGenerator));
-            return _idGenerator++;
+            return _idGenerator;
         }
 
         protected override void InitManager()

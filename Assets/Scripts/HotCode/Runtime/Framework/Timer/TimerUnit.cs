@@ -152,6 +152,7 @@ namespace HotCode.Framework
         {
             handler = null;
             expired = false;
+            _counter = 0;
             if (autoResetUniTask != null)
             {
                 autoResetUniTask.TrySetCanceled();
