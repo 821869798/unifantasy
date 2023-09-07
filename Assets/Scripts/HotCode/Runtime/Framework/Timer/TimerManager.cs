@@ -83,7 +83,7 @@ namespace HotCode.Framework
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async UniTask AwaitTimer(uint id)
+        public UniTask AwaitTimer(uint id)
         {
             if (!_timersToAdd.TryGetValue(id, out var timer))
             {
@@ -91,8 +91,9 @@ namespace HotCode.Framework
             }
             if (timer != null)
             {
-                await timer.AwaitCount();
+                return timer.AwaitCount();
             }
+            return UniTask.CompletedTask;
         }
 
         /// <summary>

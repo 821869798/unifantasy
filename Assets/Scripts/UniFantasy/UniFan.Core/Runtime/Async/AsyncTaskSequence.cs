@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -127,14 +126,11 @@ namespace UniFan
             if (SequenceCount == 0)
             {
                 Debug.LogWarning("no async task to do!");
-                if (_taskCompletionSource != null)
-                {
-                    _taskCompletionSource.TrySetResult();
-                }
                 if (OnAllTaskFinish != null)
                 {
                     OnAllTaskFinish(this);
                 }
+                CompleteAwait();
             }
             else
             {
@@ -195,14 +191,11 @@ namespace UniFan
             if (FinishTaskCount >= TaskCount)
             {
                 IsRunning = false;
-                if (_taskCompletionSource != null)
-                {
-                    _taskCompletionSource.TrySetResult();
-                }
                 if (OnAllTaskFinish != null)
                 {
                     OnAllTaskFinish(this);
                 }
+                CompleteAwait();
                 return;
             }
             if (--CurSequenceTaskCount <= 0)
@@ -218,7 +211,6 @@ namespace UniFan
             SequenceCount = 0;
             CurSequenceTaskCount = 0;
             FinishTaskCount = 0;
-            _taskCompletionSource = null;
             foreach (var task in _allTask)
             {
                 if (!task.Value)
@@ -232,6 +224,7 @@ namespace UniFan
             _taskSequence.Clear();
             OnOneTaskFinish = null;
             OnAllTaskFinish = null;
+            CancelAwait();
         }
 
 
@@ -270,7 +263,19 @@ namespace UniFan
         {
             if (_taskCompletionSource != null)
             {
-                _taskCompletionSource.TrySetCanceled();
+                var taskSource = _taskCompletionSource;
+                _taskCompletionSource = null;
+                taskSource.TrySetCanceled();
+            }
+        }
+
+        public void CompleteAwait()
+        {
+            if (_taskCompletionSource != null)
+            {
+                var taskSource = _taskCompletionSource;
+                _taskCompletionSource = null;
+                taskSource.TrySetResult();
             }
         }
         #endregion

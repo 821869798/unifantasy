@@ -281,19 +281,19 @@ namespace UniFan.Res
 
         #region Load Res Async await
 
-        public async UniTask<T> LoadABAssetAwait<T>(string assetName) where T : Object
+        public UniTask<T> LoadABAssetAwait<T>(string assetName) where T : Object
         {
-            return await DoLoadAsyncAwait<T>(assetName, ResType.ABAsset);
+            return DoLoadAsyncAwait<T>(assetName, ResType.ABAsset);
         }
 
-        public async UniTask<AssetBundle> LoadAssetBundleAwait(string assetName)
+        public UniTask<AssetBundle> LoadAssetBundleAwait(string assetName)
         {
-            return await DoLoadAsyncAwait<AssetBundle>(assetName.ToLower(), ResType.AssetBundle);
+            return DoLoadAsyncAwait<AssetBundle>(assetName.ToLower(), ResType.AssetBundle);
         }
 
-        public async UniTask<T> LoadResourceAssetAwait<T>(string assetName) where T : Object
+        public UniTask<T> LoadResourceAssetAwait<T>(string assetName) where T : Object
         {
-            return await DoLoadAsyncAwait<T>(assetName, ResType.Resource);
+            return DoLoadAsyncAwait<T>(assetName, ResType.Resource);
         }
 
         private async UniTask<T> DoLoadAsyncAwait<T>(string assetName, ResType resType) where T : Object
@@ -316,7 +316,6 @@ namespace UniFan.Res
             asyncTask.Start();
             await task;
 #pragma warning restore CS4014
-
 
 
             //移除自己

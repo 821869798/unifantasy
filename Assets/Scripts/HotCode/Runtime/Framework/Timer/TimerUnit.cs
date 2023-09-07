@@ -68,6 +68,28 @@ namespace HotCode.Framework
             return autoResetUniTask.Task;
         }
 
+        private void InvokeTaskResult()
+        {
+            if (autoResetUniTask == null)
+            {
+                return;
+            }
+            var autoTask = autoResetUniTask;
+            autoResetUniTask = null;
+            autoTask.TrySetResult();
+        }
+
+        private void InvokeTaskCancel()
+        {
+            if (autoResetUniTask == null)
+            {
+                return;
+            }
+            var autoTask = autoResetUniTask;
+            autoResetUniTask = null;
+            autoTask.TrySetCanceled();
+        }
+
         public void OnUpdate(float deltaTime, float unscaledDeltaTime)
         {
             if (expired)
@@ -90,20 +112,22 @@ namespace HotCode.Framework
 
             if (_counter >= interval)
             {
-                CallComplete();
                 if (loop < 0)
                 {
                     _counter -= interval;
+                    CallComplete();
                     return;
                 }
                 loop--;
                 if (loop <= 0)
                 {
                     expired = true;
+                    CallComplete();
                 }
                 else
                 {
                     _counter -= interval;
+                    CallComplete();
                 }
             }
         }
@@ -114,19 +138,15 @@ namespace HotCode.Framework
             {
                 return;
             }
+            expired = true;
             if (invokeComplete)
             {
                 CallComplete();
             }
             else
             {
-                if (autoResetUniTask != null)
-                {
-                    autoResetUniTask.TrySetCanceled();
-                    autoResetUniTask = null;
-                }
+                InvokeTaskCancel();
             }
-            expired = true;
         }
 
         protected virtual void CallComplete()
@@ -134,11 +154,7 @@ namespace HotCode.Framework
             try
             {
                 handler?.Invoke();
-                if (autoResetUniTask != null)
-                {
-                    autoResetUniTask.TrySetResult();
-                    autoResetUniTask = null;
-                }
+                InvokeTaskResult();
             }
             catch (Exception e)
             {
@@ -153,11 +169,7 @@ namespace HotCode.Framework
             handler = null;
             expired = false;
             _counter = 0;
-            if (autoResetUniTask != null)
-            {
-                autoResetUniTask.TrySetCanceled();
-                autoResetUniTask = null;
-            }
+            InvokeTaskCancel();
         }
     }
 }
