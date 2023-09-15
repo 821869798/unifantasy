@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine.UIElements;
-using UnityEditor.UIElements;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.UIElements;
+using UnityEngine.UIElements;
 
 namespace UniFan.ResEditor
 {
@@ -202,11 +201,13 @@ namespace UniFan.ResEditor
             {
                 _assetSearchOption.style.display = DisplayStyle.None;
                 _tfAssetSearchPattern.label = "ShareRes Regex Pattern";
+                _tfAssetSearchPattern.tooltip = "正则匹配规则";
             }
             else
             {
                 _assetSearchOption.style.display = DisplayStyle.Flex;
                 _tfAssetSearchPattern.label = "AssetSearchPattern";
+                _tfAssetSearchPattern.tooltip = "支持多个,使用|分割";
             }
 
 

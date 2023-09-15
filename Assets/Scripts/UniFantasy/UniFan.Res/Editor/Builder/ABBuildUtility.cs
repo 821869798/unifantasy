@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace UniFan.ResEditor
@@ -18,15 +16,22 @@ namespace UniFan.ResEditor
             {
                 return items;
             }
-            var files = Directory.GetFiles(searchPath, searchPattern, searchOption);
-            foreach (var item in files)
+
+            // 将多个搜索模式拆分为字符串数组
+            string[] patterns = searchPattern.Split('|', System.StringSplitOptions.RemoveEmptyEntries);
+            foreach (string pattern in patterns)
             {
-                var assetPath = item.Replace('\\', '/');
-                if (!Directory.Exists(assetPath))
+                var files = Directory.GetFiles(searchPath, pattern, searchOption);
+                foreach (var item in files)
                 {
-                    items.Add(assetPath);
+                    var assetPath = item.Replace('\\', '/');
+                    if (!Directory.Exists(assetPath))
+                    {
+                        items.Add(assetPath);
+                    }
                 }
             }
+
             return items;
         }
 
