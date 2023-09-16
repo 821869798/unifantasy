@@ -2,11 +2,8 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEditor.UIElements;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
-using PlasticPipe.PlasticProtocol.Messages;
 
 namespace UniFan.ResEditor
 {

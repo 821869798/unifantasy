@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
+using System.IO;
 using UnityEditor;
 using UnityEditorInternal;
-using System.IO;
+using UnityEngine;
 
 namespace UniFan.ResEditor
 {
