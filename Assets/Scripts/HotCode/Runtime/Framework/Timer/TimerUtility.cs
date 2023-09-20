@@ -10,9 +10,9 @@ namespace HotCode.Framework
             await TimerManager.Instance.AwaitTimer(timerId);
         }
 
-        public static void StopTimer(this uint timerId)
+        public static void StopTimer(this uint timerId, bool invokeComplete = false)
         {
-            TimerManager.Instance.StopTimer(timerId);
+            TimerManager.Instance.StopTimer(timerId, invokeComplete);
         }
     }
 }
