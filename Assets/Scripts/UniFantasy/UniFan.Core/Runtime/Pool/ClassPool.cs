@@ -26,6 +26,13 @@ namespace UniFan
         {
             if (data == null) return;
             Type type = typeof(T);
+#if UNITY_EDITOR
+            Type checkType = data.GetType();
+            if (checkType != type)
+            {
+                UnityEngine.Debug.LogWarning($"ClassPool Put Type Error, Current Type:" + type.Name + " Real Type:" + checkType.Name);
+            }
+#endif
             Stack<IReusableClass> classPool = null;
             if (!_reusablePool.TryGetValue(type, out classPool))
             {
