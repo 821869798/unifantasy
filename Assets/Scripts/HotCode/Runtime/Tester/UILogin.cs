@@ -79,7 +79,7 @@ namespace HotCode.Game
 
         private void TestLoadRes()
         {
-            var sp = this.GetWindowResloader().LoadABAsset<Sprite>("Res/03_AtlasClips/Common/common_white.png");
+            var sp = this.GetWindowResloader().LoadABAsset<Sprite>(PathConstant.GetAtlasSpritePath("Common", "common_white"));
             Debug.Log(sp);
         }
 

@@ -459,13 +459,20 @@ namespace UniFan.Res
         /// <param name="disposing">disposing表示是否调用其他Dispose</param>
         public virtual void Dispose(bool disposing)
         {
-#if !UNITY_EDITOR
+            if (disposing)
+            {
+                ReleaseAllRes();
+                return;
+            }
+
             if (_resSet.Count > 0)
             {
+#if !UNITY_EDITOR
                 Debug.LogError("[ResLoader|Dispose] No manual release resource,resCount:" + _resSet.Count);
-            }
 #endif
-            ReleaseAllRes();
+                // 析构函数可能调用是子线程中，需要放入主线程中调用Unity相关api
+                ResManager.mainThreadActionQue.Enqueue(() => ReleaseAllRes());
+            }
         }
 
         ~ResLoader()

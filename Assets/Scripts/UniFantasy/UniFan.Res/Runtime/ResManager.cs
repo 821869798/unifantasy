@@ -31,6 +31,8 @@ namespace UniFan.Res
         /// </summary>
         static internal event Action _notifyResManagerClear;
 
+        // 线程安全队列
+        static internal System.Collections.Concurrent.ConcurrentQueue<Action> mainThreadActionQue = new System.Collections.Concurrent.ConcurrentQueue<Action>();
         protected override void InitManager()
         {
             _notifyResManagerClear += this.ClearOnUpdate;
@@ -91,6 +93,10 @@ namespace UniFan.Res
             if (_isResMapDirty)
             {
                 RemoveUnusedRes();
+            }
+            while (mainThreadActionQue.TryDequeue(out var action))
+            {
+                action?.Invoke();
             }
         }
 
