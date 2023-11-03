@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace UniFan.Res
@@ -27,6 +28,8 @@ namespace UniFan.Res
         UnityEngine.Object Asset { get; }
 
         float Progress { get; }
+
+        void InitAssetType(Type resType);
 
         bool Load();
 

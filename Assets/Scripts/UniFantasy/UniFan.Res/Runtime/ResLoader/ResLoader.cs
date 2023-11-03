@@ -19,17 +19,6 @@ namespace UniFan.Res
         /// </summary>
         private static object _uniTaskObject = new object();
 
-        /// <summary>
-        /// 解决SpriteAtlas调用GetSprite内存泄露问题
-        /// </summary>
-        /// <param name="atlas"></param>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static Sprite GetAtlasSprite(SpriteAtlas atlas, string spriteName)
-        {
-            return ABAssetRes.GetAbAssetAtlasSprite(atlas, spriteName);
-        }
-
         #region function
 
         //添加资源的引用计数
@@ -88,9 +77,9 @@ namespace UniFan.Res
             return Load<T>(assetName, ResType.ABAsset);
         }
 
-        public Object LoadABAsset(string assetName)
+        public Object LoadABAsset(string assetName, Type assetType = null)
         {
-            return Load(assetName, ResType.ABAsset);
+            return DoLoad(assetName, ResType.ABAsset, assetType);
         }
 
         public AssetBundle LoadAssetBundle(string bundleName)
@@ -110,7 +99,7 @@ namespace UniFan.Res
 
         public T Load<T>(string assetName, ResType resType) where T : Object
         {
-            Object asset = DoLoad(assetName, resType);
+            Object asset = DoLoad(assetName, resType, typeof(T));
             return asset as T;
         }
 
@@ -120,7 +109,7 @@ namespace UniFan.Res
             return asset;
         }
 
-        private Object DoLoad(string assetName, ResType resType)
+        private Object DoLoad(string assetName, ResType resType, Type assetType = null)
         {
 #if UNITY_EDITOR
             float t = Time.realtimeSinceStartup;
@@ -131,6 +120,10 @@ namespace UniFan.Res
             {
                 Debug.LogError("Failed to create Res:" + assetName + " type:" + resType.ToString());
                 return null;
+            }
+            if (assetType != null)
+            {
+                res.InitAssetType(assetType);
             }
             AddResRefCount(res);
             StartLoad(res);
@@ -176,9 +169,9 @@ namespace UniFan.Res
 
         #region Load Res Async With Callback
 
-        public void LoadABAssetAsync(string assetName, Action<Object> loadCompleteCallback)
+        public void LoadABAssetAsync(string assetName, Action<Object> loadCompleteCallback, Type assetType = null)
         {
-            DoLoadAsync(assetName, ResType.ABAsset, loadCompleteCallback);
+            DoLoadAsync(assetName, ResType.ABAsset, loadCompleteCallback, assetType = null);
         }
 
         public void LoadAssetBundleAsync(string bundleName, Action<Object> loadCompleteCallback)
@@ -191,7 +184,7 @@ namespace UniFan.Res
             DoLoadAsync(assetName, ResType.Resource, loadCompleteCallback);
         }
 
-        private void DoLoadAsync(string assetName, ResType resType, Action<Object> loadCompleteCallback)
+        private void DoLoadAsync(string assetName, ResType resType, Action<Object> loadCompleteCallback, Type assetType = null)
         {
 #if UNITY_EDITOR
             float t = Time.realtimeSinceStartup;
@@ -204,6 +197,10 @@ namespace UniFan.Res
                     loadCompleteCallback(null);
                 }
                 return;
+            }
+            if (assetType != null)
+            {
+                res.InitAssetType(assetType);
             }
             AsyncTaskSequence asyncTask = AsyncTaskSequence.Create();
             AddResRefCount(res);
@@ -304,6 +301,8 @@ namespace UniFan.Res
                 return null;
             }
 
+            res.InitAssetType(typeof(T));
+
             //准备加载数据
             AsyncTaskSequence asyncTask = AsyncTaskSequence.Create();
             AddResRefCount(res);
@@ -366,7 +365,7 @@ namespace UniFan.Res
         //}
 
         [Obsolete]
-        public AsyncWait DoLoadAsyncLagacy(string assetName, ResType resType, Action<Object> loadCompleteCallback)
+        public AsyncWait DoLoadAsyncLagacy(string assetName, ResType resType, Action<Object> loadCompleteCallback, Type assetType = null)
         {
             AsyncWait wait = new AsyncWait();
 
@@ -379,6 +378,10 @@ namespace UniFan.Res
                 }
                 wait.IsDone = true;
                 return wait;
+            }
+            if (assetType != null)
+            {
+                res.InitAssetType(assetType);
             }
             AsyncTaskSequence asyncTask = AsyncTaskSequence.Create();
             AddResRefCount(res);

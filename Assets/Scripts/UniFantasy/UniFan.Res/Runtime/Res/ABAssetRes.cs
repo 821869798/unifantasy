@@ -32,80 +32,10 @@ namespace UniFan.Res
             protected set
             {
                 base.Asset = value;
-                TryAddSpriteAtlas(_asset);
             }
         }
 
-        #region SpriteAtlas
-
-        static Dictionary<SpriteAtlas, SpriteAtlasRes> _atlasResDic = new Dictionary<SpriteAtlas, SpriteAtlasRes>();
-
-        public static Sprite GetAbAssetAtlasSprite(SpriteAtlas atlas, string name)
-        {
-            if (!atlas)
-            {
-                Debug.LogError($"atlas == null, spriteName:{name}");
-                return null;
-            }
-
-            if (_atlasResDic.TryGetValue(atlas, out var res))
-            {
-                return res.GetSprite(name);
-            }
-            Debug.LogError($"Cant get sprite , atlas:{atlas.name}, sprite:{name}");
-            return null;
-        }
-
-        static void TryAddSpriteAtlas(UnityEngine.Object asset)
-        {
-            if (asset is SpriteAtlas atlas && !_atlasResDic.ContainsKey(atlas))
-            {
-                var atlasRes = SpriteAtlasRes.Create(atlas);
-                _atlasResDic[atlas] = atlasRes;
-            }
-        }
-
-        class SpriteAtlasRes : IReusableClass, IDisposable
-        {
-            SpriteAtlas spriteAtlas;
-            Dictionary<string, Sprite> spritePool = new Dictionary<string, Sprite>();
-            public uint MaxStore => 20;
-
-            public void OnReset()
-            {
-                spriteAtlas = null;
-                spritePool.Clear();
-            }
-
-            public static SpriteAtlasRes Create(SpriteAtlas atlas)
-            {
-                var res = ClassPool.Get<SpriteAtlasRes>();
-                res.spriteAtlas = atlas;
-                return res;
-            }
-
-            public Sprite GetSprite(string name)
-            {
-                if (spritePool.TryGetValue(name, out var sprite))
-                    return sprite;
-
-                sprite = spriteAtlas.GetSprite(name);
-                spritePool[name] = sprite;
-                return sprite;
-            }
-
-            public void Dispose()
-            {
-                foreach (var item in spritePool)
-                    Object.Destroy(item.Value);
-                spritePool.Clear();
-
-                ClassPool.Put<SpriteAtlasRes>(this);
-            }
-        }
-
-        #endregion
-
+        public Type AssetType { private set; get; }
 
         public static ABAssetRes Create(string assetName)
         {
@@ -165,6 +95,11 @@ namespace UniFan.Res
             return _depBundleList;
         }
 
+        public override void InitAssetType(Type resType)
+        {
+            this.AssetType = resType;
+        }
+
         public override bool Load()
         {
             if (!CheckLoadAble())
@@ -182,7 +117,15 @@ namespace UniFan.Res
             {
                 State = ResState.Loading;
                 string assetPath = FilePathHelper.Instance.GetEditorAssetPath(AssetName);
-                Object obj = UnityEditor.AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+                Object obj;
+                if (AssetType != null)
+                {
+                    obj = UnityEditor.AssetDatabase.LoadAssetAtPath(assetPath, AssetType);
+                }
+                else
+                {
+                    obj = UnityEditor.AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+                }
 
                 if (obj == null)
                 {
@@ -228,7 +171,16 @@ namespace UniFan.Res
                     OnResLoadFaild();
                     return false;
                 }
-                Object obj = ab.LoadAsset(shortAssetName);
+                Object obj;
+                if (AssetType != null)
+                {
+                    obj = ab.LoadAsset(shortAssetName, AssetType);
+                }
+                else
+                {
+                    obj = ab.LoadAsset(shortAssetName);
+                }
+
 
                 if (obj == null)
                 {
@@ -274,7 +226,15 @@ namespace UniFan.Res
             if (!ResManager.EditorBundleMode)
             {
                 string assetPath = FilePathHelper.Instance.GetEditorAssetPath(AssetName);
-                Object obj = UnityEditor.AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+                Object obj;
+                if (AssetType != null)
+                {
+                    obj = UnityEditor.AssetDatabase.LoadAssetAtPath(assetPath, AssetType);
+                }
+                else
+                {
+                    obj = UnityEditor.AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+                }
 
                 if (AssetBundleUtility.SimulationAsyncLoad)
                 {
@@ -331,7 +291,16 @@ namespace UniFan.Res
                     finishCallback();
                     yield break;
                 }
-                var assetRequest = ab.LoadAssetAsync(assetNameInAB);
+                AssetBundleRequest assetRequest;
+                if (AssetType != null)
+                {
+                    assetRequest = ab.LoadAssetAsync(assetNameInAB, AssetType);
+                }
+                else
+                {
+                    assetRequest = ab.LoadAssetAsync(assetNameInAB);
+                }
+
                 _assetBundleRequest = assetRequest;
                 yield return assetRequest;
                 _assetBundleRequest = null;
@@ -374,20 +343,10 @@ namespace UniFan.Res
             {
                 if (Asset is GameObject)
                 {
-
                 }
                 //SpriteAtals不能删,因为有用到Late Binding,用AB引用计数自动删掉
-                else if (Asset is SpriteAtlas atlas)
+                else if (Asset is SpriteAtlas)
                 {
-                    if (_atlasResDic.TryGetValue(atlas, out var spriteRes))
-                    {
-                        spriteRes.Dispose();
-                        _atlasResDic.Remove(atlas);
-                    }
-                    else
-                    {
-                        Debug.LogError($"Unload atlas res is null, {atlas.name}");
-                    }
                 }
                 else
                 {

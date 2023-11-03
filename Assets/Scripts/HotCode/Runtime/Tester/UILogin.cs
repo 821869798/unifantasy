@@ -69,9 +69,18 @@ namespace HotCode.Game
         protected override void OnInit()
         {
             this.ui.button.onClick.AddListener(BtnClicked);
+
             TestTimer().Forget();
 
+            TestLoadRes();
+
             //TestNetwork();
+        }
+
+        private void TestLoadRes()
+        {
+            var sp = this.GetWindowResloader().LoadABAsset<Sprite>("Res/03_AtlasClips/Common/common_white.png");
+            Debug.Log(sp);
         }
 
         private async UniTaskVoid TestTimer()

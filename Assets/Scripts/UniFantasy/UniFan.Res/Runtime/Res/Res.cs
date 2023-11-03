@@ -115,6 +115,11 @@ namespace UniFan.Res
             return null;
         }
 
+        public virtual void InitAssetType(Type resType)
+        {
+
+        }
+
         public virtual bool Load()
         {
             return false;
