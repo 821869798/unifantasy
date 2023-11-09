@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -11,6 +12,8 @@ namespace UniFan.Res
 
         public override ResType ResType => ResType.Resource;
 
+        public Type AssetType { private set; get; }
+
         public static ResourcesRes Create(string assetName)
         {
             ResourcesRes res = ClassPool.Get<ResourcesRes>();
@@ -20,13 +23,19 @@ namespace UniFan.Res
 
         public override void OnReset()
         {
-            base.OnReset();
             _ResourceRequest = null;
+            AssetType = null;
+            base.OnReset();
         }
 
         public override void Put2Pool()
         {
             ClassPool.Put<ResourcesRes>(this);
+        }
+
+        public override void InitAssetType(Type resType)
+        {
+            this.AssetType = resType;
         }
 
         public override bool Load()
@@ -44,7 +53,15 @@ namespace UniFan.Res
 
             State = ResState.Loading;
 
-            Object obj = Resources.Load(AssetName);
+            Object obj;
+            if (AssetType != null)
+            {
+                obj = Resources.Load(AssetName, AssetType);
+            }
+            else
+            {
+                obj = Resources.Load(AssetName);
+            }
 
             if (obj == null)
             {
@@ -86,7 +103,15 @@ namespace UniFan.Res
                 yield break;
             }
 
-            var resourceRequest = Resources.LoadAsync(AssetName);
+            ResourceRequest resourceRequest;
+            if (AssetType != null)
+            {
+                resourceRequest = Resources.LoadAsync(AssetName, AssetType);
+            }
+            else
+            {
+                resourceRequest = Resources.LoadAsync(AssetName);
+            }
 
             _ResourceRequest = resourceRequest;
             yield return resourceRequest;

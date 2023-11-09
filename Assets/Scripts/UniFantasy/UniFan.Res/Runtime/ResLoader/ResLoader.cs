@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.U2D;
 using Object = UnityEngine.Object;
 using Cysharp.Threading.Tasks;
 
@@ -429,11 +428,17 @@ namespace UniFan.Res
         public static ResLoader Create()
         {
             ResLoader loader = ClassPool.Get<ResLoader>();
+#if UNITY_EDITOR
+            EditorBehaviourHelper.AddAppQuitDispose(loader);
+#endif
             return loader;
         }
 
         public void Put2Pool()
         {
+#if UNITY_EDITOR
+            EditorBehaviourHelper.RemoveAppQuitDispose(this);
+#endif
             ReleaseAllRes();
             ClassPool.Put<ResLoader>(this);
         }
@@ -449,6 +454,9 @@ namespace UniFan.Res
         #region Dispose
         public void Dispose()
         {
+#if UNITY_EDITOR
+            EditorBehaviourHelper.RemoveAppQuitDispose(this);
+#endif
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -467,9 +475,7 @@ namespace UniFan.Res
 
             if (_resSet.Count > 0)
             {
-#if !UNITY_EDITOR
                 Debug.LogError("[ResLoader|Dispose] No manual release resource,resCount:" + _resSet.Count);
-#endif
                 // 析构函数可能调用是子线程中，需要放入主线程中调用Unity相关api
                 ResManager.mainThreadActionQue.Enqueue(() => ReleaseAllRes());
             }

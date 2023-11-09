@@ -35,7 +35,7 @@ namespace UniFan.Res
         static internal System.Collections.Concurrent.ConcurrentQueue<Action> mainThreadActionQue = new System.Collections.Concurrent.ConcurrentQueue<Action>();
         protected override void InitManager()
         {
-            _notifyResManagerClear += this.ClearOnUpdate;
+            _notifyResManagerClear = this.ClearOnUpdate;
 
             _allResList = new List<IRes>();
             _allResMap = new Dictionary<string, IRes>[System.Enum.GetNames(typeof(ResType)).Length];

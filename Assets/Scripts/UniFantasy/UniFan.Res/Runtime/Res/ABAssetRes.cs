@@ -63,6 +63,7 @@ namespace UniFan.Res
             _assetBundleRequest = null;
             OwnerBundleName = string.Empty;
             _hasRetainDep = false;
+            AssetType = null;
             base.OnReset();
         }
 
