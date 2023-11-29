@@ -1,13 +1,10 @@
 {{cs_code_head}}
 
-{{
-
-
-}}
 namespace {{code_namespace}}
 {
     public class {{class_name}} : {{baseclass_fullname}}
     {
+        {{~if window_type != 'UIBaseNode' ~}}
         /// <summary>
         /// 静态配置
         /// </summary>
@@ -23,6 +20,7 @@ namespace {{code_namespace}}
         /// 创建UI的配置
         /// </summary>
         public override IUICreateConfig createConfig => _createConfig;
+        {{~end~}}
 
         #region Template Generate,don't modify
         protected partial class {{uib_prefix + class_name}}{{if is_custom_baseclass }} : {{base_uibclass_fullname}}{{end}}

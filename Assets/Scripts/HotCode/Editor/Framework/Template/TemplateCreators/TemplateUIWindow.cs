@@ -1,11 +1,10 @@
-using UniFan;
-using Scriban;
+using HotCode.Framework;
 using System;
 using System.IO;
 using System.Reflection;
+using UniFan;
 using UnityEditor;
 using UnityEngine;
-using HotCode.Framework;
 
 namespace HotCode.FrameworkEditor
 {
@@ -39,18 +38,36 @@ namespace HotCode.FrameworkEditor
         /// </summary>
         public const string UIWindowAssembly = "Assembly-CSharp";
 
-        public const string OriginBaseClassName = "UIBaseWindow";
-
         public const string UIBPrefix = "UIB_";
+
+        public const string PrefabSuffix = ".prefab";
+
+        public enum TemplateWindowType
+        {
+            UIBaseWindow = 0,
+            UIBaseNode,
+        }
+
+        /// <summary>
+        /// 是否是Node
+        /// </summary>
+        public TemplateWindowType WindowType { private set; get; } = TemplateWindowType.UIBaseWindow;
+
 
         /// <summary>
         /// UI的名字
         /// </summary>
         public string UIWindowName { private set; get; }
+
         /// <summary>
         /// UI路径的名字，默认不需要
         /// </summary>
         public string ResParentName { private set; get; }
+
+        /// <summary>
+        /// 是否搜寻子物体OjectBinding
+        /// </summary>
+        public bool SearchSubBinding { private set; get; }
 
         /// <summary>
         /// 自定义父类的名字，需要带上命名空间
@@ -93,11 +110,12 @@ namespace HotCode.FrameworkEditor
             obj["cs_code_head"] = "using UniFan;\nusing HotCode.Framework;\nusing System;\nusing UnityEngine;\nusing UnityEngine.UI;";
             obj["code_namespace"] = "HotCode.Game";
             obj["parent_path"] = "string.Empty";
-            obj["baseclass_fullname"] = OriginBaseClassName;
+            obj["baseclass_fullname"] = WindowType.ToString();
             obj["uib_prefix"] = UIBPrefix;
             obj["window_layer"] = EUILayer.Normal.ToString();
             obj["is_permanent"] = false;
             obj["is_custom_baseclass"] = false;
+            obj["window_type"] = WindowType;
 
             return obj;
 
@@ -114,6 +132,8 @@ namespace HotCode.FrameworkEditor
             if (_isChanged)
             {
                 _isChanged = false;
+
+                templateObject["window_type"] = WindowType;
                 bool hasCustomeBase = CustomBaseType != null && _customeBaseUIB != null;
                 templateObject["is_custom_baseclass"] = hasCustomeBase;
                 if (hasCustomeBase)
@@ -124,7 +144,7 @@ namespace HotCode.FrameworkEditor
                 }
                 else
                 {
-                    templateObject["baseclass_fullname"] = OriginBaseClassName;
+                    templateObject["baseclass_fullname"] = WindowType.ToString();
                 }
 
 
@@ -135,6 +155,8 @@ namespace HotCode.FrameworkEditor
             return template.Render(templateContext);
         }
 
+        const string DefaultObjectBindingCode = @"protected virtual void InitBinding(ObjectBinding __binding){}";
+
         /// <summary>
         /// 获取UI window上的ObjectBinding组件，并且生成绑定的代码
         /// </summary>
@@ -143,25 +165,33 @@ namespace HotCode.FrameworkEditor
         {
             if (string.IsNullOrEmpty(UIWindowName))
             {
-                return string.Empty;
+                return DefaultObjectBindingCode;
             }
-            string path = UIWindowName;
+            string assetPath = UIWindowName;
             if (!string.IsNullOrEmpty(ResParentName))
             {
-                path = ResParentName + "/" + path;
+                assetPath = ResParentName.EndsWith(PrefabSuffix) ? ResParentName.Substring(0, ResParentName.Length - PrefabSuffix.Length) : ResParentName;
             }
-            path = "Assets/" + PathConstant.GetUIPrefabPath(path);
-            var go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            assetPath = "Assets/" + PathConstant.GetUIPrefabPath(assetPath);
+            var go = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
             if (go == null)
             {
-                return string.Empty;
+                return DefaultObjectBindingCode;
             }
             var binding = go.GetComponent<ObjectBinding>();
-            if (binding == null)
+            if (binding != null)
             {
-                return string.Empty;
+                return binding.GetBindingCode(_customeBaseUIB);
             }
-            return binding.GetBindingCode(_customeBaseUIB);
+            if (SearchSubBinding)
+            {
+                binding = go.GetComponentInChildren<ObjectBinding>();
+                if (binding != null)
+                {
+                    return binding.GetBindingCode(_customeBaseUIB);
+                }
+            }
+            return DefaultObjectBindingCode;
         }
 
         public override void OnGUI()
@@ -173,11 +203,11 @@ namespace HotCode.FrameworkEditor
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("资源的路径（相对于Res/03_Prefabs/UI/，默认不需要）:", TemplateGUIStyles.MaxWidthNormalStyle);
-                var tempName = GUILayout.TextField(ResParentName, TemplateGUIStyles.InputStyle);
-                if (tempName != ResParentName)
+                GUILayout.Label("模板类型:", TemplateGUIStyles.MaxWidthNormalStyle);
+                var newWindowType = (TemplateWindowType)EditorGUILayout.EnumPopup(WindowType);
+                if (newWindowType != WindowType)
                 {
-                    ResParentName = tempName;
+                    WindowType = newWindowType;
                     _isChanged = true;
                 }
             }
@@ -185,7 +215,20 @@ namespace HotCode.FrameworkEditor
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label($"自定义的基类(需要带上完整命名空间)空则继承{OriginBaseClassName}:", TemplateGUIStyles.MaxWidthNormalStyle);
+                GUILayout.Label("子物体上搜索绑定组件:", TemplateGUIStyles.MaxWidthNormalStyle);
+                var newSearch = EditorGUILayout.Toggle(SearchSubBinding);
+                if (newSearch != SearchSubBinding)
+                {
+                    SearchSubBinding = newSearch;
+                    _isChanged = true;
+                }
+            }
+            GUILayout.EndHorizontal();
+
+
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label($"自定义的基类(需要带上完整命名空间)空则继承{WindowType.ToString()}:", TemplateGUIStyles.MaxWidthNormalStyle);
                 var newClass = GUILayout.TextField(CustomBaseName, TemplateGUIStyles.InputStyle);
                 if (newClass != CustomBaseName)
                 {
@@ -213,11 +256,22 @@ namespace HotCode.FrameworkEditor
             GUILayout.EndHorizontal();
 
 
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label("自定义资源的路径（相对于Res/02_UIPrefabs/，可选参数）:", TemplateGUIStyles.MaxWidthNormalStyle);
+                var tempName = GUILayout.TextField(ResParentName, TemplateGUIStyles.InputStyle);
+                if (tempName != ResParentName)
+                {
+                    ResParentName = tempName;
+                    _isChanged = true;
+                }
+            }
+            GUILayout.EndHorizontal();
 
             string assetPath = UIWindowName;
             if (!string.IsNullOrEmpty(ResParentName))
             {
-                assetPath = ResParentName + "/" + assetPath;
+                assetPath = ResParentName.EndsWith(PrefabSuffix) ? ResParentName.Substring(0, ResParentName.Length - PrefabSuffix.Length) : ResParentName;
             }
             assetPath = PathConstant.GetUIPrefabPath(assetPath);
             GUILayout.BeginHorizontal();
@@ -230,19 +284,32 @@ namespace HotCode.FrameworkEditor
 
             //检测prefab以及objectbinding
             assetPath = "Assets/" + assetPath;
-            if (assetPath != _cachePrefabPath)
+            if (assetPath != _cachePrefabPath || _isChanged)
             {
                 _cachePrefabPath = assetPath;
                 var go = AssetDatabase.LoadAssetAtPath<GameObject>(_cachePrefabPath);
                 _cacheHasPrefab = go != null;
-                if (go != null && go.GetComponent<ObjectBinding>() != null)
+
+                do
                 {
-                    _cachePrefabHasBinding = true;
-                }
-                else
-                {
+                    if (go == null)
+                    {
+                        _cachePrefabHasBinding = false;
+                        break;
+                    }
+                    var bind = go.GetComponent<ObjectBinding>();
+                    if (bind != null)
+                    {
+                        _cachePrefabHasBinding = true;
+                        break;
+                    }
+                    if (SearchSubBinding && go.GetComponentInChildren<ObjectBinding>() != null)
+                    {
+                        _cachePrefabHasBinding = true;
+                        break;
+                    }
                     _cachePrefabHasBinding = false;
-                }
+                } while (false);
             }
 
             //检测当前模板状态
