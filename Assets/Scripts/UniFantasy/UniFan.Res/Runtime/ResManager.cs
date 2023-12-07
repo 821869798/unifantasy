@@ -21,7 +21,7 @@ namespace UniFan.Res
 
         [SerializeField] private int _curCoroutineCount;
         private const int MaxCoroutineCount = 8; //最快协成大概在6到8之间
-        private LinkedList<IEnumeratorTask> _resIEnumeratorTaskStack = new LinkedList<IEnumeratorTask>();
+        private readonly Queue<IEnumeratorTask> _resIEnumeratorTaskStack = new Queue<IEnumeratorTask>();
 
         //Res 在ResMgr中 删除的问题，ResMgr定时收集列表中的Res然后删除
         private bool _isResMapDirty;
@@ -133,7 +133,7 @@ namespace UniFan.Res
                 return;
             }
 
-            _resIEnumeratorTaskStack.AddLast(task);
+            _resIEnumeratorTaskStack.Enqueue(task);
             TryStartNextIEnumeratorTask();
         }
 
@@ -149,8 +149,7 @@ namespace UniFan.Res
                 return;
             }
 
-            var task = _resIEnumeratorTaskStack.First.Value;
-            _resIEnumeratorTaskStack.RemoveFirst();
+            var task = _resIEnumeratorTaskStack.Dequeue();
 
             ++_curCoroutineCount;
             MonoDriver.Instance.StartCoroutine(task.DoIEnumeratorTask(OnIEnumeratorTaskFinish));

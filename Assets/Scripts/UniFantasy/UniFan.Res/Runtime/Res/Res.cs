@@ -134,9 +134,10 @@ namespace UniFan.Res
         {
             if (_resListener != null)
             {
-                _resListener(result, this);
+                var callback = _resListener;
+                _resListener = null;
+                callback(result, this);
             }
-            _resListener = null;
         }
 
         protected void OnResLoadFaild()

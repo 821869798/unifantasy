@@ -242,34 +242,28 @@ namespace UniFan.Res
 
         private void OnResLoadAsyncFinish(AsyncTaskSequence asyncTask)
         {
-            if (_asyncLoadMap.ContainsKey(asyncTask))
+            if (_asyncLoadMap.TryGetValue(asyncTask, out var obj))
             {
-                Action<Object> assetCallback = _asyncLoadMap[asyncTask] as Action<Object>;
+
+                Object asset = null;
+                Action<Object> assetCallback = obj as Action<Object>;
+                List<IAsyncTask> lastTask = asyncTask.GetLastSequence();
+
+                if (lastTask != null && lastTask.Count > 0)
+                {
+                    IRes curRes = lastTask[0] as IRes;
+                    asset = curRes.Asset;
+                }
+
+                // clear async task sequence
+                _asyncLoadMap.Remove(asyncTask);
+                asyncTask.Put2Pool();
+
                 if (assetCallback != null)
                 {
-                    List<IAsyncTask> lastTask = asyncTask.GetLastSequence();
-                    if (lastTask != null && lastTask.Count > 0)
-                    {
-                        IRes res = lastTask[0] as IRes;
-                        if (res != null)
-                        {
-                            assetCallback(res.Asset);
-                        }
-                        else
-                        {
-                            assetCallback(null);
-                        }
-                    }
-                    else
-                    {
-                        assetCallback(null);
-                    }
+                    assetCallback(asset);
                 }
-                if (_asyncLoadMap.ContainsKey(asyncTask))
-                {
-                    _asyncLoadMap.Remove(asyncTask);
-                    asyncTask.Put2Pool();
-                }
+
             }
         }
 
@@ -315,13 +309,6 @@ namespace UniFan.Res
             await task;
 #pragma warning restore CS4014
 
-
-            //移除自己
-            if (_asyncLoadMap.ContainsKey(asyncTask))
-            {
-                _asyncLoadMap.Remove(asyncTask);
-            }
-
             //获取结果
             T result;
             List<IAsyncTask> lastTask = asyncTask.GetLastSequence();
@@ -335,6 +322,11 @@ namespace UniFan.Res
                 result = null;
             }
 
+            //移除自己
+            if (_asyncLoadMap.ContainsKey(asyncTask))
+            {
+                _asyncLoadMap.Remove(asyncTask);
+            }
             //清除自己
             asyncTask.Put2Pool();
 
@@ -392,11 +384,17 @@ namespace UniFan.Res
                     Object asset = null;
                     Action<Object> assetCallback = obj as Action<Object>;
                     List<IAsyncTask> lastTask = ats.GetLastSequence();
+
                     if (lastTask != null && lastTask.Count > 0)
                     {
                         IRes curRes = lastTask[0] as IRes;
                         asset = curRes.Asset;
                     }
+
+                    // clear async task sequence
+                    _asyncLoadMap.Remove(ats);
+                    ats.Put2Pool();
+
                     if (asset == null)
                     {
                         Debug.LogWarning("Resloader DoLoadAsyncAwait Asset is null,assetName:" + assetName);
@@ -407,11 +405,6 @@ namespace UniFan.Res
                     }
                     wait.IsDone = true;
                     wait.Result = asset;
-                    if (_asyncLoadMap.ContainsKey(ats))
-                    {
-                        _asyncLoadMap.Remove(ats);
-                        ats.Put2Pool();
-                    }
                 }
             };
             asyncTask.Append(res);
@@ -472,7 +465,6 @@ namespace UniFan.Res
                 ReleaseAllRes();
                 return;
             }
-
             if (_resSet.Count > 0)
             {
                 Debug.LogError("[ResLoader|Dispose] No manual release resource,resCount:" + _resSet.Count);
