@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
+using UniFanEditor;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,8 +14,41 @@ namespace HotCode.FrameworkEditor
         [MenuItem("GameEditor/TemplateWindow(文件创建模板)")]
         private static void ShowEditor()
         {
+            OpenInternal();
+        }
+
+        private static TemplateEditorWindow OpenInternal()
+        {
             _instance = GetWindow<TemplateEditorWindow>("Template");
             _instance.Show();
+            return _instance;
+        }
+
+        [InitializeOnLoadMethod]
+        static void RegisterTemplateFunction()
+        {
+            ObjectBindingEditor.CreateCSTemplateAction = (objectBinding, name) =>
+            {
+                var template = OpenByTemplateType<TemplateUIWindow>(ETemplateType.UIWindow);
+                template.ResetOptions();
+                template.LoadTemplateFile();
+                template.InitTemplateUI(objectBinding, name);
+            };
+        }
+
+        public static T OpenByTemplateType<T>(ETemplateType templateType) where T : TemplateBase
+        {
+            var window = OpenInternal();
+            var targetType = typeof(T);
+            foreach (var t in window._allTemplates)
+            {
+                if (t.TemplateType == templateType)
+                {
+                    window._curTemplateType = templateType;
+                    return t as T;
+                }
+            }
+            return default(T);
         }
 
         private TemplateBase[] _allTemplates;
@@ -73,13 +106,13 @@ namespace HotCode.FrameworkEditor
             }
             if (isChanged)
             {
-                //加载模板文件
+                // 更改类型，重新加载模板文件
                 template.LoadTemplateFile();
             }
             EditorGUI.BeginChangeCheck();
             template.OnGUI();
             isChanged = isChanged || EditorGUI.EndChangeCheck();
-            if (isChanged)
+            if (isChanged || template.ForceRender())
             {
                 currentTemplateValue = template.RenderTemplate();
             }

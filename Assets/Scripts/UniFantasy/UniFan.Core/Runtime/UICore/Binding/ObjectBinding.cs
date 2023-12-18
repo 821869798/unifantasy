@@ -1,8 +1,8 @@
 #if UNITY_EDITOR
 using Sirenix.OdinInspector;
+using System.Reflection;
 #endif
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -15,6 +15,14 @@ namespace UniFan
 #endif
     public class ObjectBinding : MonoBehaviour
     {
+#if UNITY_EDITOR
+        /// <summary>
+        /// 编辑器用，用于直接生成代码到文件中(如果为空，就使用当前GameObject name作为类型生成),否则用当前类名来寻找cs文件
+        /// </summary>
+        [HideInInspector]
+        public string editorCustomClass;
+#endif
+
 #if UNITY_EDITOR
         [ListDrawerSettings(NumberOfItemsPerPage = 30, HideAddButton = true, Expanded = true)]
 #endif
@@ -56,6 +64,16 @@ namespace UniFan
             return null;
         }
 
+        public bool TryGetVariableValue<T>(string name, out T value)
+        {
+            if (variableMap.TryGetValue(name, out var variable))
+            {
+                value = variable.GetValue<T>();
+                return true;
+            }
+            value = default(T);
+            return false;
+        }
 #if UNITY_EDITOR
 
         /// <summary>

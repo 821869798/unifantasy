@@ -46,5 +46,29 @@ namespace HotCode.FrameworkEditor
                 registerAction?.Invoke(instance);
             }
         }
+
+        public static bool TryGetTransformRelativePath(Transform root, Transform subTransform, out string path)
+        {
+            var current = subTransform;
+            path = string.Empty;
+
+            while (current != null)
+            {
+                if (current == root)
+                {
+                    return true;
+                }
+                if (string.IsNullOrEmpty(path))
+                {
+                    path = current.name;
+                }
+                else
+                {
+                    path = current.name + "/" + path;
+                }
+                current = current.parent;
+            }
+            return false;
+        }
     }
 }

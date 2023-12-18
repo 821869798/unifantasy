@@ -14,8 +14,11 @@ namespace UniFanEditor
     public class ObjectBindingEditor : OdinEditor
     {
         SerializedProperty variables;
+        private bool _enableCustomClassName;
 
         private static readonly GUILayoutOption LayoutMinWidth = GUILayout.MinWidth(40);
+
+        public static System.Action<ObjectBinding, string> CreateCSTemplateAction;
 
         protected override void OnEnable()
         {
@@ -25,6 +28,7 @@ namespace UniFanEditor
             if (target is ObjectBinding objectBinding)
             {
                 objectBinding.editorChanged = false;
+                _enableCustomClassName = !string.IsNullOrEmpty(objectBinding.editorCustomClass);
             }
         }
 
@@ -131,6 +135,25 @@ namespace UniFanEditor
 
             EditorGUILayout.BeginHorizontal();
             {
+                _enableCustomClassName = EditorGUILayout.Toggle("CustomClassName:", _enableCustomClassName);
+                if (_enableCustomClassName)
+                {
+                    if (string.IsNullOrEmpty(objectBinding.editorCustomClass))
+                    {
+                        objectBinding.editorCustomClass = objectBinding.gameObject.name;
+                    }
+                    objectBinding.editorCustomClass = EditorGUILayout.TextField(objectBinding.editorCustomClass);
+                }
+                else
+                {
+                    objectBinding.editorCustomClass = string.Empty;
+                    EditorGUILayout.LabelField(objectBinding.gameObject.name);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            {
                 if (GUILayout.Button(new GUIContent("+"), EditorStyles.miniButtonLeft, LayoutMinWidth))
                 {
                     int index = variables.arraySize > 0 ? variables.arraySize : 0;
@@ -142,14 +165,24 @@ namespace UniFanEditor
                     RemoveVariable(variables, index);
                 }
                 GUILayout.FlexibleSpace();
+                if (GUILayout.Button("create cs file", EditorStyles.miniButtonLeft, LayoutMinWidth))
+                {
+                    // 使用该ObjectBinding组件创建一个新的cs文件
+                    if (CreateCSTemplateAction != null)
+                    {
+                        CreateCSTemplateAction?.Invoke(objectBinding, _enableCustomClassName ? objectBinding.editorCustomClass : objectBinding.gameObject.name);
+                    }
+                }
                 if (GUILayout.Button("copy code", EditorStyles.miniButtonLeft, LayoutMinWidth))
                 {
-                    GUIUtility.systemCopyBuffer = (target as ObjectBinding).GetBindingCode();
+                    // 拷贝生成的代码， 手动去粘贴
+                    GUIUtility.systemCopyBuffer = objectBinding.GetBindingCode();
                     EditorBindingUtil.ShowNotificationInInspector("拷贝成功请自行替换代码中的:\nregion ObjectBinding Generate");
                 }
                 if (GUILayout.Button("code2file", EditorStyles.miniButtonLeft, LayoutMinWidth))
                 {
-                    EditorBindingUtil.GenBindingCodeReplaceFile(target as ObjectBinding);
+                    // 智能更新已存在代码文件(不会影响该文件中其他手写的代码，请放心)
+                    EditorBindingUtil.GenBindingCodeReplaceFile(objectBinding);
                 }
             }
             EditorGUILayout.EndHorizontal();
@@ -305,7 +338,7 @@ namespace UniFanEditor
             {
                 return;
             }
-            UnityEditor.Editor repaint = ScriptableObject.CreateInstance<UnityEditor.Editor>();
+            Editor repaint = ScriptableObject.CreateInstance<Editor>();
 
             GameObject gameObject = dragObj[0];
             //拿到物体下的组件

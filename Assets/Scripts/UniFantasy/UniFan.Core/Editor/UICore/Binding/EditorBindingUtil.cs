@@ -84,7 +84,16 @@ namespace UniFanEditor
                 EditorUtility.DisplayDialog("警告", $"当前ObjectBinding对象为空，生成失败", "ok");
                 return;
             }
-            string name = binding.gameObject.name;
+            string name;
+            if (!string.IsNullOrEmpty(binding.editorCustomClass))
+            {
+                name = binding.editorCustomClass;
+            }
+            else
+            {
+                name = binding.gameObject.name;
+            }
+
             //先找到对应的脚本
             string[] guids = AssetDatabase.FindAssets("t:Script " + name);
             string scriptPath = string.Empty;

@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using UniFan;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace HotCode.FrameworkEditor
@@ -42,6 +43,8 @@ namespace HotCode.FrameworkEditor
 
         public const string PrefabSuffix = ".prefab";
 
+        public const string UIPrefabPathRoot = "Assets/Res/02_UIPrefabs/";
+
         public enum TemplateWindowType
         {
             UIBaseWindow = 0,
@@ -55,7 +58,7 @@ namespace HotCode.FrameworkEditor
 
 
         /// <summary>
-        /// UI的名字
+        /// UI的名字，不需要手动赋值
         /// </summary>
         public string UIWindowName { private set; get; }
 
@@ -65,16 +68,16 @@ namespace HotCode.FrameworkEditor
         public string ResParentName { private set; get; }
 
         /// <summary>
-        /// 是否搜寻子物体OjectBinding
-        /// </summary>
-        public bool SearchSubBinding { private set; get; }
-
-        /// <summary>
         /// 自定义父类的名字，需要带上命名空间
         /// </summary>
         public string CustomBaseName { private set; get; }
         public Type CustomBaseType { private set; get; }
         private Type _customeBaseUIB;
+
+        /// <summary>
+        /// ObjectBinding脚本的路径
+        /// </summary>
+        public string ObjectBindingPath { private set; get; }
 
         /// <summary>
         /// 用于记录是否更改的
@@ -93,6 +96,93 @@ namespace HotCode.FrameworkEditor
             outPutFilePath = Path.Combine(Application.dataPath, "Scripts", "HotCode", "Runtime", "Tester").Replace('\\', '/');
         }
 
+        public void InitTemplateUI(ObjectBinding objectBinding, string name)
+        {
+            createFileName = name;
+            if (GetObjectBindingOriginPrefabAndPath(objectBinding, out var assetPath, out var componentPath))
+            {
+                if (assetPath.StartsWith(UIPrefabPathRoot))
+                {
+                    ResParentName = assetPath.Substring(UIPrefabPathRoot.Length);
+                    ResParentName = ResParentName.Remove(ResParentName.LastIndexOf(".")); //去掉后缀
+                }
+                ObjectBindingPath = componentPath;
+            }
+
+            _isChanged = true;
+        }
+
+        /// <summary>
+        /// 拿到ObjectBinding的原始prefab资源路径和组件在Prefab上的路径
+        /// </summary>
+        /// <param name="objectBinding"></param>
+        /// <param name="assetPath"></param>
+        /// <param name="componentPath"></param>
+        /// <returns></returns>
+        public static bool GetObjectBindingOriginPrefabAndPath(ObjectBinding objectBinding, out string assetPath, out string componentPath)
+        {
+            assetPath = null;
+            componentPath = string.Empty;
+            PrefabAssetType prefabAssetType = PrefabUtility.GetPrefabAssetType(objectBinding);
+            if (prefabAssetType == PrefabAssetType.Regular || prefabAssetType == PrefabAssetType.Variant)
+            {
+                var rootObject = PrefabUtility.GetNearestPrefabInstanceRoot(objectBinding.gameObject);
+                GameObject prefab = null;
+                if (rootObject != null)
+                {
+                    prefab = PrefabUtility.GetCorrespondingObjectFromSource(rootObject);
+                    if (TemplateUtil.TryGetTransformRelativePath(rootObject.transform, objectBinding.transform, out var path))
+                    {
+                        componentPath = path;
+                    }
+                }
+                else
+                {
+                    prefab = objectBinding.gameObject;
+                }
+
+                assetPath = AssetDatabase.GetAssetPath(prefab);
+
+                return !string.IsNullOrEmpty(assetPath);
+            }
+
+            PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+            // 判断是否是PrefabStage打开的预制体
+            if (prefabStage == null)
+            {
+                return false;
+            }
+
+            var root = prefabStage.prefabContentsRoot;
+
+            if (!TemplateUtil.TryGetTransformRelativePath(root.transform, objectBinding.transform, out var path2))
+            {
+                // 不是编辑器模式下的预制体
+                return false;
+            }
+
+            assetPath = prefabStage.assetPath;
+            componentPath = path2;
+
+            //var prefabAsset = AssetDatabase.LoadAssetAtPath<GameObject>(prefabStage.assetPath);
+            //if (prefabAsset == null)
+            //{
+            //    return false;
+            //}
+
+            //var componentPrefab = prefabAsset.transform.Find(path2);
+
+            //var test = PrefabUtility.GetOutermostPrefabInstanceRoot(componentPrefab);
+
+            //var rootObject2 = PrefabUtility.GetNearestPrefabInstanceRoot(objectBinding.gameObject);
+
+            //if (!TemplateUtil.TryGetTransformRelativePath(rootObject2.transform, componentPrefab, out componentPath))
+            //{
+            //    return false;
+            //}
+
+            return true;
+        }
 
         public override void ResetOptions()
         {
@@ -102,6 +192,8 @@ namespace HotCode.FrameworkEditor
             _cacheHasPrefab = false;
             _cachePrefabHasBinding = false;
             _errorType = PreviewErrorCode.None;
+            ResParentName = string.Empty;
+            ObjectBindingPath = string.Empty;
         }
 
         protected override TemplateObjectBase GenerateTemplateObject()
@@ -109,7 +201,6 @@ namespace HotCode.FrameworkEditor
             var obj = base.GenerateTemplateObject();
             obj["cs_code_head"] = "using UniFan;\nusing HotCode.Framework;\nusing System;\nusing UnityEngine;\nusing UnityEngine.UI;";
             obj["code_namespace"] = "HotCode.Game";
-            obj["parent_path"] = "string.Empty";
             obj["baseclass_fullname"] = WindowType.ToString();
             obj["uib_prefix"] = UIBPrefix;
             obj["window_layer"] = EUILayer.Normal.ToString();
@@ -119,6 +210,11 @@ namespace HotCode.FrameworkEditor
 
             return obj;
 
+        }
+
+        public override bool ForceRender()
+        {
+            return _isChanged;
         }
 
         public override string RenderTemplate()
@@ -149,6 +245,23 @@ namespace HotCode.FrameworkEditor
 
 
                 templateObject["object_binding_code"] = GetObjectBindingCode();
+
+                string parentPath = string.Empty;
+                if (!string.IsNullOrEmpty(ResParentName))
+                {
+                    var assetPath = ResParentName.EndsWith(PrefabSuffix) ? ResParentName.Substring(0, ResParentName.Length - PrefabSuffix.Length) : ResParentName;
+                    var pos = assetPath.LastIndexOf('/');
+                    if (pos >= 0)
+                    {
+                        // 有路径
+                        parentPath = "\"" + assetPath.Substring(0, pos) + "\"";
+                    }
+                }
+                if (string.IsNullOrEmpty(parentPath))
+                {
+                    parentPath = "string.Empty";
+                }
+                templateObject["parent_path"] = parentPath;
             }
 
 
@@ -178,19 +291,28 @@ namespace HotCode.FrameworkEditor
             {
                 return DefaultObjectBindingCode;
             }
-            var binding = go.GetComponent<ObjectBinding>();
-            if (binding != null)
+
+            if (!string.IsNullOrEmpty(ObjectBindingPath))
             {
-                return binding.GetBindingCode(_customeBaseUIB);
+                var obTransform = go.transform.Find(ObjectBindingPath);
+                if (obTransform != null)
+                {
+                    var binding = obTransform.GetComponent<ObjectBinding>();
+                    if (binding != null)
+                    {
+                        return binding.GetBindingCode(_customeBaseUIB);
+                    }
+                }
             }
-            if (SearchSubBinding)
+            else
             {
-                binding = go.GetComponentInChildren<ObjectBinding>();
+                var binding = go.GetComponent<ObjectBinding>();
                 if (binding != null)
                 {
                     return binding.GetBindingCode(_customeBaseUIB);
                 }
             }
+
             return DefaultObjectBindingCode;
         }
 
@@ -212,19 +334,6 @@ namespace HotCode.FrameworkEditor
                 }
             }
             GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            {
-                GUILayout.Label("子物体上搜索绑定组件:", TemplateGUIStyles.MaxWidthNormalStyle);
-                var newSearch = EditorGUILayout.Toggle(SearchSubBinding);
-                if (newSearch != SearchSubBinding)
-                {
-                    SearchSubBinding = newSearch;
-                    _isChanged = true;
-                }
-            }
-            GUILayout.EndHorizontal();
-
 
             GUILayout.BeginHorizontal();
             {
@@ -258,7 +367,7 @@ namespace HotCode.FrameworkEditor
 
             GUILayout.BeginHorizontal();
             {
-                GUILayout.Label("自定义资源的路径（相对于Res/02_UIPrefabs/，可选参数）:", TemplateGUIStyles.MaxWidthNormalStyle);
+                GUILayout.Label($"自定义资源的路径（相对于{UIPrefabPathRoot}，可选参数）:", TemplateGUIStyles.MaxWidthNormalStyle);
                 var tempName = GUILayout.TextField(ResParentName, TemplateGUIStyles.InputStyle);
                 if (tempName != ResParentName)
                 {
@@ -281,6 +390,18 @@ namespace HotCode.FrameworkEditor
                 GUILayout.TextField(assetPath, TemplateGUIStyles.NoInputStyle);
             }
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Label("ObjectBinding路径(空就是根节点上):", TemplateGUIStyles.MaxWidthNormalStyle);
+
+                var tempName = GUILayout.TextField(ObjectBindingPath, TemplateGUIStyles.InputStyle);
+                if (tempName != ObjectBindingPath)
+                {
+                    ObjectBindingPath = tempName;
+                    _isChanged = true;
+                }
+            }
+            GUILayout.EndHorizontal();
 
             //检测prefab以及objectbinding
             assetPath = "Assets/" + assetPath;
@@ -297,17 +418,30 @@ namespace HotCode.FrameworkEditor
                         _cachePrefabHasBinding = false;
                         break;
                     }
-                    var bind = go.GetComponent<ObjectBinding>();
-                    if (bind != null)
+
+                    if (!string.IsNullOrEmpty(ObjectBindingPath))
                     {
-                        _cachePrefabHasBinding = true;
-                        break;
+                        var obTransform = go.transform.Find(ObjectBindingPath);
+                        if (obTransform != null)
+                        {
+                            var binding = obTransform.GetComponent<ObjectBinding>();
+                            if (binding != null)
+                            {
+                                _cachePrefabHasBinding = true;
+                                break;
+                            }
+                        }
                     }
-                    if (SearchSubBinding && go.GetComponentInChildren<ObjectBinding>() != null)
+                    else
                     {
-                        _cachePrefabHasBinding = true;
-                        break;
+                        var binding = go.GetComponent<ObjectBinding>();
+                        if (binding != null)
+                        {
+                            _cachePrefabHasBinding = true;
+                            break;
+                        }
                     }
+
                     _cachePrefabHasBinding = false;
                 } while (false);
             }

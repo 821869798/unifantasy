@@ -106,6 +106,11 @@ namespace HotCode.FrameworkEditor
         /// <returns></returns>
         public abstract string RenderTemplate();
 
+        public virtual bool ForceRender()
+        {
+            return false;
+        }
+
         public virtual void OnGUI()
         {
             GUILayout.BeginHorizontal();
