@@ -67,6 +67,16 @@ namespace HotCode.Framework
             return newitem;
         }
 
+        public bool TryGetFirst(out T item)
+        {
+            if (this.listItems.Count > 0)
+            {
+                item = this.listItems[0];
+                return true;
+            }
+            item = default(T);
+            return false;
+        }
 
         public void Dispose()
         {

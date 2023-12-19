@@ -210,7 +210,13 @@ public class ByteArray
         }
 
         byte[] oldData = rawdata;
-        Capacity = Capacity <= 0 ? DEFAULT_CAP : Capacity * 2;
+
+        do
+        {
+            Capacity = Capacity <= 0 ? DEFAULT_CAP : Capacity * 2;
+
+        } while (Capacity < len + validCount);
+
         rawdata = new byte[Capacity];
         if (validCount > 0)
         {
