@@ -72,6 +72,7 @@ namespace UniFan
                 return true;
             }
             value = default(T);
+            Debug.LogError($"[{nameof(ObjectBinding)}|{this.name}] can't find variable: {name}");
             return false;
         }
 #if UNITY_EDITOR
@@ -151,10 +152,7 @@ namespace UniFan
                     continue;
                 }
                 var vname = "__tbv" + i;
-                sb.Append(spaces);
-                sb.Append($"    var {vname} = __binding.GetVariableByName(\"{Variables[i].name}\");\n");
-                sb.Append(spaces);
-                sb.Append($"    {GenerateValueAssignment(Variables[i], vname, indentCount)}\n");
+                sb.Append($"{GenerateValueAssignment("__binding", Variables[i], vname, indentCount + 1)}\n");
             }
             sb.Append(spaces);
             sb.Append("}\n");
@@ -231,7 +229,7 @@ namespace UniFan
             return variableDeclaration;
         }
 
-        public static string GenerateValueAssignment(Variable variable, string valueName, int indentCount = 0)
+        public static string GenerateValueAssignment(string bindingName, Variable variable, string valueName, int indentCount = 0)
         {
             string valueAssignment = "";
 
@@ -239,42 +237,44 @@ namespace UniFan
             VariableType variableType = variable.variableType;
             string name = variable.name;
 
+            // 前面的空格
+            string spaces = string.Empty.PadLeft(4 * indentCount);
+
             // 根据 VariableType 生成读取数据的代码
             switch (variableType)
             {
                 case VariableType.Object:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<UnityEngine.Object>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<UnityEngine.Object>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.GameObject:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<GameObject>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<UnityEngine.GameObject>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.Component:
                     var variableDeclaration = variable.editorObjectValue is Component component && component != null ? component.GetType().ToString() : string.Empty;
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<{variableDeclaration}>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<{variableDeclaration}>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.Boolean:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<bool>();";
                     break;
                 case VariableType.Integer:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<int>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<int>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.Float:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<float>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<float>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.String:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<string>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<string>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.Color:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<Color>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<UnityEngine.Color>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.Vector2:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<Vector2>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<UnityEngine.Vector2>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.Vector3:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<Vector3>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<UnityEngine.Vector3>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.Vector4:
-                    valueAssignment = $"this.{name} = {valueName}.GetValue<Vector4>();";
+                    valueAssignment = $"{spaces}{bindingName}.TryGetVariableValue<UnityEngine.Vector4>(\"{variable.name}\", out var {valueName});\n{spaces}this.{name} = {valueName};";
                     break;
                 case VariableType.Array:
                     string defType;
@@ -286,12 +286,13 @@ namespace UniFan
                     {
                         defType = GetVariableTypeDeclaration(variable, variable.editorVariableArray.editorArrayType, null);
                     }
-                    string spaces = string.Empty.PadLeft(4 * indentCount);
-                    valueAssignment = $"this.{name} = new {defType}[{valueName}.variableArray?.ArrayValueCount ?? 0];";
-                    valueAssignment += $"\n{spaces}    for (int __index = 0; __index < this.{name}.Length; __index++)";
-                    valueAssignment += $"\n{spaces}    {{";
-                    valueAssignment += $"\n{spaces}        this.{name}[__index] = {valueName}.variableArray.GetValue<{defType}>(__index);";
-                    valueAssignment += $"\n{spaces}    }}";
+
+                    valueAssignment = $"{spaces}var {valueName} = {bindingName}.GetVariableByName(\"{variable.name}\");\n";
+                    valueAssignment += $"{spaces}this.{name} = new {defType}[{valueName}?.arrayValueCount ?? 0];";
+                    valueAssignment += $"\n{spaces}for (int __index = 0; __index < this.{name}.Length; __index++)";
+                    valueAssignment += $"\n{spaces}{{";
+                    valueAssignment += $"\n{spaces}    this.{name}[__index] = {valueName}.variableArray.GetValue<{defType}>(__index);";
+                    valueAssignment += $"\n{spaces}}}";
 
                     break;
                 default:

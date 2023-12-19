@@ -61,6 +61,8 @@ namespace UniFan
 
         public VariableArray variableArray => _variableArray;
 
+        public int arrayValueCount => _variableArray == null ? 0 : _variableArray.ArrayValueCount;
+
         public virtual void SetValue<T>(T value)
         {
             this.SetValue((object)value);

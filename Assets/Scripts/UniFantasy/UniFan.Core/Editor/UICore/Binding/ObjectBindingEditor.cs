@@ -152,6 +152,8 @@ namespace UniFanEditor
             }
             EditorGUILayout.EndHorizontal();
 
+            bool editorChanged = false;
+
             EditorGUILayout.BeginHorizontal();
             {
                 if (GUILayout.Button(new GUIContent("+"), EditorStyles.miniButtonLeft, LayoutMinWidth))
@@ -164,6 +166,8 @@ namespace UniFanEditor
                     int index = variables.arraySize > 0 ? variables.arraySize - 1 : -1;
                     RemoveVariable(variables, index);
                 }
+                editorChanged = EditorGUI.EndChangeCheck();
+
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button("create cs file", EditorStyles.miniButtonLeft, LayoutMinWidth))
                 {
@@ -187,10 +191,12 @@ namespace UniFanEditor
             }
             EditorGUILayout.EndHorizontal();
 
+            EditorGUI.BeginChangeCheck();
+
             //绘制base
             base.OnInspectorGUI();
 
-            if (EditorGUI.EndChangeCheck())
+            if (EditorGUI.EndChangeCheck() || editorChanged)
             {
                 Undo.RegisterCompleteObjectUndo(target, "Modify Binding:" + target.name);
                 serializedObject.ApplyModifiedProperties();
