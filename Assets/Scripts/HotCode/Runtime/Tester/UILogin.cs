@@ -29,17 +29,19 @@ namespace HotCode.Game
         #region Template Generate,don't modify
         protected partial class UIB_UILogin
         {
-            #region ObjectBinding Generate 
+            #region ObjectBinding Generate
             public UniFan.ExImage image { protected set; get; }
             public UniFan.ExButton button { protected set; get; }
+            public UnityEngine.UI.ExLoopVerticalScrollRect verticalLoopScroll { protected set; get; }
             protected virtual void InitBinding(ObjectBinding __binding)
             {
-                var __tbv0 = __binding.GetVariableByName("image");
-                this.image = __tbv0.GetValue<UniFan.ExImage>();
-                var __tbv1 = __binding.GetVariableByName("button");
-                this.button = __tbv1.GetValue<UniFan.ExButton>();
+                __binding.TryGetVariableValue<UniFan.ExImage>("image", out var __tbv0);
+                this.image = __tbv0;
+                __binding.TryGetVariableValue<UniFan.ExButton>("button", out var __tbv1);
+                this.button = __tbv1;
+                __binding.TryGetVariableValue<UnityEngine.UI.ExLoopVerticalScrollRect>("verticalLoopScroll", out var __tbv2);
+                this.verticalLoopScroll = __tbv2;
             }
-
             #endregion ObjectBinding Generate 
         }
         #endregion Template Generate,don't modify
@@ -70,18 +72,33 @@ namespace HotCode.Game
         {
             this.ui.button.onClick.AddListener(BtnClicked);
 
+            TestLoadRes();
+
             TestTimer().Forget();
 
-            TestLoadRes();
+            TestLoopScrollView();
 
             //TestNetwork();
         }
+
+        private void BtnClicked()
+        {
+            Debug.Log("Button Clicked");
+            TestSendMsg("Button Clicked");
+            this.ui.image.color = Color.blue;
+        }
+
+        #region 加载资源测试
 
         private void TestLoadRes()
         {
             var sp = this.GetWindowResloader().LoadABAsset<Sprite>(PathConstant.GetAtlasSpritePath("Common", "common_white"));
             Debug.Log(sp);
         }
+
+        #endregion
+
+        #region 计时器测试
 
         private async UniTaskVoid TestTimer()
         {
@@ -92,6 +109,32 @@ namespace HotCode.Game
             // stop timer,can call timerId.StopTimer()
             // timerId.StopTimer();
         }
+
+        #endregion
+
+        #region 循环列表测试
+        // 循环列表示例，针对Item很多的情况。
+        private LoopScrollAdapter<UINTestScrollItem> _loopScrollAdapter;
+
+        private void TestLoopScrollView()
+        {
+            // 使用循环列表适配器初始化(更上层的封装，业务写起来更简单)，也可以自己使用原始的对象写(需要多写些代码)。
+            _loopScrollAdapter = new LoopScrollAdapter<UINTestScrollItem>(this.ui.verticalLoopScroll).BindItemNodeChanged(OnScrollItemChanged);
+            // 根据数据来设置Item数量
+            _loopScrollAdapter.RefillCells(1000);
+        }
+
+        private void OnScrollItemChanged(UINTestScrollItem item, int index)
+        {
+            // 实际需要根据index获取数据，然后刷新用数据刷新Item；
+            // 例如 var data = this.dataList[index]; item.RefreshByData(data);
+            item.RefreshScrollItem(index);
+        }
+
+
+        #endregion
+
+        #region 网络测试
 
         NetChannel netChannel;
         private void TestNetwork()
@@ -150,13 +193,7 @@ namespace HotCode.Game
             packet.Put();
         }
 
-
-        private void BtnClicked()
-        {
-            Debug.Log("Button Clicked");
-            TestSendMsg("Button Clicked");
-            this.ui.image.color = Color.blue;
-        }
+        #endregion
 
         protected override void OnDispose()
         {

@@ -1,0 +1,16 @@
+{
+    "name": "ExLoopScrollRect.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:174b432621f01fb418be26ffc6c90e22"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
