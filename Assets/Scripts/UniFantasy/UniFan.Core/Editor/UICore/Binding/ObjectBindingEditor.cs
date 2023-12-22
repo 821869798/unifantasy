@@ -201,6 +201,7 @@ namespace UniFanEditor
                 Undo.RegisterCompleteObjectUndo(target, "Modify Binding:" + target.name);
                 serializedObject.ApplyModifiedProperties();
                 objectBinding.editorChanged = true;
+                EditorUtility.SetDirty(target);
             }
 
         }
