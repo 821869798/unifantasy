@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace HotCode.Framework
+namespace Main
 {
     public static class AndroidInterface
     {
@@ -33,6 +32,36 @@ namespace HotCode.Framework
                 return _androidUtil;
             }
         }
+
+        /// <summary>
+        /// 获取状态栏高度
+        /// AndroidJavaClass的调用泛型调用需要放到aot程序集里
+        /// </summary>
+        /// <returns></returns>
+        public static int GetStatusHeight(int defaultValue = 0)
+        {
+            try
+            {
+                return AndroidUtil.CallStatic<int>("GetStatusHeight");
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        public static bool CallStatic_FuncBool(string method, bool defaultValue = false)
+        {
+            try
+            {
+                return AndroidUtil.CallStatic<bool>(method);
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
     }
 
 }

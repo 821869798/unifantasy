@@ -1,3 +1,4 @@
+using Main;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -77,7 +78,7 @@ namespace HotCode.Framework
             {
                 bool hasNotch = Screen.width > Screen.safeArea.width;
 #if UNITY_ANDROID
-            hasNotch = hasNotch ? true : GetAndroidNotch();
+                hasNotch = hasNotch ? true : GetAndroidNotch();
 #endif
                 return hasNotch;
             }
@@ -86,11 +87,11 @@ namespace HotCode.Framework
         public static float GetDefaultNotchValue()
         {
 #if UNITY_ANDROID
-        float notchHeight = GetAndroidStatusHeight();
-        if (HasNotch)
-        {
-            return notchHeight / Screen.width * 100;
-        }
+            float notchHeight = GetAndroidStatusHeight();
+            if (HasNotch)
+            {
+                return notchHeight / Screen.width * 100;
+            }
 #elif UNITY_IOS
         if (HasNotch)
         {
@@ -103,51 +104,36 @@ namespace HotCode.Framework
 
 #if UNITY_ANDROID
 
-    public static float GetAndroidStatusHeight()
-    {
-        try
+        public static float GetAndroidStatusHeight()
         {
-            return AndroidInterface.AndroidUtil.CallStatic<int>("GetStatusHeight");
+            return AndroidInterface.GetStatusHeight(0);
         }
-        catch
-        {
 
-        }
-        return 0;
-    }
-
-    public static bool GetAndroidNotch()
-    {
-        var device = DeviceModel();
-        if (!string.IsNullOrEmpty(device))
+        public static bool GetAndroidNotch()
         {
-            var method = string.Format("HasNotchIn{0}", device.Substring(0, 1).ToUpper() + device.Substring(1, device.Length - 1));
-            try
+            var device = DeviceModel();
+            if (!string.IsNullOrEmpty(device))
             {
-                return AndroidInterface.AndroidUtil.CallStatic<bool>(method);
+                var method = string.Format("HasNotchIn{0}", device.Substring(0, 1).ToUpper() + device.Substring(1, device.Length - 1));
+                return AndroidInterface.CallStatic_FuncBool(method, false);
             }
-            catch
-            {
-
-            }
+            return false;
         }
-        return false;
-    }
 
 
-    static readonly string[] TargetDevice = new string[] { "huawei", "xiaomi", "oppo", "vivo" };
+        static readonly string[] TargetDevice = new string[] { "huawei", "xiaomi", "oppo", "vivo" };
 
-    static string DeviceModel()
-    {
-        var deviceName = SystemInfo.deviceModel.ToLower();
-        foreach (var device in TargetDevice)
+        static string DeviceModel()
         {
-            if (deviceName.Contains(device))
-                return device;
-        }
+            var deviceName = SystemInfo.deviceModel.ToLower();
+            foreach (var device in TargetDevice)
+            {
+                if (deviceName.Contains(device))
+                    return device;
+            }
 
-        return null;
-    }
+            return null;
+        }
 #endif
 
     }

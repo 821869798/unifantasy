@@ -15,7 +15,7 @@
 		"ui"
 	],
 	"dependencies": {
-		"com.cysharp.unitask": "2.3.3",
+		"com.cysharp.unitask": "2.5.0",
 		"org.icsharpcode.sharpziplib": "1.4.1",
 		"com.unity.scriptablebuildpipeline": "1.20.2"
 	}

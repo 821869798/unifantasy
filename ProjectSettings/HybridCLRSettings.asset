@@ -29,6 +29,7 @@ MonoBehaviour:
   - System.Core
   - UniTask
   - UniFan
+  - Main
   outputLinkFile: HybridCLRData/Generated/link.xml
   outputAOTGenericReferenceFile: HybridCLRData/Generated/AOTGenericReferences.cs
   maxGenericReferenceIteration: 10

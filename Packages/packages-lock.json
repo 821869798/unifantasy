@@ -1,14 +1,14 @@
 {
   "dependencies": {
     "com.code-philosophy.hybridclr": {
-      "version": "3.4.2",
+      "version": "3.4.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://package.openupm.cn"
     },
     "com.cysharp.unitask": {
-      "version": "2.3.3",
+      "version": "2.5.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
