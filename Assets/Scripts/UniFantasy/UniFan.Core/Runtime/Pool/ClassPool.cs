@@ -86,6 +86,10 @@ namespace UniFan
 #endif
                 classPool.Push(data);
             }
+            else if (data is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
 
         public void Reset()
