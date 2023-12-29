@@ -23,7 +23,7 @@ namespace Main
             /// 热更新dll不缺元数据，不需要补充，如果调用LoadMetadataForAOTAssembly会返回错误
             /// 
 
-            var fileListBinary = resloader.LoadABAsset<TextAsset>(HybridCLRUtil.CodeDllPath + HybridCLRUtil.AotFileListName);
+            var fileListBinary = resloader.LoadABAsset<TextAsset>(HybridCLRUtil.CodeDllPath + HybridCLRUtil.AOTMetadataPath + "/" + HybridCLRUtil.AotFileListName);
             if (fileListBinary == null || fileListBinary.bytes == null)
             {
                 Debug.LogError("LoadMetadataForAOTAssemblies FileList failed:" + HybridCLRUtil.AotFileListName);
@@ -52,7 +52,7 @@ namespace Main
             foreach (var aotDllName in aotFileList)
             {
                 //byte[] dllBytes = BetterStreamingAssets.ReadAllBytes(aotDllName + ".bytes");
-                var text = await resloader.LoadABAssetAwait<TextAsset>(HybridCLRUtil.CodeDllPath + aotDllName);
+                var text = await resloader.LoadABAssetAwait<TextAsset>(HybridCLRUtil.CodeDllPath + HybridCLRUtil.AOTMetadataPath + "/" + aotDllName);
                 if (text == null)
                 {
                     return;
@@ -72,6 +72,7 @@ namespace Main
         public static async UniTask<Assembly> LoadHotUpdateAssembly(ResLoader resloader, string fileName)
         {
             var filePath = HybridCLRUtil.CodeDllPath + fileName;
+
 
             var text = await resloader.LoadABAssetAwait<TextAsset>(filePath);
             if (text == null)

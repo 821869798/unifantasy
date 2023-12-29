@@ -29,13 +29,20 @@ namespace MainEditor
         public static readonly string CodeOutputDir = Path.Combine(Application.dataPath, HybridCLRUtil.CodeDllPath);
 
         [MenuItem("HybridCLR/BuildCodesAndCopy", false, 3000)]
-        public static void BuildAndCopyABAOTHotUpdateDlls()
+        public static void BuildAndCopyABAOTHotUpdateDllsMenu()
+        {
+            BuildAndCopyABAOTHotUpdateDlls();
+        }
+
+        public static bool BuildAndCopyABAOTHotUpdateDlls()
         {
             try
             {
                 BuildTarget target = EditorUserBuildSettings.activeBuildTarget;
                 CompileDllCommand.CompileDll(target);
                 CopyABAOTHotUpdateDlls(target);
+                AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+                return true;
             }
             catch (Exception e)
             {
@@ -43,10 +50,14 @@ namespace MainEditor
             }
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            return false;
         }
 
         public static void CopyABAOTHotUpdateDlls(BuildTarget target)
         {
+            // 删除原来的文件
+            DeleteFilesByExtension(CodeOutputDir, "*.bytes");
+
             CopyAOTAssembliesToCodeAssets();
             CopyHotUpdateAssembliesToCodeAssets();
         }
@@ -55,7 +66,7 @@ namespace MainEditor
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
             string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
-            string fileList = Path.Combine(CodeOutputDir, HybridCLRUtil.AotFileListName);
+            string fileList = Path.Combine(CodeOutputDir, HybridCLRUtil.AOTMetadataPath, HybridCLRUtil.AotFileListName);
             using (var fs = File.OpenWrite(fileList))
             using (BinaryWriter bw = new BinaryWriter(fs))
             {
@@ -70,12 +81,11 @@ namespace MainEditor
                         continue;
                     }
                     bw.Write($"{dll}.dll.bytes");
-                    string dllBytesPath = $"{CodeOutputDir}/{dll}.dll.bytes";
+                    string dllBytesPath = Path.Combine(CodeOutputDir, HybridCLRUtil.AOTMetadataPath, dll + ".dll.bytes");
                     File.Copy(srcDllPath, dllBytesPath, true);
                     Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
                 }
             }
-
         }
 
         public static void CopyHotUpdateAssembliesToCodeAssets()
@@ -87,9 +97,19 @@ namespace MainEditor
             foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved)
             {
                 string dllPath = $"{hotfixDllSrcDir}/{dll}";
-                string dllBytesPath = $"{CodeOutputDir}/{dll}.bytes";
+                string dllBytesPath = Path.Combine(CodeOutputDir, dll + ".bytes");
                 File.Copy(dllPath, dllBytesPath, true);
                 Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dllPath} -> {dllBytesPath}");
+            }
+        }
+
+        public static void DeleteFilesByExtension(string directoryPath, string searchPattern)
+        {
+            string[] files = Directory.GetFiles(directoryPath, searchPattern, SearchOption.AllDirectories);
+
+            foreach (string file in files)
+            {
+                File.Delete(file);
             }
         }
     }

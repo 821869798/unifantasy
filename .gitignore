@@ -65,6 +65,8 @@ HybridCLRData
 AssetBundles
 /Assets/Res/99_Codes/*.bytes
 /Assets/Res/99_Codes/*.bytes.meta
+/Assets/Res/99_Codes/AOTMetadata/*.bytes
+/Assets/Res/99_Codes/AOTMetadata/*.bytes.meta
 Assets/resmanifest.bytes
 Assets/resmanifest.bytes.meta
 Assets/StreamingAssets/bundles

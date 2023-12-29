@@ -14,13 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildRules:
   - active: 1
+    buildDesc: "aot\u6CDB\u578B\u8865\u5145\u5143\u6570\u636E"
+    buildType: 2
+    isOverrideBundleName: 0
+    overrideBundleName: 
+    searchPath: Assets/Res/99_Codes
+    searchPattern: '*.bytes'
+    searchRegex: 
+    searchOption: 1
+    forceInclueDeps: 0
+    manifestWriteType: 0
+    depCulling: 0
+    ignoreDepCulling: 0
+  - active: 1
     buildDesc: "\u70ED\u66F4\u4EE3\u7801"
     buildType: 1
     isOverrideBundleName: 0
     overrideBundleName: 
     searchPath: Assets/Res/99_Codes
     searchPattern: '*.bytes'
-    searchOption: 1
+    searchRegex: 
+    searchOption: 0
     forceInclueDeps: 0
     manifestWriteType: 2
     depCulling: 0
@@ -32,6 +46,7 @@ MonoBehaviour:
     overrideBundleName: 
     searchPath: Assets/Res/04_SpriteAtlas
     searchPattern: '*.spriteatlasv2'
+    searchRegex: 
     searchOption: 1
     forceInclueDeps: 1
     manifestWriteType: 0
@@ -44,6 +59,7 @@ MonoBehaviour:
     overrideBundleName: 
     searchPath: Assets/Res/02_UIPrefabs
     searchPattern: '*.prefab'
+    searchRegex: 
     searchOption: 1
     forceInclueDeps: 0
     manifestWriteType: 2
@@ -56,6 +72,7 @@ MonoBehaviour:
     overrideBundleName: 
     searchPath: Assets/Res/01_Scenes
     searchPattern: '*.unity'
+    searchRegex: 
     searchOption: 1
     forceInclueDeps: 0
     manifestWriteType: 0
