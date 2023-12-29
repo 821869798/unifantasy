@@ -42,7 +42,7 @@ namespace UniFan.ResEditor
         /// </summary>
         static string[] ResSplitRemovePath = {
             ResPathConsts.MediaPath,
-            Path.Combine(Consts.AssetbundleLoadPath,"res","images"),
+            Path.Combine(ABBuildConsts.AssetbundleLoadPath,"res","images"),
         };
 
         /// <summary>

@@ -30,6 +30,8 @@ namespace UniFan.ResEditor
         Toggle _togForceIncludeDep;
         MaskField _maskDepCulling;
         Toggle _togIgnoreDepCulling;
+        VisualElement _assetRegexContainer;
+        TextField _tfAssetSearchRegex;
 
 
 
@@ -147,6 +149,16 @@ namespace UniFan.ResEditor
                 }
             });
 
+            _assetRegexContainer = root.Q<VisualElement>("AssetRegexContainer");
+            _tfAssetSearchRegex = root.Q<TextField>("AssetSearchRegex");
+            _tfAssetSearchRegex.RegisterValueChangedCallback(evt =>
+            {
+                if (this._rule != null)
+                {
+                    this._rule.searchRegex = evt.newValue;
+                }
+            });
+
             _efManifestInfoType = root.Q<EnumField>("ManifestInfoType");
             _efManifestInfoType.RegisterValueChangedCallback(evt =>
             {
@@ -166,7 +178,7 @@ namespace UniFan.ResEditor
             });
 
             _maskDepCulling = root.Q<MaskField>("MaskDepCulling");
-            _maskDepCulling.choices = Consts.BuildCullingLangTypeNames.ToList();
+            _maskDepCulling.choices = ABBuildConsts.BuildCullingLangTypeNames.ToList();
             _maskDepCulling.RegisterValueChangedCallback(evt =>
             {
                 if (this._rule != null)
@@ -202,12 +214,14 @@ namespace UniFan.ResEditor
                 _assetSearchOption.style.display = DisplayStyle.None;
                 _tfAssetSearchPattern.label = "ShareRes Regex Pattern";
                 _tfAssetSearchPattern.tooltip = "正则匹配规则";
+                _assetRegexContainer.style.display = DisplayStyle.None;
             }
             else
             {
                 _assetSearchOption.style.display = DisplayStyle.Flex;
                 _tfAssetSearchPattern.label = "AssetSearchPattern";
                 _tfAssetSearchPattern.tooltip = "支持多个,使用|分割";
+                _assetRegexContainer.style.display = DisplayStyle.Flex;
             }
 
 
@@ -217,6 +231,7 @@ namespace UniFan.ResEditor
             _tfAssetSearchPath.value = rule.searchPath;
             _assetSearchOption.value = rule.searchOption;
             _tfAssetSearchPattern.value = rule.searchPattern;
+            _tfAssetSearchRegex.value = rule.searchRegex;
             _efManifestInfoType.value = rule.manifestWriteType;
             _togForceIncludeDep.value = rule.forceInclueDeps;
             _maskDepCulling.value = rule.depCulling;

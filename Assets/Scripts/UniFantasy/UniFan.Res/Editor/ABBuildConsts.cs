@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
 
 namespace UniFan.ResEditor
 {
-    public static class Consts
+    public static class ABBuildConsts
     {
         //assetbundle资源的扩展名
         public static readonly string BundleExtensionName = ".ab";

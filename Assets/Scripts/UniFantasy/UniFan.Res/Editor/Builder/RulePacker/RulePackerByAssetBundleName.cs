@@ -11,7 +11,7 @@ namespace UniFan.ResEditor
                 return false;
             }
 
-            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
+            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption, rule.searchRegex);
             if (files.Count == 0)
             {
                 return true;

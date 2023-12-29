@@ -48,6 +48,8 @@ namespace UniFan.ResEditor
         public string searchPath;
         //文件搜索通配符
         public string searchPattern;
+        //在文件搜索之后，再使用正则匹配搜索到文件是否需要
+        public string searchRegex;
         //文件搜索选项，递归下层目录或者仅当前层路径
         public SearchOption searchOption = SearchOption.AllDirectories;
         //是否强制包含依赖文件到本ab包中,例如图集把散图打进本包管理

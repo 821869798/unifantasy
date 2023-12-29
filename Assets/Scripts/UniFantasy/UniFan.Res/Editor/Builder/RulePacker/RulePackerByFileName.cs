@@ -7,7 +7,7 @@ namespace UniFan.ResEditor
     {
         public bool ResRulePacker(BuildRule rule)
         {
-            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
+            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption, rule.searchRegex);
             for (int i = 0; i < files.Count; i++)
             {
                 var item = files[i];

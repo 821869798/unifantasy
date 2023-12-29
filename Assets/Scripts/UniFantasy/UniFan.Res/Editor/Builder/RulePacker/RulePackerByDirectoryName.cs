@@ -8,7 +8,7 @@ namespace UniFan.ResEditor
 
         public bool ResRulePacker(BuildRule rule)
         {
-            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption);
+            var files = ABBuildCreator.GetFilesWithoutPacked(rule.searchPath, rule.searchPattern, rule.searchOption, rule.searchRegex);
 
             Dictionary<string, List<string>> bundles = new Dictionary<string, List<string>>();
             Dictionary<string, List<string>> originBundleAssets = new Dictionary<string, List<string>>();

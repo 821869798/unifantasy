@@ -73,7 +73,7 @@ namespace UniFan.ResEditor
             ResetData();
 
             buildLang = lang;
-            cullingLangType = Consts.LangToCullingType(lang);
+            cullingLangType = ABBuildConsts.LangToCullingType(lang);
             onlyBuildCurLang = buildlang;
 
             //打包语言正则
@@ -174,7 +174,12 @@ namespace UniFan.ResEditor
             return packedAssets.Contains(assetName);
         }
 
-        public static void AddPackedAssets(ICollection<string> assetNames)
+        public static void AddPackedAssets(List<string> assetNames)
+        {
+            packedAssets.AddRange(assetNames);
+        }
+
+        public static void AddPackedAssets(HashSet<string> assetNames)
         {
             packedAssets.AddRange(assetNames);
         }
@@ -204,7 +209,7 @@ namespace UniFan.ResEditor
                 }
                 bool isNeedPackFile = true;
                 //不打包.cs文件等类型的资源
-                if (Consts.NoPackedDependenciesFiles.Contains(Path.GetExtension(assetPath).ToLower()))
+                if (ABBuildConsts.NoPackedDependenciesFiles.Contains(Path.GetExtension(assetPath).ToLower()))
                 {
                     isNeedPackFile = false;
                 }
@@ -257,13 +262,13 @@ namespace UniFan.ResEditor
             foreach (var item in allDependencies)
             {
                 //去除不要文件
-                if (Consts.NoPackDependFiles.Contains(Path.GetExtension(item.Key).ToLower()))
+                if (ABBuildConsts.NoPackDependFiles.Contains(Path.GetExtension(item.Key).ToLower()))
                 {
                     continue;
                 }
 
                 //未达到成为公共资源的依赖数量
-                if (item.Value.Count < Consts.CommonAssetRelyCount)
+                if (item.Value.Count < ABBuildConsts.CommonAssetRelyCount)
                 {
                     continue;
                 }
@@ -289,40 +294,40 @@ namespace UniFan.ResEditor
                 for (int k = 0; k < shareRules.Count; k++)
                 {
                     var rule = shareRules[k];
-                    if (shareAssetName.StartsWith(rule.searchPath))
+                    if (!shareAssetName.StartsWith(rule.searchPath))
                     {
-                        if (shareRegexList[k].IsMatch(shareAssetName))
+                        continue;
+                    }
+                    if (shareRegexList[k].IsMatch(shareAssetName))
+                    {
+                        IRulePacker packer = rulePackers[(int)rule.buildType];
+                        if (packer == null)
                         {
-
-                            IRulePacker packer = rulePackers[(int)rule.buildType];
-                            if (packer == null)
-                            {
-                                Debug.LogError("Not found RulePackerType:" + rule.buildType);
-                                return false;
-                            }
-                            string assetBundleName = packer.GetShareRulePackerName(rule, shareAssetName);
-
-                            if (!ABBuildUtility.CheckAssetBundleName(assetBundleName))
-                            {
-                                return false;
-                            }
-                            if (!ABBuildUtility.CheckAssetBundleName(assetBundleName))
-                            {
-                                return false;
-                            }
-                            var sharebuildData = TryNewBuildData(assetBundleName);
-                            sharebuildData.isCommonAssetBundle = true;
-                            sharebuildData.assetNames.Add(shareAssetName);
-                            isInBuild = true;
-                            break;
+                            Debug.LogError("Not found RulePackerType:" + rule.buildType);
+                            return false;
                         }
+                        string assetBundleName = packer.GetShareRulePackerName(rule, shareAssetName);
+
+                        if (!ABBuildUtility.CheckAssetBundleName(assetBundleName))
+                        {
+                            return false;
+                        }
+                        if (!ABBuildUtility.CheckAssetBundleName(assetBundleName))
+                        {
+                            return false;
+                        }
+                        var sharebuildData = TryNewBuildData(assetBundleName);
+                        sharebuildData.isCommonAssetBundle = true;
+                        sharebuildData.assetNames.Add(shareAssetName);
+                        isInBuild = true;
+                        break;
                     }
                 }
 
-                //如果没进共享资源包规则，就自成一包
+                //如果没进共享资源包规则，就按文件夹成一个包
                 if (!isInBuild)
                 {
-                    var assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(shareAssetName, true);
+                    var assetBundleName = ABBuildUtility.BuildAssetBundleNameWithAssetPath(Path.GetDirectoryName(shareAssetName), true);
                     if (!ABBuildUtility.CheckAssetBundleName(assetBundleName))
                     {
                         return false;
@@ -409,61 +414,80 @@ namespace UniFan.ResEditor
             var files = ABBuildCreator.GetAssetDependencies(item);
             var removeAll = files.RemoveAll((string assetPath) =>
             {
-                return Consts.NoPackDependFiles.Contains(Path.GetExtension(assetPath).ToLower()) || (allDependencies.ContainsKey(assetPath) && allDependencies[assetPath].Count >= Consts.CommonAssetRelyCount);
+                return ABBuildConsts.NoPackDependFiles.Contains(Path.GetExtension(assetPath).ToLower()) || (allDependencies.ContainsKey(assetPath) && allDependencies[assetPath].Count >= ABBuildConsts.CommonAssetRelyCount);
             });
             return files;
         }
 
-        public static List<string> GetFilesWithoutPacked(string searchPath, string searchPattern, SearchOption searchOption)
+
+        public static List<string> GetFilesWithoutPacked(string searchPath, string searchPattern, SearchOption searchOption, string searchRegex)
         {
             var files = ABBuildUtility.GetFilesWithoutDirectories(searchPath, searchPattern, searchOption);
-            var removeAll = files.RemoveAll((string obj) =>
+            if (string.IsNullOrEmpty(searchRegex))
             {
-                bool needRemove = false;
-                do
+                _ = files.RemoveAll(CheckFileNeedRemove);
+            }
+            else
+            {
+
+                int searchPathLength = searchPath.Length;
+                if (!searchPath.EndsWith("/"))
                 {
-                    if (Consts.NoPackedFiles.Contains(Path.GetExtension(obj).ToLower()))
+                    searchPathLength++;
+                }
+
+                Regex regex = new Regex(searchRegex, RegexOptions.IgnoreCase);
+                // 需要用正则在此确认是否需要打包
+                _ = files.RemoveAll((item) =>
+                {
+                    if (CheckFileNeedRemove(item))
                     {
-                        needRemove = true;
-                        break;
-                    }
-                    if (!regexMatched.TryGetValue(obj, out var match))
-                    {
-                        match = onlyBuildCurLang && buildLangRegex.IsMatch(obj);
-                        regexMatched[obj] = match;
-                    }
-                    if (match)
-                    {
-                        needRemove = true;
-                        break;
-                    }
-                    string path = obj.Replace("\\", "/");
-                    if (trieTreeFilter.GetPathValueType(path) == PathTrieTree.PathValueType.BlackList)
-                    {
-                        needRemove = true;
-                        break;
-                    }
-                    if (!needRemove)
-                    {
-                        foreach (var noPackDir in Consts.NoPackedDirs)
-                        {
-                            if (path.Contains(noPackDir))
-                            {
-                                needRemove = true;
-                                break;
-                            }
-                        }
+                        return true;
                     }
 
-                } while (false);
+                    var relSearchPath = item.Substring(searchPathLength);
 
-                if (needRemove)
+                    return !regex.IsMatch(relSearchPath);
+                });
+            }
+            return files;
+        }
+
+        /// <summary>
+        /// 检测打包文件是否不需要打包
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private static bool CheckFileNeedRemove(string obj)
+        {
+            if (ABBuildConsts.NoPackedFiles.Contains(Path.GetExtension(obj).ToLower()))
+            {
+                return true;
+            }
+            if (!regexMatched.TryGetValue(obj, out var match))
+            {
+                match = onlyBuildCurLang && buildLangRegex.IsMatch(obj);
+                regexMatched[obj] = match;
+            }
+            if (match)
+            {
+                return true;
+            }
+            string path = obj.Replace("\\", "/");
+            if (trieTreeFilter.GetPathValueType(path) == PathTrieTree.PathValueType.BlackList)
+            {
+                return true;
+            }
+
+            foreach (var noPackDir in ABBuildConsts.NoPackedDirs)
+            {
+                if (path.Contains(noPackDir))
                 {
                     return true;
                 }
-                return ContainPackedAssets(obj);
-            });
-            return files;
+            }
+
+            return ContainPackedAssets(obj);
         }
 
     }

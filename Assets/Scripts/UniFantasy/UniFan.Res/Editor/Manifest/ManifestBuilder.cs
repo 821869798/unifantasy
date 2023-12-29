@@ -160,8 +160,8 @@ namespace UniFan.ResEditor
         {
             try
             {
-                string outputPath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
-                string filePath = Path.Combine(outputPath, Consts.ResBuildReporterName);
+                string outputPath = Path.Combine(ABBuildConsts.AssetBundlesOutputPath, ABBuildConsts.GetPlatformName());
+                string filePath = Path.Combine(outputPath, ABBuildConsts.ResBuildReporterName);
                 using (FileStream fs = File.Open(filePath, FileMode.Create))
                 {
                     using (StreamWriter sw = new StreamWriter(fs))
@@ -200,7 +200,7 @@ namespace UniFan.ResEditor
         {
             try
             {
-                string filePath = Path.Combine(Application.dataPath, Consts.ResManifestBinaryConfigName);
+                string filePath = Path.Combine(Application.dataPath, ABBuildConsts.ResManifestBinaryConfigName);
                 using (FileStream fs = File.Open(filePath, FileMode.Create))
                 {
                     using (BinaryWriter bw = new BinaryWriter(fs))
@@ -237,9 +237,9 @@ namespace UniFan.ResEditor
                 AssetDatabase.Refresh();
                 //打包储存AB包信息的文件
                 AssetBundleBuild build = new AssetBundleBuild();
-                build.assetBundleName = Consts.ResManifestFilePath;
-                build.assetNames = new string[] { string.Concat("Assets/", Consts.ResManifestBinaryConfigName) };
-                string outputPath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
+                build.assetBundleName = ABBuildConsts.ResManifestFilePath;
+                build.assetNames = new string[] { string.Concat("Assets/", ABBuildConsts.ResManifestBinaryConfigName) };
+                string outputPath = Path.Combine(ABBuildConsts.AssetBundlesOutputPath, ABBuildConsts.GetPlatformName());
                 var options = BuildAssetBundleOptions.None;
 
                 options |= BuildAssetBundleOptions.ChunkBasedCompression;
@@ -249,8 +249,8 @@ namespace UniFan.ResEditor
                 BuildPipeline.BuildAssetBundles(outputPath, new AssetBundleBuild[] { build }, options, EditorUserBuildSettings.activeBuildTarget);
 
                 //删除多余文件
-                string manifestAsset = Path.Combine(outputPath, Consts.GetPlatformName());
-                string manifestText = Path.Combine(outputPath, Consts.GetPlatformName() + ".manifest");
+                string manifestAsset = Path.Combine(outputPath, ABBuildConsts.GetPlatformName());
+                string manifestText = Path.Combine(outputPath, ABBuildConsts.GetPlatformName() + ".manifest");
                 if (File.Exists(manifestAsset))
                 {
                     FileUtil.DeleteFileOrDirectory(manifestAsset);

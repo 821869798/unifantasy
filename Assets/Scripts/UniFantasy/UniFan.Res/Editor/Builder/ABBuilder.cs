@@ -12,7 +12,7 @@ namespace UniFan.ResEditor
         public static bool BuildAssetBundles(List<AssetBundleBuild> builds, IResBuildAdapter resBuildAdapter)
         {
 
-            string outputPath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
+            string outputPath = Path.Combine(ABBuildConsts.AssetBundlesOutputPath, ABBuildConsts.GetPlatformName());
 
 
 
@@ -29,10 +29,10 @@ namespace UniFan.ResEditor
                 return false;
             }
             //移动manifest文件
-            string manifestAsset = Path.Combine(outputPath, Consts.GetPlatformName());
-            string manifestText = Path.Combine(outputPath, Consts.GetPlatformName() + ".manifest");
-            string manifestAssetDst = Path.Combine(outputPath, Consts.ManifestFilePath);
-            string manifestTextDst = Path.Combine(outputPath, Consts.ManifestFilePath + ".manifest");
+            string manifestAsset = Path.Combine(outputPath, ABBuildConsts.GetPlatformName());
+            string manifestText = Path.Combine(outputPath, ABBuildConsts.GetPlatformName() + ".manifest");
+            string manifestAssetDst = Path.Combine(outputPath, ABBuildConsts.ManifestFilePath);
+            string manifestTextDst = Path.Combine(outputPath, ABBuildConsts.ManifestFilePath + ".manifest");
             if (File.Exists(manifestAsset))
             {
                 if (File.Exists(manifestAssetDst))
@@ -54,7 +54,7 @@ namespace UniFan.ResEditor
 
         static string GetAbOutputPath()
         {
-            return Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
+            return Path.Combine(ABBuildConsts.AssetBundlesOutputPath, ABBuildConsts.GetPlatformName());
         }
 
         public static bool CreateNewAssetBundleDirectory(bool deleteOld)

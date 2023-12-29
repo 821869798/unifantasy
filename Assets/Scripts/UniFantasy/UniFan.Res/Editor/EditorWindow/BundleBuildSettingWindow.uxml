@@ -40,6 +40,9 @@
                     <uie:EnumField label="AssetSearchOption" name="AssetSearchOption" include-obsolete-values="false" type="System.IO.SearchOption" style="flex-grow: 1; -unity-text-align: upper-left;" />
                     <ui:TextField picking-mode="Ignore" label="AssetSearchPattern" value="filler text" name="AssetSearchPattern" style="flex-grow: 3; -unity-text-align: upper-right;" />
                 </ui:VisualElement>
+                <ui:VisualElement name="AssetRegexContainer" style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
+                    <ui:TextField picking-mode="Ignore" label="AssetSearchRegex(optional)" value="filler text" name="AssetSearchRegex" readonly="false" tooltip="使用正则匹配资源，格式为相对路径，例如^\w+/\w+\.prefab$" style="flex-grow: 1;" />
+                </ui:VisualElement>
                 <ui:VisualElement style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
                     <uie:EnumField label="Manifest Info Write(寻址信息写入)" name="ManifestInfoType" include-obsolete-values="false" type="UniFan.ResEditor.ManifestWriteType, UniFan.ResEditor" value="WriteAll" style="flex-grow: 1;" />
                 </ui:VisualElement>

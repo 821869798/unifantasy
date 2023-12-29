@@ -88,7 +88,7 @@ namespace UniFan.ResEditor
         {
             try
             {
-                string outputPath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName());
+                string outputPath = Path.Combine(ABBuildConsts.AssetBundlesOutputPath, ABBuildConsts.GetPlatformName());
 
                 if (!Directory.Exists(outputPath))
                 {
@@ -112,7 +112,7 @@ namespace UniFan.ResEditor
         [MenuItem("GameEditor/AssetBundle/Copy AssetBundles to StreamingAssets", priority = 20)]
         public static void CopyAssetBundlesToStreamingAssets()
         {
-            string destination = Path.Combine(Application.streamingAssetsPath, Consts.AssetbundleLoadPath);
+            string destination = Path.Combine(Application.streamingAssetsPath, ABBuildConsts.AssetbundleLoadPath);
 
             CopyAssetBundlesToPath(destination);
             AssetDatabase.Refresh();
@@ -121,7 +121,7 @@ namespace UniFan.ResEditor
         [MenuItem("GameEditor/AssetBundle/Zip Encrypted", priority = 21)]
         static void ZipEncrypted()
         {
-            var sourcePath = Path.Combine(Consts.AssetBundlesOutputPath, Consts.GetPlatformName()) + EncryptExtension;
+            var sourcePath = Path.Combine(ABBuildConsts.AssetBundlesOutputPath, ABBuildConsts.GetPlatformName()) + EncryptExtension;
             if (!Directory.Exists(sourcePath))
             {
                 Debug.LogError("No encrypted assetBundle output folder, try to encrypt the assetBundles first.");

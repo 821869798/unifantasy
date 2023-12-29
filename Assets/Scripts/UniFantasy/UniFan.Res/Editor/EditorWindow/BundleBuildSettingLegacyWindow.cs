@@ -227,7 +227,7 @@ namespace UniFan.ResEditor
             GUI.Label(r, "特定语言下不被依赖(勿乱选):");
             r.x += r.width;
             r.width = 150;
-            rule.depCulling = EditorGUI.MaskField(r, rule.depCulling, Consts.BuildCullingLangTypeNames);
+            rule.depCulling = EditorGUI.MaskField(r, rule.depCulling, ABBuildConsts.BuildCullingLangTypeNames);
 
             r.x += r.width + cap;
             r.width = 120;

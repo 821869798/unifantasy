@@ -41,18 +41,20 @@ namespace UniFan.ResEditor
             string fileName;
             if (Directory.Exists(fullPath))
             {
+                // 是目录
                 fileName = Path.GetFileName(assetPath);
             }
             else
             {
+                // 是文件
                 fileName = Path.GetFileNameWithoutExtension(assetPath);
             }
 
             if (isShared)
             {
-                fileName = Consts.CommonAssetBundlePrefix + fileName;
+                fileName = ABBuildConsts.CommonAssetBundlePrefix + fileName;
             }
-            string name = (Path.Combine(Path.GetDirectoryName(assetPath), fileName) + Consts.BundleExtensionName).Replace('\\', '/').ToLower();
+            string name = (Path.Combine(Path.GetDirectoryName(assetPath), fileName) + ABBuildConsts.BundleExtensionName).Replace('\\', '/').ToLower();
             if (name.StartsWith("assets/"))
             {
                 name = name.Substring(7);
@@ -105,6 +107,15 @@ namespace UniFan.ResEditor
             {
                 if (!setMap.Contains(list[i]))
                     setMap.Add(list[i]);
+            }
+        }
+
+        public static void AddRange<T>(this HashSet<T> setMap, ICollection<T> list)
+        {
+            foreach (var item in list)
+            {
+                if (!setMap.Contains(item))
+                    setMap.Add(item);
             }
         }
 
