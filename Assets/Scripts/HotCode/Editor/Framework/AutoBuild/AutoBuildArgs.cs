@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using UnityEngine;
 
 namespace AutoBuild
 {
@@ -36,9 +38,15 @@ namespace AutoBuild
         /// </summary>
         public bool enableIncrement;
 
-        public BuildMode buildMode = BuildMode.AllBuild;
+        /// <summary>
+        /// 出包模式
+        /// </summary>
+        public BuildMode buildMode;
 
-        public AndroidBuildOption androidBuildOption = AndroidBuildOption.Il2cpp64AndX86;
+        /// <summary>
+        /// il2cpp的编译选项
+        /// </summary>
+        public AndroidBuildOption androidBuildOption;
 
         //build方式
         public enum BuildMode
@@ -59,6 +67,16 @@ namespace AutoBuild
             Il2cpp64AndX86 = 3,
             Il2cpp32 = 4,
             AABAndX86 = 5,
+        }
+
+        private AutoBuildArgs()
+        {
+            // 默认值
+            this.versionNumber = "1.0.0.0";
+            this.outputPath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "build_output").Replace('\\', '/');
+            this.buildVersionName = "temp_manual_build";
+            this.buildMode = BuildMode.AllBuild;
+            this.androidBuildOption = AndroidBuildOption.Il2cpp64AndX86;
         }
 
 

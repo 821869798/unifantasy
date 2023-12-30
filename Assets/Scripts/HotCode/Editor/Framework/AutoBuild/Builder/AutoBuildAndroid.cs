@@ -6,9 +6,9 @@ namespace AutoBuild
 {
     public class AutoBuildAndroid : AutoBuildPlatformBase
     {
-        //国内的签名文件（包括心动）
+        //国内包的签名文件
         const string KeystoreName = "Tools/Platform/user.keystore";
-        const string KeyaliasName = "lhcx2";
+        const string KeyaliasName = "unifantasy";
         const string AndroidKeystorePass = "123456";
         const string AndroidKeyaliasPass = "123456";
 

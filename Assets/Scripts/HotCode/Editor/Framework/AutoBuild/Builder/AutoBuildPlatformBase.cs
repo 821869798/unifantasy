@@ -45,9 +45,11 @@ namespace AutoBuild
 
             // HyBridCLR如果没有安装，需要安装一下
             InstallerController hybridclrController = new InstallerController();
-            if (!hybridclrController.HasInstalledHybridCLR())
+            if (!hybridclrController.HasInstalledHybridCLR() || hybridclrController.InstalledLibil2cppVersion != hybridclrController.PackageVersion)
             {
+                Debug.Log("-------------------------- Start  HybridCLR/Install----------------------------------");
                 hybridclrController.InstallDefaultHybridCLR();
+                Debug.Log("-------------------------- Finish HybridCLR/Install----------------------------------");
             }
             if (!hybridclrController.HasInstalledHybridCLR())
             {
@@ -56,7 +58,7 @@ namespace AutoBuild
             }
 
             // 初始化宏设置
-            // InitScriptSymbols();
+            InitScriptSymbols();
 
             // Android il2cpp符号表文件
             EditorUserBuildSettings.androidCreateSymbols = AndroidCreateSymbols.Public;
