@@ -21,11 +21,24 @@ namespace AutoBuild
             return false;
         }
 
+        private static void AutoBuildMenu(AutoBuildPlatformBase builder)
+        {
+            if (AutoBuildLogic(builder))
+            {
+                EditorUtility.DisplayDialog("Info", "Build Complete", "OK");
+                EditorUtility.RevealInFinder(AutoBuildArgs.DefaultBuildOutputPath);
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("Error", "Build Failed", "OK");
+            }
+        }
+
 
         [MenuItem("GameEditor/AutoBuild/BuildWindows")]
         static void BuildWindowsMenu()
         {
-            AutoBuildLogic(new AutoBuildWindows());
+            AutoBuildMenu(new AutoBuildWindows());
         }
 
         public static void BuildWindows()
@@ -39,7 +52,7 @@ namespace AutoBuild
         [MenuItem("GameEditor/AutoBuild/BuildAndroid")]
         static void BuildAndroidMenu()
         {
-            AutoBuildLogic(new AutoBuildAndroid());
+            AutoBuildMenu(new AutoBuildAndroid());
         }
 
         public static void BuildAndroid()
@@ -53,7 +66,7 @@ namespace AutoBuild
         [MenuItem("GameEditor/AutoBuild/BuildiOS")]
         static void BuildiOSMenu()
         {
-            AutoBuildLogic(new AutoBuildiOS());
+            AutoBuildMenu(new AutoBuildiOS());
         }
 
         public static void BuildiOS()
@@ -64,6 +77,8 @@ namespace AutoBuild
             }
         }
 
+        /* 
+        // 废弃了，不需要此操作了
         [MenuItem("GameEditor/AutoBuild/FirstSetupBuild")]
         static void FirstSetupBuildMenu()
         {
@@ -139,6 +154,8 @@ namespace AutoBuild
             var report = BuildPipeline.BuildPlayer(options);
             return report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded;
         }
+
+        */
 
     }
 

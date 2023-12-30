@@ -17,7 +17,7 @@ def GetUnityExePath() {
   if (env.Unity2021) {
     unityExePath = env.Unity2021
   } else {
-    unityExePath = Unity2021_DefaultPath
+    unityExePath = env.Unity2021_DefaultPath
   }
   return unityExePath
 }
@@ -33,10 +33,8 @@ pipeline {
     stage('检测本地工程') {
       steps {
         script {
-          def setupHybridCLR = params.enableforceSetpupHybridCLR
           def projectExist = fileExists(params.projectPath)
           if (!projectExist) {
-            setupHybridCLR = true
             // 不存在工程，需要拉取一下,|符号需要转义
             def scmUrlArray = params.scmUrl.split("\\|")
             def scmUrlRaw = ''
@@ -75,16 +73,6 @@ pipeline {
             }
           }
           
-          // 首次拉取工程后，需要做一次HybridCLR的Setup
-          // 就是安装hybridclr的修改版il2cpp代码，以及先il2cpp打包成功一次，生成mscorlib等程序集才能继续打包
-          //if (setupHybridCLR) {
-          //   def unityExePath = GetUnityExePath()
-          //  def cmdArg = "\"${unityExePath}\" -quit -batchmode -nographics -logfile -projectPath \"${projectPath}\" -executeMethod AutoBuild.AutoBuildEntry.FirstSetupHybridCLR"
-          //  def exitCode = CallCmd(cmdArg)
-          //  if (exitCode != 0) {
-          //    error('unity setup HybridCLR failed!')
-          //  }
-          //}
         }
       }
     }

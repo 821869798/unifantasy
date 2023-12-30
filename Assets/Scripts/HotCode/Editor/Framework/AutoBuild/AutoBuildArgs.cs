@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace AutoBuild
@@ -69,11 +70,13 @@ namespace AutoBuild
             AABAndX86 = 5,
         }
 
+        public static readonly string DefaultBuildOutputPath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "build_output").Replace('\\', '/');
+
         private AutoBuildArgs()
         {
             // 默认值
-            this.versionNumber = "1.0.0.0";
-            this.outputPath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "build_output").Replace('\\', '/');
+            this.versionNumber = FormatVersion(new Version(PlayerSettings.bundleVersion), 4);
+            this.outputPath = DefaultBuildOutputPath;
             this.buildVersionName = "temp_manual_build";
             this.buildMode = BuildMode.AllBuild;
             this.androidBuildOption = AndroidBuildOption.Il2cpp64AndX86;
@@ -160,6 +163,32 @@ namespace AutoBuild
                 return true;
             }
             return false;
+        }
+
+
+        public static string FormatVersion(Version version, int precision)
+        {
+            // Validate input
+            if (version == null)
+            {
+                throw new ArgumentNullException(nameof(version));
+            }
+
+            if (precision < 1 || precision > 4)
+            {
+                throw new ArgumentOutOfRangeException(nameof(precision), "Precision must be between 1 and 4.");
+            }
+
+            // Create a new Version with the specified precision
+            Version truncatedVersion = new Version(
+                version.Major,
+                precision >= 2 ? Math.Max(0, version.Minor) : 0,
+                precision >= 3 ? Math.Max(0, version.Build) : 0,
+                precision == 4 ? Math.Max(0, version.Revision) : 0
+            );
+
+            // Convert the truncated version to a string
+            return truncatedVersion.ToString(precision);
         }
     }
 }

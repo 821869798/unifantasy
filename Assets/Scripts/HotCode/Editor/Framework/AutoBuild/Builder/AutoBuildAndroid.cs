@@ -33,6 +33,8 @@ namespace AutoBuild
             if (buildArgs.buildMode == AutoBuildArgs.BuildMode.BuildResVersion)
                 return true;
 
+            // 关闭导出工程
+            EditorUserBuildSettings.exportAsGoogleAndroidProject = false;
 
             //            //设置icon
             //            var textureName = $"Assets/Built-in-Res/Icon/app_icon_{channelType}.png";

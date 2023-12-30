@@ -40,6 +40,8 @@ namespace AutoBuild
         /// </summary>
         public virtual bool ResetData()
         {
+            // 不要在自动打包代码中使用类似UNITY_ANDROID这样的平台宏，因为切换平台这些需要在下次构建才生效。使用BuildTarget判断
+            
             AutoBuildEntry.UseAutoBuild = true;
             buildArgs = AutoBuildArgs.ParseFromCommandLine();
 
@@ -216,6 +218,7 @@ namespace AutoBuild
 
         /// <summary>
         /// 设置宏定义
+        /// 请不要在自动打包代码中使用这些宏，请直接使用buildArgs
         /// </summary>
         protected virtual void InitScriptSymbols()
         {
