@@ -34,6 +34,7 @@ namespace UniFan
             set
             {
                 T newValue = value;
+                this.value = newValue;
                 if (!inited)
                 {
                     SaveValue(value);
@@ -42,7 +43,6 @@ namespace UniFan
                 }
                 if (!newValue.Equals(this.value))
                 {
-                    this.value = newValue;
                     SaveValue(value);
                 }
             }
