@@ -60,7 +60,7 @@ projects.each { project ->
         description("${project.description}")
         //job parameters
         parameters {
-
+            // 可以使用isUnix()判断如何是非windows系统，默认路径换成例如/User/xxx
             stringParam('projectPath', "D:\\program\\my\\${project.name}", '打包项目所在的目录，不存在通过url拉取')
             stringParam('outputPath', 'D:\\program\\my\\testout', '打包的输出目录')
             extendedChoice SimpleExtendedChoice('buildPlatform','PT_SINGLE_SELECT',3,',','0,1,2',project.buildPlatform,'Windows64,Android,iOS','选择打包平台')
