@@ -28,6 +28,7 @@ namespace UniFan.ResEditor
         TextField _tfAssetSearchPattern;
         EnumField _efManifestInfoType;
         Toggle _togForceIncludeDep;
+        Toggle _togIgnoreAssetGuid;
         MaskField _maskDepCulling;
         Toggle _togIgnoreDepCulling;
         VisualElement _assetRegexContainer;
@@ -177,6 +178,15 @@ namespace UniFan.ResEditor
                 }
             });
 
+            _togIgnoreAssetGuid = root.Q<Toggle>("IgnoreAssetGuid");
+            _togIgnoreAssetGuid.RegisterValueChangedCallback(evt =>
+            {
+                if (this._rule != null)
+                {
+                    this._rule.ignoreAssetGuid = evt.newValue;
+                }
+            });
+
             _maskDepCulling = root.Q<MaskField>("MaskDepCulling");
             _maskDepCulling.choices = ABBuildConsts.BuildCullingLangTypeNames.ToList();
             _maskDepCulling.RegisterValueChangedCallback(evt =>
@@ -234,6 +244,7 @@ namespace UniFan.ResEditor
             _tfAssetSearchRegex.value = rule.searchRegex;
             _efManifestInfoType.value = rule.manifestWriteType;
             _togForceIncludeDep.value = rule.forceInclueDeps;
+            _togIgnoreAssetGuid.value = rule.ignoreAssetGuid;
             _maskDepCulling.value = rule.depCulling;
             _togIgnoreDepCulling.value = rule.ignoreDepCulling;
 

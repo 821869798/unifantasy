@@ -29,6 +29,10 @@ namespace UniFan.ResEditor
                 buildData.assetNames.Add(item);
                 buildData.originAssetNames.Add(item);
                 ABBuildCreator.AddPackedAssets(buildData.assetNames);
+                if (rule.ignoreAssetGuid)
+                {
+                    ABBuildCreator.ReplaceAssetGuidDeterministic(item);
+                }
                 buildData.manifestWriteType = rule.manifestWriteType;
             }
             return true;

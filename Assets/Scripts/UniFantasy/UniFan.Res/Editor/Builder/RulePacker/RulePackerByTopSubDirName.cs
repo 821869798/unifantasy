@@ -68,6 +68,10 @@ namespace UniFan.ResEditor
                 buildData.assetNames.AddRange(item.Value);
                 buildData.originAssetNames.AddRange(originBundleAssets[item.Key]);
                 ABBuildCreator.AddPackedAssets(item.Value);
+                if (rule.ignoreAssetGuid)
+                {
+                    ABBuildCreator.ReplaceAssetGuidDeterministic(item.Value);
+                }
                 buildData.manifestWriteType = rule.manifestWriteType;
             }
             return true;

@@ -1,8 +1,4 @@
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 
 namespace UniFan.ResEditor
 {
@@ -54,6 +50,8 @@ namespace UniFan.ResEditor
         public SearchOption searchOption = SearchOption.AllDirectories;
         //是否强制包含依赖文件到本ab包中,例如图集把散图打进本包管理
         public bool forceInclueDeps = false;
+        // 忽略文件的guid，会替换成计算出来的固定guid，适用于不需要版本控制的文件，但是又需要唯一性，防止打包变化导致ab md5变化，因为有额外的热更
+        public bool ignoreAssetGuid = false;
         //不写入包含的文件到Manifest中，例如lua脚本、图集
         public ManifestWriteType manifestWriteType = ManifestWriteType.WriteAll;
         //该包在某种语言环境下不被引用

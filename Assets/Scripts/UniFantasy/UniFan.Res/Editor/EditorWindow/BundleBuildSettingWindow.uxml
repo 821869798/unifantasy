@@ -47,7 +47,8 @@
                     <uie:EnumField label="Manifest Info Write(寻址信息写入)" name="ManifestInfoType" include-obsolete-values="false" type="UniFan.ResEditor.ManifestWriteType, UniFan.ResEditor" value="WriteAll" style="flex-grow: 1;" />
                 </ui:VisualElement>
                 <ui:VisualElement style="flex-direction: row; min-height: auto; height: 25px; margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
-                    <ui:Toggle label="Force Include Dep(勿乱选,针对图集和Sprite打成同一个包)" name="ForceIncludeDep" style="color: rgb(210, 210, 210); flex-grow: 1; -unity-text-align: upper-left; font-size: 12px; -unity-font-style: normal; white-space: normal; -unity-text-outline-color: rgb(63, 63, 63); -unity-background-image-tint-color: rgb(255, 255, 255);" />
+                    <ui:Toggle label="Force Include Dep(勿乱选)" name="ForceIncludeDep" tooltip="使用场景例如：针对图集和Sprite打成同一个包" style="color: rgb(210, 210, 210); flex-grow: 1; -unity-text-align: upper-left; font-size: 12px; -unity-font-style: normal; white-space: normal; -unity-text-outline-color: rgb(63, 63, 63); -unity-background-image-tint-color: rgb(255, 255, 255);" />
+                    <ui:Toggle label="Ignore Asset&apos;s Guid(勿乱选)" name="IgnoreAssetGuid" tooltip="会忽略资源的的Guid信息，使用固定算法替换这些资源meta的Guid值，适用于不需要版本控制的文件。禁止用于依赖型资源" style="color: rgb(210, 210, 210); flex-grow: 1; -unity-text-align: upper-left; font-size: 12px; -unity-font-style: normal; white-space: normal; -unity-text-outline-color: rgb(63, 63, 63); -unity-background-image-tint-color: rgb(255, 255, 255);" />
                 </ui:VisualElement>
                 <ui:Foldout text="Localization（多语言相关）" value="true" name="LocalizationFoldout" style="margin-left: 5px; margin-right: 5px; margin-top: 5px; margin-bottom: 5px;">
                     <uie:MaskField label="引用剔除（特定语言下不被依赖）" name="MaskDepCulling" style="flex-grow: 1;" />

@@ -23,6 +23,7 @@ MonoBehaviour:
     searchRegex: 
     searchOption: 1
     forceInclueDeps: 0
+    ignoreAssetGuid: 1
     manifestWriteType: 0
     depCulling: 0
     ignoreDepCulling: 0
@@ -36,6 +37,7 @@ MonoBehaviour:
     searchRegex: 
     searchOption: 0
     forceInclueDeps: 0
+    ignoreAssetGuid: 1
     manifestWriteType: 2
     depCulling: 0
     ignoreDepCulling: 0
@@ -49,6 +51,7 @@ MonoBehaviour:
     searchRegex: 
     searchOption: 1
     forceInclueDeps: 1
+    ignoreAssetGuid: 0
     manifestWriteType: 0
     depCulling: 0
     ignoreDepCulling: 0
@@ -62,6 +65,7 @@ MonoBehaviour:
     searchRegex: 
     searchOption: 1
     forceInclueDeps: 0
+    ignoreAssetGuid: 0
     manifestWriteType: 2
     depCulling: 0
     ignoreDepCulling: 0
@@ -75,6 +79,7 @@ MonoBehaviour:
     searchRegex: 
     searchOption: 1
     forceInclueDeps: 0
+    ignoreAssetGuid: 0
     manifestWriteType: 0
     depCulling: 0
     ignoreDepCulling: 0

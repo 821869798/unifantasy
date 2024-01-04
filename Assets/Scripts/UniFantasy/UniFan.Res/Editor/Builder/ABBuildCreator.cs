@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Sirenix.Utilities;
+using UnityEditor;
+using UnityEditor.Build.Pipeline.Utilities;
+using UnityEngine;
 
 namespace UniFan.ResEditor
 {
@@ -29,6 +29,9 @@ namespace UniFan.ResEditor
         public static Dictionary<string, string[]> dependenciesCache = new Dictionary<string, string[]>();
         //相同包里面的文件放在一起，避免多个同名包
         public static Dictionary<string, AssetBundleBuildData> newBuildDatas = new Dictionary<string, AssetBundleBuildData>();
+
+        // 替换的guid资源
+        private readonly static HashSet<string> replaceGuidAssetSet = new HashSet<string>();
 
         //筛选字典树
         public static PathTrieTree trieTreeFilter;
@@ -61,6 +64,7 @@ namespace UniFan.ResEditor
             regexMatched.Clear();
             dependenciesCache.Clear();
             newBuildDatas.Clear();
+            replaceGuidAssetSet.Clear();
 
             CurRuleIndex = 0;
             trieTreeFilter = BuildFilterConfig.GlobalBuildFilterConfig.GetTrieFilterData();
@@ -126,6 +130,9 @@ namespace UniFan.ResEditor
                 }
             }
             outBuilds = builds;
+
+            AssetDatabase.Refresh();
+
             return true;
         }
 
@@ -490,5 +497,48 @@ namespace UniFan.ResEditor
             return ContainPackedAssets(obj);
         }
 
+
+        static readonly Regex regexReplaceGuid = new Regex(@"guid:\s*[0-9a-fA-F]{32}");
+        /// <summary>
+        /// 给asset替换为固定guid
+        /// </summary>
+        /// <param name="assetPath"></param>
+        public static void ReplaceAssetGuidDeterministic(string assetPath)
+        {
+            string metaFilePath = assetPath + ".meta";
+            if (!File.Exists(metaFilePath))
+            {
+                return;
+            }
+            var rawFileHash = HashingMethods.CalculateFile(assetPath);
+            var finalGuid = string.Empty;
+            // 防止guid重复
+            for (uint sign = 0; ; ++sign)
+            {
+                string signString = (sign > 0 ? sign.ToString() : string.Empty);
+                finalGuid = HashingMethods.Calculate(rawFileHash, assetPath + signString).ToString();
+                if (replaceGuidAssetSet.Contains(finalGuid))
+                {
+                    continue;
+                }
+                var existAssetPath = AssetDatabase.GUIDToAssetPath(finalGuid);
+                if (string.IsNullOrEmpty(existAssetPath) || existAssetPath == assetPath)
+                {
+                    replaceGuidAssetSet.Add(finalGuid);
+                    break;
+                }
+            }
+
+            var originMetaContent = File.ReadAllText(metaFilePath);
+            File.WriteAllText(metaFilePath, regexReplaceGuid.Replace(originMetaContent, "guid: " + finalGuid));
+        }
+
+        public static void ReplaceAssetGuidDeterministic(List<string> assetPaths)
+        {
+            foreach (var assetPath in assetPaths)
+            {
+                ReplaceAssetGuidDeterministic(assetPath);
+            }
+        }
     }
 }
