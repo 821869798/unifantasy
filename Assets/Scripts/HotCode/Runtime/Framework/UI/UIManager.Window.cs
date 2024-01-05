@@ -351,29 +351,49 @@ namespace HotCode.Framework
             RemoveAsyncLoading(type);
         }
 
+        /// <summary>
+        /// 关闭所有UI窗体
+        /// </summary>
+        /// <param name="containPermanent">是否包含常驻UI</param>
         public void CloseAllWindow(bool containPermanent)
         {
             _isInCloseAll = true;
             //清除所有的异步加载中的UI
             ClearAllAsyncLoading();
 
+            var windows = ListPool<UIBaseWindow>.Get();
             foreach (var kv in _allWindows)
             {
-                var window = kv.Value;
+                windows.Add(kv.Value);
+            }
+
+            foreach (var window in windows)
+            {
                 if (containPermanent || !window.winSetting.permanent)
                 {
-                    RemoveWindowInternal(kv.Key);
+                    RemoveWindowInternal(window.GetType());
                 }
             }
+
+            ListPool<UIBaseWindow>.Put(windows);
 
             _isInCloseAll = false;
         }
 
+        /// <summary>
+        /// 隐藏所有UI窗体
+        /// </summary>
+        /// <param name="containPermanent">是否包含常驻UI</param>
         public void HideAllWindow(bool containPermanent)
         {
+            var windows = ListPool<UIBaseWindow>.Get();
             foreach (var kv in _allWindows)
             {
-                var window = kv.Value;
+                windows.Add(kv.Value);
+            }
+
+            foreach (var window in windows)
+            {
                 if (window.active
                     && (containPermanent || !window.winSetting.permanent)
                     )
@@ -381,6 +401,8 @@ namespace HotCode.Framework
                     window.Hide();
                 }
             }
+
+            ListPool<UIBaseWindow>.Put(windows);
         }
 
         #endregion
