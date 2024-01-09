@@ -9,7 +9,7 @@
 
 # 环境准备
 
-- Unity2021.3.x
+- Unity2021.3.x，如果需要打PC包，需要安装Unity的il2cpp支持模块（Windows MacOS都有该模块），HybridCLR需要依赖il2cpp
 - Android-SDK
 - Android-NDK
 
@@ -49,7 +49,7 @@ Jenkins自动打开部署在打包机上，就可以远程全自动打包，不�
 
 ## 部署jenkins
 
-- [jenkins.war](https://www.jenkins.io/download/) 可以从连接下在jenkins.war包
+- [jenkins.war](https://www.jenkins.io/download/) 可以从连接下在jenkins.war包，注意要选择Generic Java package (.war)下载，这个是通用的，不要选Windows版本。
 - jdk环境。**不能使用jdk8，jdk8已经不被jenkins支持，一些插件兼容性也可能有问题。**可以去官网下载最新的jdk21,[Java Downloads | Oracle](https://www.oracle.com/java/technologies/downloads/#java21)
 
 - jdk的bin路径添加到环境变量中
@@ -58,10 +58,13 @@ Jenkins自动打开部署在打包机上，就可以远程全自动打包，不�
 
 首先需要在jenkins.war文件所在目录打开终端。
 
-- Windows启动jenkins命令，如果启动失败就去除-Dfile.encoding=utf-8参数(不知道为啥我的电脑不能用改参数启动，可能jdk21不支持？但是控制台中文也没问题)。
+- Windows启动jenkins命令
 
-```
-java -Dfile.encoding=utf-8 -jar jenkins.war
+```shell
+# Powershell用这一行
+$env:JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"; java -jar jenkins.war
+# cmd用这一行
+set JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8 & java -jar jenkins.war
 ```
 
 - MacOS启动jenkins命令
