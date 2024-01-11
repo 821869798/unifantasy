@@ -41,7 +41,7 @@ namespace AutoBuild
         public virtual bool ResetData()
         {
             // 不要在自动打包代码中使用类似UNITY_ANDROID这样的平台宏，因为切换平台这些需要在下次构建才生效。使用BuildTarget判断
-            
+
             AutoBuildEntry.UseAutoBuild = true;
             buildArgs = AutoBuildArgs.ParseFromCommandLine();
 
@@ -64,6 +64,9 @@ namespace AutoBuild
 
             // Android il2cpp符号表文件
             EditorUserBuildSettings.androidCreateSymbols = AndroidCreateSymbols.Public;
+
+            // development模式
+            EditorUserBuildSettings.development = buildArgs.enableUnityDevelopment;
 
             //buildLang = LanguageGlobal.GetDefaultLanguage(buildArgs.AndroidChannelType);
             //打包时不可设置该值

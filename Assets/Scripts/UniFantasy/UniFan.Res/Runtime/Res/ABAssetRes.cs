@@ -243,6 +243,11 @@ namespace UniFan.Res
                     float time = UnityEngine.Random.Range(0, 0.3f) + 0.2f;
                     yield return new WaitForSecondsRealtime(time);
                 }
+                else
+                {
+                    // 非模拟异步的时候也等待1帧，能发现绝大多数错误情况
+                    yield return null;
+                }
 
                 if (obj == null)
                 {

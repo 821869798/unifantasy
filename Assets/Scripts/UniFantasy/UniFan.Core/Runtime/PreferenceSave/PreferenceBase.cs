@@ -34,16 +34,17 @@ namespace UniFan
             set
             {
                 T newValue = value;
-                this.value = newValue;
                 if (!inited)
                 {
-                    SaveValue(value);
+                    SaveValue(newValue);
                     inited = true;
+                    this.value = newValue;
                     return;
                 }
                 if (!newValue.Equals(this.value))
                 {
-                    SaveValue(value);
+                    SaveValue(newValue);
+                    this.value = newValue;
                 }
             }
         }

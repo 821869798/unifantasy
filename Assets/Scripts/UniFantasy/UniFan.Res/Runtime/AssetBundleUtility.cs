@@ -24,6 +24,33 @@ namespace UniFan.Res
 
         // 编辑器模拟 AssetBundle的异步加载
         public static EditorPreferenceBool SimulationAsyncLoad { get; } = new EditorPreferenceBool(nameof(SimulationAsyncLoad));
+
+        public static string GetPlatformName()
+        {
+            return GetPlatformForAssetBundles(EditorUserBuildSettings.activeBuildTarget);
+        }
+
+        public static string GetPlatformForAssetBundles(BuildTarget platform)
+        {
+            switch (platform)
+            {
+                case BuildTarget.Android:
+                    return "Android";
+                case BuildTarget.iOS:
+                    return "iOS";
+                case BuildTarget.tvOS:
+                    return "tvOS";
+                case BuildTarget.WebGL:
+                    return "WebGL";
+                case BuildTarget.StandaloneWindows:
+                case BuildTarget.StandaloneWindows64:
+                    return "Windows";
+                case BuildTarget.StandaloneOSX:
+                    return "OSX";
+                default:
+                    return string.Empty;
+            }
+        }
 #endif
 
         #endregion

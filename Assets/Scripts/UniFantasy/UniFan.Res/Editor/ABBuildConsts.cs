@@ -1,4 +1,4 @@
-using UnityEditor;
+using UniFan.Res;
 
 namespace UniFan.ResEditor
 {
@@ -61,36 +61,7 @@ namespace UniFan.ResEditor
 
         public static string GetPlatformName()
         {
-            return GetPlatformForAssetBundles(EditorUserBuildSettings.activeBuildTarget);
-        }
-
-        public static string GetPlatformForAssetBundles(BuildTarget platform)
-        {
-            if (platform == BuildTarget.Android)
-            {
-                return "Android";
-            }
-            if (platform == BuildTarget.iOS)
-            {
-                return "iOS";
-            }
-            if (platform == BuildTarget.tvOS)
-            {
-                return "tvOS";
-            }
-            if (platform == BuildTarget.WebGL)
-            {
-                return "WebGL";
-            }
-            if (platform == BuildTarget.StandaloneWindows || platform == BuildTarget.StandaloneWindows64)
-            {
-                return "Windows";
-            }
-            if (platform == BuildTarget.StandaloneOSX)
-            {
-                return "OSX";
-            }
-            return null;
+            return AssetBundleUtility.GetPlatformName();
         }
 
         public static readonly string[] BuildCullingLangTypeNames = System.Enum.GetNames(typeof(BuildCullingLangType));

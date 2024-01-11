@@ -122,6 +122,8 @@ namespace UniFan
             return "Android";
 #elif UNITY_IOS
         return "iOS";
+#elif UNITY_WEBGL
+        return "WebGL";
 #endif
         }
 
