@@ -108,7 +108,7 @@ Manager Jenkins -> System。找到全局属性一栏，添加Unity执行文件�
 
 key: Unity2021
 
-value: 根据自己电脑的Unity.exe所在目录填写
+value: 根据自己电脑的Unity.exe所在目录填写。Windows写到Unity.exe，MacOS需要写到Unity.app/Contents/MacOS/Unity
 
 ![image-20240102160636691](img/auto-build-jenkins7.png)
 

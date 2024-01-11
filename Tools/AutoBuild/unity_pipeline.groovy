@@ -17,7 +17,11 @@ def GetUnityExePath() {
   if (env.Unity2021) {
     unityExePath = env.Unity2021
   } else {
-    unityExePath = env.Unity2021_DefaultPath
+    if (isUnix()) {
+      unityExePath = Unity2021_DefaultPath_Unix
+    } else {
+      unityExePath = env.Unity2021_DefaultPath
+    }
   }
   return unityExePath
 }
@@ -27,6 +31,7 @@ pipeline {
 
   environment {
     Unity2021_DefaultPath = 'C:/Program Files/Unity/Hub/Editor/2021.3.16f1/Editor/Unity.exe'
+    Unity2021_DefaultPath_Unix = '/Applications/Unity/Hub/Editor/2021.3.16f1/Unity.app/Contents/MacOS/Unity'
   }
 
   stages {
@@ -51,17 +56,17 @@ pipeline {
             if (params.versionControl == '0') {
               if (scmBranch != '') {
                 cmdArg = """
-                git clone -b ${scmBranch} ${scmUrlRaw} "${projectPath}"
+                git clone -b ${scmBranch} ${scmUrlRaw} "${projectPath}" || exit 1
                 """
               } else {
                 cmdArg = """
-                git clone ${scmUrlRaw} "${projectPath}"
+                git clone ${scmUrlRaw} "${projectPath}" || exit 1
                 """
               }
             }
             else if (params.versionControl == '1') {
               cmdArg = """
-                svn checkout ${scmUrlRaw} "${projectPath}"
+                svn checkout ${scmUrlRaw} "${projectPath}" || exit 1
               """
             }
             if (cmdArg != '') {
@@ -85,16 +90,16 @@ pipeline {
             def cmdArg = ''
             if (params.versionControl == '0') {
               cmdArg = """
-                git -C "${projectPath}" restore -s HEAD -- "${projectPath}/Assets"
-                git -C "${projectPath}" restore -s HEAD -- "${projectPath}/ProjectSettings"
-                git -C "${projectPath}" pull
+                git -C "${projectPath}" restore -s HEAD -- "${projectPath}/Assets" || exit 1
+                git -C "${projectPath}" restore -s HEAD -- "${projectPath}/ProjectSettings" || exit 1
+                git -C "${projectPath}" pull || exit 1
               """
             }
             else if (params.versionControl == '1') {
               cmdArg = """
-                svn revert -R "${projectPath}/Assets"
-                svn revert -R "${projectPath}/ProjectSettings"
-                svn update "${projectPath}"
+                svn revert -R "${projectPath}/Assets" || exit 1
+                svn revert -R "${projectPath}/ProjectSettings" || exit 1
+                svn update "${projectPath}" || exit 1
               """
             }
             if (cmdArg != '') {
@@ -115,8 +120,12 @@ pipeline {
     stage('准备构建参数') {
       steps {
         script {
-          //判断打包平台,用于控制打包方法和输出目录
+          // 判断打包平台,用于控制启动Unity执行的打包方法
           def buildMethod = 'AutoBuild.AutoBuildEntry.'
+          // 启动Unity直接指定的目标平台 
+          // Standalone Win Win64 OSXUniversal Linux64iOS Android WebGL WindowsStoreApps tvOS
+          def buildTarget = ''
+          // 打包输出目录
           def finalOutputPath = outputPath
 
           switch (params.buildPlatform) {
@@ -124,16 +133,19 @@ pipeline {
               //windows
               buildMethod += 'BuildWindows'
               finalOutputPath +=  '/Windows'
+              buildTarget = 'Standalone'
               break
             case '1':
               //Android
               buildMethod += 'BuildAndroid'
               finalOutputPath += '/Android'
+              buildTarget = 'Android'
               break
             case '2':
               //iOS
               buildMethod += 'BuildiOS'
               finalOutputPath += '/iOS'
+              buildTarget = 'iOS'
               break
             default :
               error('Build Platform not support!')
@@ -148,7 +160,7 @@ pipeline {
           echo "buildVersionName:${buildVersionName}"
 
           //调用unity的命令行参数
-          env.unity_execute_arg = ("-quit -batchmode -nographics -logfile -projectPath \"${projectPath}\" -executeMethod ${buildMethod} "
+          env.unity_execute_arg = ("-quit -batchmode -nographics -logfile -projectPath \"${projectPath}\" -executeMethod ${buildMethod} -buildTarget ${buildTarget} "
           + "\"buildPlatform|${buildPlatform}\" \"outputPath|${finalOutputPath}\" \"buildVersionName|${buildVersionName}\" \"buildMode|${buildMode}\" "
           + "\"versionNumber|${versionNumber}\" \"enableIncrement|${enableIncrement}\" \"androidBuildOption|${androidBuildOption}\" \"enableBuildExcel|${enableBuildExcel}\" "
           + "\"enableUnityDevelopment|${enableUnityDevelopment}\" \"enableGameDevelopment|${enableGameDevelopment}\" "

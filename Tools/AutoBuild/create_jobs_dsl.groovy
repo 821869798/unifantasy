@@ -1,3 +1,16 @@
+import org.apache.commons.lang.SystemUtils
+
+// dsl中没法用isUnix函数，只能自己写一个
+def DSL_IsUnix() {
+    if (SystemUtils.IS_OS_UNIX || SystemUtils.IS_OS_MAC) {
+        return true;
+    }
+    else {
+        return false
+    }
+}
+
+
 //定义choice的函数
 def SimpleExtendedChoice(n, t, count, delimiter, v, dv, descValue, desc) {
     def choice = {
@@ -54,15 +67,27 @@ def projects = [
     new PipelineProject(name: "${dsl_pipelineName}-Windows",      buildPlatform: '0',     description: 'build Windows')
 ]
 
+// 默认的工作目录
+def defaultWorkPath = "D:\\program\\my\\";
+if (DSL_IsUnix()) {
+    // macos linux，获取User目录
+    def userHome = System.getProperty('user.home')
+    // 下面这行代码效果是一样的，dsl中能直接用env，需要用System.getenv
+    // def userHome = System.getenv('HOME')
+    defaultWorkPath = "${userHome}/program/my/";
+}
+
+// TODO，推荐把输出目录修改成打包机本地挂载的局域网共享盘（windows和macos都支持挂载的），这样远程打包完直接去共享盘取。
+def defaultOutputPath = defaultWorkPath;
+
 projects.each { project ->
     pipelineJob("${project.name}") {
         // Define job properties
         description("${project.description}")
         //job parameters
         parameters {
-            // 可以使用isUnix()判断如何是非windows系统，默认路径换成例如/User/xxx
-            stringParam('projectPath', "D:\\program\\my\\${project.name}", '打包项目所在的目录，不存在通过url拉取')
-            stringParam('outputPath', 'D:\\program\\my\\testout', '打包的输出目录')
+            stringParam('projectPath', "${defaultWorkPath}${project.name}", '打包项目所在的目录，不存在通过url拉取')
+            stringParam('outputPath', "${defaultOutputPath}testout", '打包的输出目录')
             extendedChoice SimpleExtendedChoice('buildPlatform','PT_SINGLE_SELECT',3,',','0,1,2',project.buildPlatform,'Windows64,Android,iOS','选择打包平台')
             extendedChoice SimpleExtendedChoice('buildMode','PT_SINGLE_SELECT',3,',','0,1,2','0','全量打包,不打包AssetBundle，直接Build,打空包','选择打包模式')
             booleanParam('enableUnityDevelopment',false,'开启unity的developmentbuild')
