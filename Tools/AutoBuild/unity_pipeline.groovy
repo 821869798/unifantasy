@@ -18,7 +18,7 @@ def GetUnityExePath() {
     unityExePath = env.Unity2021
   } else {
     if (isUnix()) {
-      unityExePath = Unity2021_DefaultPath_Unix
+      unityExePath = env.Unity2021_DefaultPath_Unix
     } else {
       unityExePath = env.Unity2021_DefaultPath
     }
@@ -156,7 +156,7 @@ pipeline {
           def buildDisplayName = currentBuild.displayName
           buildDisplayName = buildDisplayName.startsWith('#') ? buildDisplayName.substring(1) : buildDisplayName
           def formattedDate = new Date().format('yyyy-MM-dd')
-          def buildVersionName = "${JOB_NAME}_${buildDisplayName}_${formattedDate}"
+          def buildVersionName = "${JOB_NAME}_${formattedDate}_${buildDisplayName}"
           echo "buildVersionName:${buildVersionName}"
 
           //调用unity的命令行参数
