@@ -91,8 +91,8 @@ java -jar jenkins.war
 
 - Subversion：svn支持，可选，根据需求
 - Extended Choice Parameter： 更强大的参数支持
-
 - Job DSL：能够使用groovy脚本灵活的维护构建
+- Pipeline Utility Steps：groovy脚本的工具类
 
 ### Jenkins首次的设置项
 

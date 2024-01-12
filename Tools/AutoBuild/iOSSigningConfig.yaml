@@ -1,0 +1,26 @@
+# 是否适用远程配置
+signingIsRmote : false
+# 远程仓库类型，0为git,1为svn
+versionControlType: 0
+# 远程配置的仓库链接
+signingScmUrl : ""
+# 分支名,git生效
+signingScmBranch: ""
+# 远程仓库的证书索引文件名带后缀，就是跟本配置一样，放在根目录
+remoteSigningIndex : "iOSSigningConfig.yaml"
+# 证书列表，如果是远程仓库这里之后就不需要写了，写在远程仓库的索引中
+# jenkins中有3个CheckBox选项，1:对应appstore包，2:对应development包 3:对应企业证书包。 可以缺省，但是jenkins里不要选
+# 这里我是只有一个ad-hoc证书，来代替1,2了。
+signings:
+  1:
+    # 自定义ipa包的文件前缀
+    filePrefix: "appstore_"
+    codeSignIdentity: "Apple Distribution: Yueyang Yuncai Engineering Labor Service Co., Ltd (LD9X6CBJK2)"
+    mobileprovisionFilePath: "iOS_Signing/test_ad-hoc.mobileprovision"
+    # 根据证书来写，app-store, development, enterprise, ad-hoc
+    signingMethod: ad-hoc
+  2:
+    filePrefix: "dev_"
+    codeSignIdentity: "Apple Distribution: Yueyang Yuncai Engineering Labor Service Co., Ltd (LD9X6CBJK2)"
+    mobileprovisionFilePath: "iOS_Signing/test_ad-hoc.mobileprovision"
+    signingMethod: ad-hoc

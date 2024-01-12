@@ -68,17 +68,17 @@ def projects = [
 ]
 
 // 默认的工作目录
-def defaultWorkPath = "D:\\program\\my\\";
+def defaultWorkPath = "D:/JenkinsHome/";
 if (DSL_IsUnix()) {
     // macos linux，获取User目录
     def userHome = System.getProperty('user.home')
     // 下面这行代码效果是一样的，dsl中能直接用env，需要用System.getenv
     // def userHome = System.getenv('HOME')
-    defaultWorkPath = "${userHome}/program/my/";
+    defaultWorkPath = "${userHome}/JenkinsHome/";
 }
 
-// TODO，推荐把输出目录修改成打包机本地挂载的局域网共享盘（windows和macos都支持挂载的），这样远程打包完直接去共享盘取。
-def defaultOutputPath = defaultWorkPath;
+ // 默认的输出目录:TODO，推荐把输出目录修改成打包机本地挂载的局域网共享盘（windows和macos都支持挂载的），这样远程打包完直接去共享盘取。
+def defaultOutputPath = "${defaultWorkPath}Output";
 
 projects.each { project ->
     pipelineJob("${project.name}") {
@@ -86,8 +86,8 @@ projects.each { project ->
         description("${project.description}")
         //job parameters
         parameters {
-            stringParam('projectPath', "${defaultWorkPath}${project.name}", '打包项目所在的目录，不存在通过url拉取')
-            stringParam('outputPath', "${defaultOutputPath}testout", '打包的输出目录')
+            stringParam('projectPath', "${defaultWorkPath}Project/${project.name}", '打包项目所在的目录，不存在通过url拉取')
+            stringParam('outputPath', "${defaultOutputPath}", '打包的输出目录')
             extendedChoice SimpleExtendedChoice('buildPlatform','PT_SINGLE_SELECT',3,',','0,1,2',project.buildPlatform,'Windows64,Android,iOS','选择打包平台')
             extendedChoice SimpleExtendedChoice('buildMode','PT_SINGLE_SELECT',3,',','0,1,2','0','全量打包,不打包AssetBundle，直接Build,打空包','选择打包模式')
             booleanParam('enableUnityDevelopment',false,'开启unity的developmentbuild')
@@ -98,13 +98,16 @@ projects.each { project ->
             booleanParam('enableBuildExcel',true,'是否导表')
             booleanParam('enableIncrement',false,'是否是增量打包')
             extendedChoice SimpleExtendedChoice('androidBuildOption','PT_SINGLE_SELECT',6,',','0,1,2,3,4,5','3','Mono,Il2cpp64,AABMode,Il2cpp64AndX86,Il2cpp32,AABAndX86','打包特殊选项')
-            stringParam('versionNumber', '1.0.0.0', '打包版本')
-            
+            stringParam('versionNumber', '1.0.0.0', '打包版本(前三位为app版本,最后一位资源)')
+            stringParam('iOSBundleVersion', '0', 'iOS构建版本号(数字)')
+            extendedChoice SimpleExtendedChoice('iOSSigningType','PT_CHECKBOX',3,',','1,2,3','1,2','appstore发布包,development开发者包,企业证书包','iOS出包证书签名类型，可以多选')
+            booleanParam('iOSIpaResign', true, 'iOS打包多个证书包时，后面的包使用重签名的方式加速')
+            booleanParam('SkipUnityBuild', false, '跳过Unity打包,例如只测试Xcode打包')
         }
 
         definition {
             cps {
-                script(readFileFromWorkspace('Tools/AutoBuild/unity_pipeline.groovy'))
+                script(readFileFromWorkspace('Tools/AutoBuild/scripts/unity_pipeline.groovy'))
                 sandbox()
             }
         }

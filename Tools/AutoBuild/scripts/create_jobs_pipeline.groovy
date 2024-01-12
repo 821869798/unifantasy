@@ -16,7 +16,7 @@ pipeline {
                         dsl_pipelineName: 'trunk',
                         dsl_scmUrl: 'https://github.com/821869798/unifantasy.git|main'
                     ]
-                    jobDsl sandbox: true, targets: 'Tools/AutoBuild/create_jobs_dsl.groovy', additionalParameters: dslParams
+                    jobDsl sandbox: true, targets: 'Tools/AutoBuild/scripts/create_jobs_dsl.groovy', additionalParameters: dslParams
                 }
             }
         }
