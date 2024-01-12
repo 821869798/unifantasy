@@ -49,6 +49,11 @@ namespace AutoBuild
         /// </summary>
         public AndroidBuildOption androidBuildOption;
 
+        /// <summary>
+        /// Android的app的BuildVersion的最后两位手动位，之前位的是时间
+        /// </summary>
+        public int androidVersionEndNum2;
+
         //build方式
         public enum BuildMode
         {
@@ -77,6 +82,10 @@ namespace AutoBuild
             // 默认值
             this.versionNumber = FormatVersion(new Version(PlayerSettings.bundleVersion), 4);
             this.outputPath = DefaultBuildOutputPath;
+            if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
+            {
+                this.outputPath = Path.Combine(DefaultBuildOutputPath, "xcode_project");
+            }
             this.buildVersionName = "temp_manual_build";
             this.buildMode = BuildMode.AllBuild;
             this.androidBuildOption = AndroidBuildOption.Il2cpp64AndX86;
@@ -148,7 +157,10 @@ namespace AutoBuild
                 {
                     buildArgs.enableBuildExcel = bool.Parse(enableBuildExcel);
                 }
-
+                if (TryParseOneArg(arg, "androidVersionEndNum2|", out var androidVersionEndNum2))
+                {
+                    buildArgs.androidVersionEndNum2 = int.Parse(androidVersionEndNum2);
+                }
             }
             return buildArgs;
         }

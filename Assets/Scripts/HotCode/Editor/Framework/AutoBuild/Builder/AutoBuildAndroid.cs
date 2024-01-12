@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -227,23 +228,23 @@ namespace AutoBuild
         //}
 
 
-        //protected override bool SetResVersion(string resVersion)
-        //{
-        //    if (!base.SetResVersion(resVersion))
-        //        return false;
+        protected override bool SetResVersion(string resVersion)
+        {
+            if (!base.SetResVersion(resVersion))
+                return false;
 
-        //    //设置安卓的版本代码
-        //    var nowDate = DateTime.Now;
-        //    if (buildArgs.androidVersionEndNum2 < 0 || buildArgs.androidVersionEndNum2 > 99)
-        //    {
-        //        Debug.LogError($"androidVersionEndNum2({buildArgs.androidVersionEndNum2}) error");
-        //        return false;
-        //    }
-        //    var endNum = buildArgs.androidVersionEndNum2 == 0 ? nowDate.Hour : buildArgs.androidVersionEndNum2;
-        //    PlayerSettings.Android.bundleVersionCode = (nowDate.Year - 2000) * 1000000 + nowDate.Month * 10000 + nowDate.Day * 100 + endNum;
+            //设置安卓的版本代码
+            var nowDate = DateTime.Now;
+            if (buildArgs.androidVersionEndNum2 < 0 || buildArgs.androidVersionEndNum2 > 99)
+            {
+                Debug.LogError($"androidVersionEndNum2({buildArgs.androidVersionEndNum2}) error");
+                return false;
+            }
+            var endNum = buildArgs.androidVersionEndNum2 == 0 ? nowDate.Hour : buildArgs.androidVersionEndNum2;
+            PlayerSettings.Android.bundleVersionCode = (nowDate.Year - 2000) * 1000000 + nowDate.Month * 10000 + nowDate.Day * 100 + endNum;
 
-        //    return true;
-        //}
+            return true;
+        }
 
         public override void StartBuild()
         {

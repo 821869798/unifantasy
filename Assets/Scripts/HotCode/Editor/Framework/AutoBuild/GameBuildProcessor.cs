@@ -42,21 +42,11 @@ namespace AutoBuild
 
             Debug.Log($"[{nameof(GameBuildProcessor)}] -> {nameof(OnPreprocessBuild)}");
 
-            //if (MediaBuildProcessor.MediaBuildIn)
-            //{
-            //    if (!MediaBuildProcessor.CopyMedia())
-            //        EditorApplication.Exit(1);
-            //}
-            //else
-            //{
-            //    MediaBuildProcessor.DeleteBuildInMedia();
-            //}
-
-            if (report.summary.platform == BuildTarget.Android || report.summary.platform == BuildTarget.iOS)
-            {
-                //把多余的资源移除出去,移动平台安装包有大小限制，安卓不超过2g，iOS不超过4g
-                //BuildResSpliter.ResSplitOnPreprocessBuild();
-            }
+            // if (report.summary.platform == BuildTarget.Android || report.summary.platform == BuildTarget.iOS)
+            // {
+            //     //把多余的资源移除出去,移动平台安装包有大小限制，安卓不超过2g，iOS不超过4g
+            //     //BuildResSpliter.ResSplitOnPreprocessBuild();
+            // }
 
         }
 
@@ -73,33 +63,10 @@ namespace AutoBuild
             Debug.Log($"[{nameof(GameBuildProcessor)}] -> {nameof(OnPostprocessBuild)}");
 
 
-            //if (report.summary.platform == BuildTarget.Android || report.summary.platform == BuildTarget.iOS)
-            //{
-            //    //压缩分包资源
-            //    string zipPath;
-            //    if (!string.IsNullOrEmpty(ipaOutputPath) && report.summary.platform == BuildTarget.iOS)
-            //        //放到ipa的输出目录下
-            //        zipPath = Path.Combine(ipaOutputPath, "extraRes.zip");
-            //    else
-            //        zipPath = $"{report.summary.outputPath}_extraRes.zip";
-
-            //    BuildResSpliter.ZipResSplit(zipPath);
-
-            //    //把多余的资源移回来
-            //    BuildResSpliter.MoveBackReSplits();
-            //}
-
-
-            //if (MediaBuildProcessor.MediaBuildIn)
-            //{
-            //    MediaBuildProcessor.DeleteMedia();
-            //}
-
-            //if (AutoBuild.AutoBuildEntry.UseAutoBuild && report.summary.result == BuildResult.Failed)
-            //{
-            //    Debug.LogError("build Failed");
-            //    EditorApplication.Exit(1);
-            //}
+            if (report.summary.platform == BuildTarget.iOS)
+            {
+                XCodePostProcess.PostProcessBuild(report);
+            }
         }
 
         #endregion
