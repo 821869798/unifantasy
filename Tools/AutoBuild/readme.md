@@ -156,8 +156,69 @@ dsl_scmUrl是构建的分支。svn分支的格式是`svn://url`。git分支的�
 
 ![image-20240102165038275](img/auto-build-jenkins8.png)
 
+## iOS打包配置说明
+
+按照上面的教程把jenkins安装，部署在Mac电脑上后，需要以下安装和配置。
+
+- 安装XCode
+- 安装Xcode Command Line，可以在命令行中输入`xcode-select --install` 的方式安装
+- 安装p12证书
+- 有对应mobileprovision证书描述文件，至少1个。类型有app-store, development, enterprise, ad-hoc
+
+### 证书索引配置
+
+示例工程中，有个`iOSSigningConfig.yaml`文件，其中就是配置你存在的mobileprovision证书描述文件供打包使用。其中`unity_pipeline.groovy`代码有这个一句读取配置文件的代码
+
+```groovy
+def iOSYamlText = readFile(file: "${projectPath}/Tools/AutoBuild/iOSSigningConfig.yaml") 
+```
+
+仓库中也有`iOSSigningConfig.yaml`示例文件，请使用自己的证书信息替换这些配置信息，`test_ad-hoc.mobileprovision`可以删除掉。
+文件的示例内容如下：
+
+```yaml
+# 是否适用远程配置
+signingIsRmote : false
+# 远程仓库类型，0为git,1为svn
+versionControlType: 0
+# 远程配置的仓库链接
+signingScmUrl : ""
+# 分支名,git生效
+signingScmBranch: ""
+# 远程仓库的证书索引文件名带后缀，就是跟本配置一样，放在根目录
+remoteSigningIndex : "iOSSigningConfig.yaml"
+# 证书列表，如果是远程仓库这里之后就不需要写了，写在远程仓库的索引中
+# jenkins中有3个CheckBox选项，1:对应appstore包，2:对应development包 3:对应企业证书包。 可以缺省，但是jenkins里不要选
+# 这里我是只有一个ad-hoc证书，来代替1,2了。
+signings:
+  1:
+    # 自定义ipa包的文件前缀
+    filePrefix: "appstore_"
+    codeSignIdentity: "Apple Distribution: Yueyang Yuncai Engineering Labor Service Co., Ltd (LD9X6CBJK2)"
+    mobileprovisionFilePath: "iOS_Signing/test_ad-hoc.mobileprovision"
+    # 根据证书来写，app-store, development, enterprise, ad-hoc
+    signingMethod: ad-hoc
+  2:
+    filePrefix: "dev_"
+    codeSignIdentity: "Apple Distribution: Yueyang Yuncai Engineering Labor Service Co., Ltd (LD9X6CBJK2)"
+    mobileprovisionFilePath: "iOS_Signing/test_ad-hoc.mobileprovision"
+    signingMethod: ad-hoc
+```
+
+该配置文件可以放在工程里，然后可以选择证书描述文件(mobileprovision)是放在工程里的，还是放在远程仓库中的，如果放在远程仓库的，每次打包会拉取下来。
+
+`signings`字段的1、2、3对应的是jenkins的打包的iOS证书类型选项。
+
+如果是第一次用该证书打包，会出现codesign弹框卡住要求输入密码，可以输入后选择始终允许，之后就不会卡住，一口气无人值守打完ipa包。
+
+打包建议，可以勾选使用重签加速打包，第一个包是正式打包(一般是app-store类型的包)。然后测试包用重签快速出ipa，大幅提升出多个ipa的速度。
+
+### 其他注意
+
+游戏不要使用com.unity3d.开头的包名(应该没有游戏会去冒用Unity公司的包名吧！)。因为本项目打iOS包的时候会根据mobileprovision描述文件自动替换包名，所以跟iOS的证书跟Unity项目中设置的包名不一致也无所谓的。但是com.unity3d.开头的包名不会被替换，因为自从Unity2019后导出XCode工程会带一个UnityFramework的项目，这个项目包名是com.unity3d.unityframework，以及一个Tester项目是com.unity3d开头的。
+
 ## TODO 
 
-后续需要根据项目扩展unity_pipeline.groovy脚本，比如打包后的处理，XCode命令行（有pipeline插件或者直接调命令行）打包iOS的ipa包，以及添加热更资源的构建groovy脚本。
+后续需要根据项目需求扩展` create_jobs_dsl.groovy` 和 `unity_pipeline.groovy`和脚本，比如打包后的特殊处理，以及添加热更资源版本构建的groovy脚本。
 
-![image-20240102154533584](img/todo1.png)
+ ![image-20240102154533584](img/todo1.png)
