@@ -135,7 +135,6 @@ namespace AutoBuild
 
             HybridCLR.Editor.Commands.PrebuildCommand.GenerateAll();
 
-            //MediaBuildProcessor.MediaBuildIn.Value = false;
 
             var tempBuildPath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp", "HybridCLR_FirstBuild");
             var parentPath = Path.GetDirectoryName(tempBuildPath);

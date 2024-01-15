@@ -53,6 +53,16 @@ namespace AutoBuild
         /// Android的app的BuildVersion的最后两位手动位，之前位的是时间
         /// </summary>
         public int androidVersionEndNum2;
+		
+        /// <summary>
+        /// 是否把热更资源拷贝到版本库
+        /// </summary>
+        public bool copyToResVersion;
+
+        /// <summary>
+        /// 版本库所在的目录
+        /// </summary>
+        public string sourceVersionPath;
 
         //build方式
         public enum BuildMode
@@ -89,8 +99,23 @@ namespace AutoBuild
             this.buildVersionName = "temp_manual_build";
             this.buildMode = BuildMode.AllBuild;
             this.androidBuildOption = AndroidBuildOption.Il2cpp64AndX86;
+            this.enableUnityDevelopment = EditorUserBuildSettings.development;
+            this.enableGameDevelopment = AutoBuildUtility.ContainScriptingDefineSymbol("GameDev");
+            this.enableBuildExcel = true;
+            this.enableIncrement = true;
+            this.copyToResVersion = true;
+            this.sourceVersionPath = Path.Combine(DefaultBuildOutputPath, "patch_version").Replace('\\', '/');
         }
 
+
+        public string GetAppVersion()
+        {
+            var version = new Version(versionNumber);
+
+            var appVersion = string.IsNullOrEmpty(appVersionNumber) ? version.ToString(3) : appVersionNumber;
+
+            return appVersion;
+        }
 
         /// <summary>
         /// 解析命令行参数
@@ -101,8 +126,15 @@ namespace AutoBuild
             AutoBuildArgs buildArgs = new AutoBuildArgs();
             string[] args = Environment.GetCommandLineArgs();
             UnityEngine.Debug.Log("build command line arg:" + string.Join(" ", args));
+            // 检查参数列表中是否包含 -executeMethod 参数，判断是否是jenkins调用的
+            bool isExecuteMethod = false;
             foreach (var arg in args)
             {
+                if (arg == "-executeMethod")
+                {
+                    isExecuteMethod = true;
+                    continue;
+                }
                 if (TryParseOneArg(arg, "outputPath|", out var outputPath))
                 {
                     buildArgs.outputPath = outputPath;
@@ -162,6 +194,7 @@ namespace AutoBuild
                     buildArgs.androidVersionEndNum2 = int.Parse(androidVersionEndNum2);
                 }
             }
+            _ = isExecuteMethod;
             return buildArgs;
         }
 

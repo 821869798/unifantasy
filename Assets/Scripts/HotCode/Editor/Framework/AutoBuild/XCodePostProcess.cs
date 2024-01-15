@@ -33,7 +33,6 @@ namespace AutoBuild
 
             // 禁用Bitcode
             proj.SetBuildProperty(targetGuidUnityFramework, "ENABLE_BITCODE", "NO");
-            proj.SetBuildProperty(targetGuid,"PRODUCT_BUNDLE_IDENTIFIER","${PRODUCT_BUNDLE_IDENTIFIER_APP}");
             proj.SetBuildProperty(targetGuid, "ENABLE_BITCODE", "NO");
 
             // 应用修改后的设置

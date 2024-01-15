@@ -74,9 +74,6 @@ namespace AutoBuild
             //BuildProcessor.buildLanguage = buildLang;
             //BuildProcessor.ipaOutputPath = buildArgs.ipaOutputPath;
 
-            //包内媒体资源模式
-            //MediaBuildProcessor.MediaBuildIn.Value = true;
-
             if (buildArgs.enableBuildExcel)
             {
 
@@ -100,6 +97,50 @@ namespace AutoBuild
                     Debug.Log("-------------------------- Start  Copy All AssetBundle To Steaming Assets----------------------------------");
                     AssetBundleMenuItem.CopyAssetBundlesToStreamingAssets();
                     Debug.Log("-------------------------- Finish Copy All AssetBundle To Steaming Assets----------------------------------");
+                    /*
+                    //拷贝媒体文件
+                    Debug.Log("-------------------------- Start  Copy Media Files----------------------------------");
+                    if (!MediaBuildProcessor.CopyMedia())
+                    {
+                        return false;
+                    }
+                    Debug.Log("-------------------------- Finish Copy Media Files----------------------------------");
+                    */
+
+                    #region TODO 拆分资源
+                    if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android || EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
+                    {
+                        //把多余的资源移除出去,移动平台安装包有大小限制，安卓不超过2g，iOS不超过4g
+                        //BuildResSpliter.ResSplitOnPreprocessBuild();
+                    }
+                    //if (report.summary.platform == BuildTarget.Android || report.summary.platform == BuildTarget.iOS)
+                    //{
+                    //    //压缩分包资源
+                    //    string zipPath;
+                    //    if (!string.IsNullOrEmpty(ipaOutputPath) && report.summary.platform == BuildTarget.iOS)
+                    //        //放到ipa的输出目录下
+                    //        zipPath = Path.Combine(ipaOutputPath, "extraRes.zip");
+                    //    else
+                    //        zipPath = $"{report.summary.outputPath}_extraRes.zip";
+
+                    //    BuildResSpliter.ZipResSplit(zipPath);
+                    //}
+
+                    #endregion
+
+                    /* 
+                    // 生成PatchManifest,需要在拆分资源之后,因为里面不需要包括拆分出去的资源
+                    Debug.Log("-------------------------------- Start  Generate PatchManifest ---------------------------------------------");
+                    if (!PatchEditorHelper.GeneratePatcManifestFileInfo(Application.streamingAssetsPath, buildArgs.GetAppVersion()))
+                    {
+                        return false;
+                    }
+                    Debug.Log("-------------------------------- Finish Generate PatchManifest ---------------------------------------------");
+                    */
+
+                    // 刷新
+                    AssetDatabase.Refresh();
+
                     break;
                 case AutoBuildArgs.BuildMode.NoAssetBundle:
                     break;
@@ -109,54 +150,65 @@ namespace AutoBuild
                     HybridCLR.Editor.Commands.PrebuildCommand.GenerateAll();
                     Debug.Log("-------------------------- Finish  HybridCLR/Generate/All----------------------------------");
 
-                    //删除所有StreamingAssets文件
+                    //空包删除所有StreamingAssets文件
                     Debug.Log("-------------------------------- Start  Delete All StreamingAssets Files ---------------------------------------------");
                     FilePathHelper.DeleteDir(FilePathHelper.Instance.StreamingAssetsPath, false);
-
-                    //包内媒体资源模式
-                    //MediaBuildProcessor.MediaBuildIn.Value = false;
+                    Debug.Log("-------------------------------- Finish Delete All StreamingAssets Files ---------------------------------------------");
                     break;
 
                 case AutoBuildArgs.BuildMode.BuildResVersion:
 
                     #region 热更资源打包相关
 
-                    ////打ab
-                    //if (buildArgs.BuildResVersionAb)
-                    //{
-                    //    if (!BuildAssetBundle())
-                    //        return false;
-                    //}
+                    /*
+                    //打ab
+                    if (!BuildAssetBundle())
+                        return false;
 
-                    ////拷贝资源到版本库
-                    //if (buildArgs.CopyToResVersion)
-                    //{
-                    //    Debug.Log("-------------------------------- Start Copy To ResVersion ---------------------------------------------");
+                    if (buildArgs.copyToResVersion)
+                    {
+                        Debug.Log("-------------------------------- Start Copy To ResVersion ---------------------------------------------");
+                        var destVersionPath = Path.Combine(buildArgs.sourceVersionPath, ABBuildConsts.GetPlatformName(), buildArgs.versionNumber);
+                        //删除目录下所有文件
+                        if (!FilePathHelper.DeleteDir(destVersionPath))
+                        {
+                            return false;
+                        }
 
-                    //    //删除目录下所有文件
-                    //    if (!FilePathHelper.DeleteDir(buildArgs.sourceVersionPath))
-                    //        return false;
+                        // 拷贝ab到版本库文件夹
+                        var bundlePath = Path.Combine(destVersionPath, ABBuildConsts.AssetbundleLoadPath);
+                        Debug.Log("-------------------------------- Start Copy bundlePath ---------------------------------------------");
+                        if (!AssetBundleMenuItem.CopyAssetBundlesToPath(bundlePath))
+                        {
+                            return false;
+                        }
+                        // 拷贝音视频到版本库文件夹
+                        var mediaPath = Path.Combine(destVersionPath, PathConstant.PackedMediaPath);
+                        Debug.Log("-------------------------------- Start Copy mediaPath ---------------------------------------------");
+                        if (!MediaBuildProcessor.CopyMedia(mediaPath))
+                        {
+                            return false;
+                        }
+                        Debug.Log("-------------------------------- Finish Copy To ResVersion ---------------------------------------------");
 
-                    //    var bundlePath = Path.Combine(buildArgs.sourceVersionPath, Consts.AssetbundleLoadPath);
-                    //    Debug.Log("-------------------------------- Start Copy bundlePath ---------------------------------------------");
-                    //    if (!AssetBundleMenuItem.CopyAssetBundlesToPath(bundlePath))
-                    //        return false;
 
-                    //    var mediaPath = Path.Combine(buildArgs.sourceVersionPath, PathConsts.MediaPath);
-                    //    Debug.Log("-------------------------------- Start Copy mediaPath ---------------------------------------------");
-                    //    if (!BuildProcessor.CopyMedia(mediaPath))
-                    //        return false;
+                        // 生成PatchManifest
+                        Debug.Log("-------------------------------- Start  Generate PatchManifest ---------------------------------------------");
+                        if (!PatchEditorHelper.GeneratePatcManifestFileInfo(destVersionPath, buildArgs.versionNumber))
+                        {
+                            return false;
+                        }
+                        Debug.Log("-------------------------------- Finish Generate PatchManifest ---------------------------------------------");
 
-                    //    Debug.Log("-------------------------------- Finish Copy To ResVersion ---------------------------------------------");
-                    //}
-
+                    }
+                    */
                     #endregion
 
                     return true;
             }
 
             //设置版本
-            if (!SetResVersion(buildArgs.versionNumber))
+            if (!SetVersion())
                 return false;
 
             //设置渠道
@@ -270,20 +322,10 @@ namespace AutoBuild
 
 
         //设置版本
-        protected virtual bool SetResVersion(string resVersion)
+        protected virtual bool SetVersion()
         {
-            var version = new Version(resVersion);
 
-            //var versionJson = new LocalVersionJson()
-            //{
-            //    version = resVersion,
-            //    internalResNum = 0
-            //};
-
-            //var versionTextPath = FilePathHelper.Instance.GetStreamingPath(HotUpdateController.VersionFileName);
-            //versionJson.SaveWrite(versionTextPath);
-
-            PlayerSettings.bundleVersion = string.IsNullOrEmpty(buildArgs.appVersionNumber) ? version.ToString(3) : buildArgs.appVersionNumber;
+            PlayerSettings.bundleVersion = buildArgs.GetAppVersion();
 
             return true;
         }

@@ -228,9 +228,9 @@ namespace AutoBuild
         //}
 
 
-        protected override bool SetResVersion(string resVersion)
+        protected override bool SetVersion()
         {
-            if (!base.SetResVersion(resVersion))
+            if (!base.SetVersion())
                 return false;
 
             //设置安卓的版本代码

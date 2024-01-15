@@ -42,12 +42,6 @@ namespace AutoBuild
 
             Debug.Log($"[{nameof(GameBuildProcessor)}] -> {nameof(OnPreprocessBuild)}");
 
-            // if (report.summary.platform == BuildTarget.Android || report.summary.platform == BuildTarget.iOS)
-            // {
-            //     //把多余的资源移除出去,移动平台安装包有大小限制，安卓不超过2g，iOS不超过4g
-            //     //BuildResSpliter.ResSplitOnPreprocessBuild();
-            // }
-
         }
 
 
@@ -102,7 +96,7 @@ namespace AutoBuild
         }
 
         //先把需要放在StreamingAssets下的文件都放好，然后使用该工具查找生成需要替换的文本内容，并替换GradleReplaceContent
-        [MenuItem("GameEditor/查找StreamingAssets目录下用于gradle不压缩的文件")]
+        [MenuItem("GameEditor/BuildTools/Test/查找StreamingAssets目录下用于gradle不压缩的文件", priority = int.MaxValue)]
         static void GenStreamingAssetsSuffix()
         {
             var fileSuffixSet = new HashSet<string>();
