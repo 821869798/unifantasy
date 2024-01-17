@@ -243,8 +243,10 @@ pipeline {
             # 获取mobileprovision的uuid和包名
             CurrentUUID=`/usr/libexec/PlistBuddy -c 'Print UUID' /dev/stdin <<< \$(security cms -D -i ${mobileprovisionFilePath})` || exit 1
             CurrentBundleId=`/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' /dev/stdin <<< \$(security cms -D -i ${mobileprovisionFilePath}) | cut -d '.' -f2-` || exit 1
+            CurrentDevelopmentTeam=`/usr/libexec/PlistBuddy -c 'Print TeamIdentifier:0' /dev/stdin <<< \$(security cms -D -i ${mobileprovisionFilePath})` || exit 1
             echo CurrentUUID=\${CurrentUUID} > ${tempXcodeProperties} || exit 1
             echo CurrentBundleId=\${CurrentBundleId} >> ${tempXcodeProperties} || exit 1
+            echo CurrentDevelopmentTeam=\${CurrentDevelopmentTeam} >> ${tempXcodeProperties} || exit 1
             # 安装mobileprovision文件
             cp "${mobileprovisionFilePath}" "${env.HOME}/Library/MobileDevice/Provisioning Profiles/\${CurrentUUID}.mobileprovision" || exit 1
             """
@@ -280,7 +282,7 @@ pipeline {
             xcodebuild archive -project "${xcodeProject.xcodeProjectPath}/${xcodeProject.xcodeProjectName}.xcodeproj" \\
               -scheme ${xcodeProject.xcodeProjectName} -sdk iphoneos -configuration Release \\
               -archivePath "${xcodeProject.archivePath}/${signingParam.filePrefix}${xcodeProject.xcodeProjectName}.xcarchive" \\
-              CODE_SIGN_IDENTITY="${signingParam.codeSignIdentity}" PROVISIONING_PROFILE_APP="${xcodeProps.CurrentUUID}" PRODUCT_BUNDLE_IDENTIFIER_APP="${xcodeProps.CurrentBundleId}" CODE_SIGN_STYLE=Manual || exit 1
+              CODE_SIGN_IDENTITY="${signingParam.codeSignIdentity}" PROVISIONING_PROFILE_APP="${xcodeProps.CurrentUUID}" PRODUCT_BUNDLE_IDENTIFIER_APP="${xcodeProps.CurrentBundleId}" DEVELOPMENT_TEAM="${xcodeProps.CurrentDevelopmentTeam}" CODE_SIGN_STYLE=Manual || exit 1
 
             # export ipa
             xcodebuild -exportArchive -archivePath "${xcodeProject.archivePath}/${signingParam.filePrefix}${xcodeProject.xcodeProjectName}.xcarchive" \\
