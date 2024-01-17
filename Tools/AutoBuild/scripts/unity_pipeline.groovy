@@ -282,7 +282,8 @@ pipeline {
             xcodebuild archive -project "${xcodeProject.xcodeProjectPath}/${xcodeProject.xcodeProjectName}.xcodeproj" \\
               -scheme ${xcodeProject.xcodeProjectName} -sdk iphoneos -configuration Release \\
               -archivePath "${xcodeProject.archivePath}/${signingParam.filePrefix}${xcodeProject.xcodeProjectName}.xcarchive" \\
-              CODE_SIGN_IDENTITY="${signingParam.codeSignIdentity}" PROVISIONING_PROFILE_APP="${xcodeProps.CurrentUUID}" PRODUCT_BUNDLE_IDENTIFIER_APP="${xcodeProps.CurrentBundleId}" DEVELOPMENT_TEAM="${xcodeProps.CurrentDevelopmentTeam}" CODE_SIGN_STYLE=Manual || exit 1
+              CODE_SIGN_IDENTITY="${signingParam.codeSignIdentity}" PROVISIONING_PROFILE_APP="${xcodeProps.CurrentUUID}" \\
+              PRODUCT_BUNDLE_IDENTIFIER_APP="${xcodeProps.CurrentBundleId}" DEVELOPMENT_TEAM="${xcodeProps.CurrentDevelopmentTeam}" CODE_SIGN_STYLE=Manual || exit 1
 
             # export ipa
             xcodebuild -exportArchive -archivePath "${xcodeProject.archivePath}/${signingParam.filePrefix}${xcodeProject.xcodeProjectName}.xcarchive" \\
