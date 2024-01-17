@@ -76,6 +76,11 @@ namespace UniFan
             m_internalDic.Clear();
         }
 
+        public List<TValue>.Enumerator GetEnumerator()
+        {
+            return m_betterList.GetEnumerator();
+        }
+
         IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
         {
             return m_betterList.GetEnumerator();
