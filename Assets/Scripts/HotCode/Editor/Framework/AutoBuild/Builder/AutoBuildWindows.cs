@@ -33,15 +33,20 @@ namespace AutoBuild
                     break;
             }
 
+            SetOutputPath();
+            
+            return true;
+        }
+
+        protected virtual void SetOutputPath()
+        {
             //设置输出路径
             string finalPathDir = Path.Combine(buildArgs.outputPath, buildArgs.buildVersionName);
             if (!Directory.Exists(finalPathDir))
             {
                 Directory.CreateDirectory(finalPathDir);
             }
-            buildArgs.outputFinalPath = Path.Combine(finalPathDir, PlayerSettings.applicationIdentifier + "_" + buildArgs.buildVersionName) + ".exe";
-            //初始化平台宏
-            return true;
+            buildArgs.outputFinalPath = Path.Combine(finalPathDir, PlayerSettings.productName + "_" + buildArgs.buildVersionName) + ".exe";
         }
 
         public override void StartBuild()

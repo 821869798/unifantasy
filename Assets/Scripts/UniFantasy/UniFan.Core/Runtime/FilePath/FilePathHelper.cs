@@ -31,10 +31,10 @@ namespace UniFan
         {
 
 #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
-        StreamingAssetsPathForWWW = string.Format("file:///{0}/StreamingAssets/", Application.dataPath);
-        StreamingAssetsPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
-        PersistentDataPathForWWW = string.Format("file:///{0}/StreamingAssets/", Application.dataPath);
-        PersistentDataPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
+            StreamingAssetsPathForWWW = string.Format("file:///{0}/StreamingAssets/", Application.dataPath);
+            StreamingAssetsPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
+            PersistentDataPathForWWW = string.Format("file:///{0}/StreamingAssets/", Application.dataPath);
+            PersistentDataPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
 #elif UNITY_ANDROID && !UNITY_EDITOR
             StreamingAssetsPathForWWW = string.Format("jar:file://{0}!/assets/", Application.dataPath);
             StreamingAssetsPath = string.Format("{0}!/assets/", Application.dataPath);
@@ -46,17 +46,24 @@ namespace UniFan
             PersistentDataPathForWWW = string.Format("file://{0}/", Application.persistentDataPath);
             PersistentDataPath = string.Concat(Application.persistentDataPath, "/");
 #elif UNITY_IOS && !UNITY_EDITOR
-        StreamingAssetsPathForWWW = string.Format("file://{0}/Raw/", Application.dataPath);
-        StreamingAssetsPath = string.Format("{0}/Raw/", Application.dataPath);
-        PersistentDataPathForWWW = string.Format("file://{0}/", Application.persistentDataPath);
-        PersistentDataPath = string.Concat(Application.persistentDataPath,"/");
-#else
+            StreamingAssetsPathForWWW = string.Format("file://{0}/Raw/", Application.dataPath);
+            StreamingAssetsPath = string.Format("{0}/Raw/", Application.dataPath);
+            PersistentDataPathForWWW = string.Format("file://{0}/", Application.persistentDataPath);
+            PersistentDataPath = string.Concat(Application.persistentDataPath,"/");
+#elif UNITY_EDITOR
             //编辑器模式下
             var assetPath = Path.GetDirectoryName(Application.dataPath);
             StreamingAssetsPathForWWW = string.Format("file://{0}/StreamingAssets/", Application.dataPath);
             StreamingAssetsPath = string.Format("{0}/StreamingAssets/", Application.dataPath);
             PersistentDataPathForWWW = string.Format("file://{0}/EditorPersistent/", assetPath);
             PersistentDataPath = string.Format("{0}/EditorPersistent/", assetPath);
+#else
+            // 其他Runtime通用
+            var assetPath = Path.GetDirectoryName(Application.dataPath);
+            StreamingAssetsPathForWWW = "file://" + Application.streamingAssetsPath + "/";
+            StreamingAssetsPath = Application.streamingAssetsPath + "/";
+            PersistentDataPathForWWW = "file://" + Application.persistentDataPath + "/";
+            PersistentDataPath = Application.persistentDataPath + "/";
 #endif
         }
 

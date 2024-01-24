@@ -1,0 +1,25 @@
+{
+    "name": "HotCode.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3726d06f977604eeab2ba41c5fdf3fcb",
+        "GUID:5ec7fe36951adcd4fad26566e757c41b",
+        "GUID:192f0f7816f78c44091b4bf0fd6b80a8",
+        "GUID:70c4b958cdf4d60479e599875f65406f",
+        "GUID:209ef6d4d335f2444839a740563f2fb2",
+        "GUID:2373f786d14518f44b0f475db77ba4de",
+        "GUID:40149b6e2e55a424cadcf9bde8099170",
+        "GUID:ce97fafbc255e4303a528ed032a19816"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

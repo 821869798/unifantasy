@@ -18,7 +18,7 @@ MonoBehaviour:
     buildType: 2
     isOverrideBundleName: 0
     overrideBundleName: 
-    searchPath: Assets/Res/99_Codes
+    searchPath: Assets/Res/99_Codes/AOTMetadata
     searchPattern: '*.bytes'
     searchRegex: 
     searchOption: 1

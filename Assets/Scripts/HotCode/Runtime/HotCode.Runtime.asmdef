@@ -1,0 +1,23 @@
+{
+    "name": "HotCode.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:5ec7fe36951adcd4fad26566e757c41b",
+        "GUID:70c4b958cdf4d60479e599875f65406f",
+        "GUID:209ef6d4d335f2444839a740563f2fb2",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:029c1c1b674aaae47a6841a0b89ad80e",
+        "GUID:51a77436b3466064fa4a94e67f91e5f4",
+        "GUID:174b432621f01fb418be26ffc6c90e22",
+        "GUID:db43169b856919145b19ffc76ea76eb4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

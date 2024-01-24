@@ -68,10 +68,24 @@ namespace AutoBuild
         {
             AutoBuildMenu(new AutoBuildiOS());
         }
-
+        
         public static void BuildiOS()
         {
             if (!AutoBuildLogic(new AutoBuildiOS()))
+            {
+                EditorApplication.Exit(1);
+            }
+        }
+        
+        [MenuItem("GameEditor/AutoBuild/BuildMacOS")]
+        static void BuildMacOSMenu()
+        {
+            AutoBuildMenu(new AutoBuildMacOS());
+        }
+
+        public static void BuildMacOS()
+        {
+            if (!AutoBuildLogic(new AutoBuildMacOS()))
             {
                 EditorApplication.Exit(1);
             }
