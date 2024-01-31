@@ -5,6 +5,7 @@ using UniFan.Res;
 using Cysharp.Threading.Tasks;
 using System.Reflection;
 using System.IO;
+using Main.HotUpdate;
 
 namespace Main
 {
@@ -13,19 +14,27 @@ namespace Main
         // Start is called before the first frame update
         private void Start()
         {
+            LaunchGame().Forget();
+        }
+
+        async UniTask LaunchGame()
+        {
+            // 框架初始化
             UniFantasy.InitUniFantasy(this.gameObject);
 
+            // 全局设置
             GameGlobalSetting();
 
-            //TODO 热更相关
+            //热更相关
+            await HotUpdate();
 
             //初始化资源管理
             ResManager.Instance.InitAssetBundle();
-
-            InitManager();
+            
+            InitAOTManager();
 
             // 开始加载dll
-            StartLoadHotDllAsync().Forget();
+            await StartLoadHotDllAsync();
 
             Destroy(this);
         }
@@ -42,11 +51,41 @@ namespace Main
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
         }
 
-        void InitManager()
+        /// <summary>
+        /// 绑定aot程序集中的管理器
+        /// </summary>
+        void InitAOTManager()
         {
             ManagerCenter.Instance.BindManage(ResManager.Instance);
         }
 
+
+        async UniTask HotUpdate()
+        {
+#if UNITY_EDITOR
+            if (!PatchLogicUtility.ActiveEditorPatchLogic)
+            {
+
+            }
+            else
+#endif
+            {
+#if UNITY_EDITOR
+                if (AssetBundleUtility.ActiveBundleMode)
+                {
+                    Debug.LogWarning($"[{nameof(GameLauncher)}] 开启了编辑器热更模式，但是没有开启编辑器ab模式");
+                }
+#endif
+
+#if UNITY_EDITOR
+                //TODO 做热更逻辑，目前仅编辑器有效，之后做完正式的，可以去除该编辑器宏
+                using (var patchController = new PatchController().Init())
+                {
+                    await patchController.StartPatch();
+                }
+#endif
+            }
+        }
 
         async UniTask StartLoadHotDllAsync()
         {

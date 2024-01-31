@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using HotCode.Framework;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -10,10 +11,7 @@ using UniFan;
 using MainEditor;
 using HotCode.FrameworkEditor;
 using HybridCLR.Editor.Installer;
-
-
-
-
+using MainEditor.HotUpdate;
 
 
 #if UNITY_2019_3_OR_NEWER
@@ -128,7 +126,6 @@ namespace AutoBuild
 
                     #endregion
 
-                    /* 
                     // 生成PatchManifest,需要在拆分资源之后,因为里面不需要包括拆分出去的资源
                     Debug.Log("-------------------------------- Start  Generate PatchManifest ---------------------------------------------");
                     if (!PatchEditorHelper.GeneratePatcManifestFileInfo(Application.streamingAssetsPath, buildArgs.GetAppVersion()))
@@ -136,7 +133,7 @@ namespace AutoBuild
                         return false;
                     }
                     Debug.Log("-------------------------------- Finish Generate PatchManifest ---------------------------------------------");
-                    */
+
 
                     // 刷新
                     AssetDatabase.Refresh();
@@ -160,7 +157,6 @@ namespace AutoBuild
 
                     #region 热更资源打包相关
 
-                    /*
                     //打ab
                     if (!BuildAssetBundle())
                         return false;
@@ -183,6 +179,7 @@ namespace AutoBuild
                             return false;
                         }
                         // 拷贝音视频到版本库文件夹
+                        /*
                         var mediaPath = Path.Combine(destVersionPath, PathConstant.PackedMediaPath);
                         Debug.Log("-------------------------------- Start Copy mediaPath ---------------------------------------------");
                         if (!MediaBuildProcessor.CopyMedia(mediaPath))
@@ -190,7 +187,7 @@ namespace AutoBuild
                             return false;
                         }
                         Debug.Log("-------------------------------- Finish Copy To ResVersion ---------------------------------------------");
-
+                        */
 
                         // 生成PatchManifest
                         Debug.Log("-------------------------------- Start  Generate PatchManifest ---------------------------------------------");
@@ -201,7 +198,7 @@ namespace AutoBuild
                         Debug.Log("-------------------------------- Finish Generate PatchManifest ---------------------------------------------");
 
                     }
-                    */
+
                     #endregion
 
                     return true;

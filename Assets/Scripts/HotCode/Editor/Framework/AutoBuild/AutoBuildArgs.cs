@@ -53,7 +53,7 @@ namespace AutoBuild
         /// Android的app的BuildVersion的最后两位手动位，之前位的是时间
         /// </summary>
         public int androidVersionEndNum2;
-		
+
         /// <summary>
         /// 是否把热更资源拷贝到版本库
         /// </summary>
@@ -192,6 +192,10 @@ namespace AutoBuild
                 if (TryParseOneArg(arg, "androidVersionEndNum2|", out var androidVersionEndNum2))
                 {
                     buildArgs.androidVersionEndNum2 = int.Parse(androidVersionEndNum2);
+                }
+                if (TryParseOneArg(arg, "sourceVersionPath|", out var sourceVersionPath))
+                {
+                    buildArgs.sourceVersionPath = sourceVersionPath;
                 }
             }
             _ = isExecuteMethod;
