@@ -186,6 +186,13 @@ namespace UniFan.Network
             Socket.Connect(MakeConnectInlineAction(callback));
         }
 
+        public void Connect(Uri uri, Action<ConnectResults, Exception> callback = null)
+        {
+            Reset();
+            Socket.ChangeUri(uri);
+            Socket.Connect(MakeConnectInlineAction(callback));
+        }
+
         private Action<ConnectResults, Exception> MakeConnectInlineAction(Action<ConnectResults, Exception> callback)
         {
             if (callback == null)
@@ -206,8 +213,8 @@ namespace UniFan.Network
         {
             try
             {
-                ArraySegment<byte> result = MsgCodec.Pack(packet);
-                return Send(result.Array, result.Offset, result.Count);
+                ReadOnlySpan<byte> result = MsgCodec.Pack(packet);
+                return Send(result);
             }
             catch (Exception ex)
             {
@@ -218,37 +225,17 @@ namespace UniFan.Network
 
         public SendResults Send(byte[] source)
         {
-            if (source == null)
-            {
-                return SendResults.Ignore;
-            }
             if (!Socket.Connected)
             {
                 return SendResults.Faild;
             }
-            if (source != null)
-            {
-                return Send(source, 0, source.Length);
-            }
-            return SendResults.Success;
-        }
-
-        public SendResults Send(byte[] source, int offset)
-        {
             if (source == null)
             {
                 return SendResults.Ignore;
             }
-            if (!Socket.Connected)
-            {
-                return SendResults.Faild;
-            }
-            if (source != null)
-            {
-                return Send(source, offset, source.Length - offset);
-            }
-            return SendResults.Success;
+            return Send(source, 0, source.Length);
         }
+        
 
         public SendResults Send(byte[] source, int offset, int count)
         {
@@ -263,6 +250,18 @@ namespace UniFan.Network
             return Socket.Send(source, offset, count);
         }
 
+        public SendResults Send(ReadOnlySpan<byte> source)
+        {
+            if (!Socket.Connected)
+            {
+                return SendResults.Faild;
+            }
+            if (source.Length <= 0)
+            {
+                return SendResults.Ignore;
+            }
+            return Socket.Send(source);
+        }
 
         protected virtual void OnChannelConnecting(ISocket channel)
         {

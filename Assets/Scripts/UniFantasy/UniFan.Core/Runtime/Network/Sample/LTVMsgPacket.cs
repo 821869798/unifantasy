@@ -19,9 +19,9 @@ namespace UniFan.Network
             ByteData = new ByteArray(BigEndianOrder.Instance);
         }
 
-        public override void Input(ArraySegment<byte> packet)
+        public override void Input(ReadOnlySpan<byte> packet)
         {
-            this.ByteData.WriteBytes(packet.Array, packet.Offset, packet.Count);
+            this.ByteData.WriteSpan(packet);
             var msgLen = this.ByteData.ReadUInt32();
             CmdId = this.ByteData.ReadUInt32();
         }
@@ -29,6 +29,11 @@ namespace UniFan.Network
         public override ArraySegment<byte> Output()
         {
             return ByteData.GetRawBytes();
+        }
+
+        public override ReadOnlySpan<byte> OutputSpan()
+        {
+            return ByteData.GetReadOnlySpan();
         }
 
         public override void Encode()
@@ -40,6 +45,12 @@ namespace UniFan.Network
         {
             int msgLen = len;
             this.ByteData.WriteUInt32((uint)(msgLen + TotalPackHeadLen)).WriteUInt32(this.CmdId).WriteBytes(data, offset, len);
+        }
+        
+        public override void Encode(ReadOnlySpan<byte> data)
+        {
+            int msgLen = data.Length;
+            this.ByteData.WriteUInt32((uint)(msgLen + TotalPackHeadLen)).WriteUInt32(this.CmdId).WriteSpan(data);
         }
 
         public override void Reset()

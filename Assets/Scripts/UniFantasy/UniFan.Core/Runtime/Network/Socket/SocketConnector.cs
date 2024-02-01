@@ -158,8 +158,8 @@ namespace UniFan.Network
         protected virtual void Initial()
         {
             PendingSentBuffer = new RingBuffer(65536);
-            ReceiveDataStates = new SocketReceiveStates(2048);
-            SentDataStates = new SocketSentStates(2048);
+            ReceiveDataStates = new SocketReceiveStates(4096);
+            SentDataStates = new SocketSentStates(4096);
             ConnectDataStates = new ConnectStates();
         }
 
@@ -170,6 +170,11 @@ namespace UniFan.Network
                 throw new ArgumentException("Params [ipEndPoint] cannot be null", "ipEndPoint");
             }
             LastIpEndPort = ipEndPoint;
+        }
+        
+        public void ChangeUri(Uri uri)
+        {
+            throw new NotSupportedException("Normal Socket Client no supported ChangeUri");
         }
 
         public virtual void Connect(Action<ConnectResults, Exception> callback = null)
@@ -208,25 +213,16 @@ namespace UniFan.Network
         {
             if (data == null || data.Length == 0)
             {
-                return SendResults.Success;
+                return SendResults.Ignore;
             }
             return Send(data, 0, data.Length);
-        }
-
-        public SendResults Send(byte[] data, int offset)
-        {
-            if (data == null || data.Length == 0)
-            {
-                return SendResults.Success;
-            }
-            return Send(data, offset, data.Length - offset);
         }
 
         public virtual SendResults Send(byte[] data, int offset, int count)
         {
             if (data == null || data.Length == 0 || count <= 0)
             {
-                return SendResults.Success;
+                return SendResults.Ignore;
             }
             lock (SyncRoot)
             {
@@ -243,9 +239,30 @@ namespace UniFan.Network
             //TriggerOnBufferFull(data);
             Close(new RuntimeException("Socket[" + Name + "] Send Buffer Full Exception"), Socket);
             return SendResults.Faild;
-
         }
 
+        public virtual SendResults Send(ReadOnlySpan<byte> data)
+        {
+            if (data.Length <= 0)
+            {
+                return SendResults.Ignore;
+            }
+            lock (SyncRoot)
+            {
+                if (!Connected || needToClose)
+                {
+                    return SendResults.Faild;
+                }
+                if (PendingSentBuffer.CanWrite(data.Length))
+                {
+                    PendingSentBuffer.Write(data);
+                    return sending ? SendResults.Pending : StartSend();
+                }
+            }
+            //TriggerOnBufferFull(data);
+            Close(new RuntimeException("Socket[" + Name + "] Send Buffer Full Exception"), Socket);
+            return SendResults.Faild;
+        }
 
         protected virtual SendResults StartSend()
         {

@@ -155,8 +155,8 @@ namespace HotCode.Game
             };
             netChannel.OnPacket += (net, packet) =>
             {
-                var rawData = packet.Output();
-                var str = Encoding.UTF8.GetString(rawData.Array, rawData.Offset, rawData.Count);
+                var rawData = packet.OutputSpan();
+                var str = Encoding.UTF8.GetString(rawData);
                 Debug.Log($"recv message:{str}");
                 packet.Put();
             };

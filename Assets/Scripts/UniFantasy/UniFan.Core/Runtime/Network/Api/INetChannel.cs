@@ -35,14 +35,16 @@ namespace UniFan.Network
 
         SendResults Send(byte[] source);
 
-        SendResults Send(byte[] source, int offset);
-
         SendResults Send(byte[] source, int offset, int count);
+        
+        SendResults Send(ReadOnlySpan<byte> source);
 
         void Connect(Action<ConnectResults, Exception> callback = null);
 
         void Connect(IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback = null);
 
+        void Connect(Uri uri, Action<ConnectResults, Exception> callback = null);
+        
         bool Reconnect(Exception ex);
 
         CloseResults Disconnect(Exception ex = null);

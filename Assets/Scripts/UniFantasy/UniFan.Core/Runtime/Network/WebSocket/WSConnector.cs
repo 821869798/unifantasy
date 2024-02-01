@@ -107,7 +107,7 @@ namespace UniFan.Network
         protected virtual void Initial()
         {
             PendingSentBuffer = new RingBuffer(65536);
-            SentState = new byte[2048];
+            SentState = new byte[4096];
         }
 
         public void ChangeIpEndPoint(IPEndPoint ipEndPoint)
@@ -115,7 +115,7 @@ namespace UniFan.Network
             throw new NotSupportedException("WebSocket Client no supported ChangeIpEndPoint");
         }
 
-        public virtual void ChangeIpEndPoint(Uri uri)
+        public void ChangeUri(Uri uri)
         {
             this.Uri = uri;
         }
@@ -230,25 +230,16 @@ namespace UniFan.Network
         {
             if (data == null || data.Length == 0)
             {
-                return SendResults.Success;
+                return SendResults.Ignore;
             }
             return Send(data, 0, data.Length);
-        }
-
-        public SendResults Send(byte[] data, int offset)
-        {
-            if (data == null || data.Length == 0)
-            {
-                return SendResults.Success;
-            }
-            return Send(data, offset, data.Length - offset);
         }
 
         public SendResults Send(byte[] data, int offset, int count)
         {
             if (data == null || data.Length == 0 || count <= 0)
             {
-                return SendResults.Success;
+                return SendResults.Ignore;
             }
             lock (SyncRoot)
             {
@@ -261,6 +252,36 @@ namespace UniFan.Network
                     PendingSentBuffer.Write(data, offset, count);
                     bool sending = sendBuffSizes.Count > 0;
                     sendBuffSizes.Enqueue(count);
+                    if (sending)
+                    {
+                        return SendResults.Pending;
+                    }
+                    SendMessageAsync(CancellationToken.None);
+                    return SendResults.Success;
+                }
+            }
+
+            Close(new RuntimeException("Socket[" + Name + "] Send Buffer Full Exception"), Socket);
+            return SendResults.Faild;
+        }
+        
+        public SendResults Send(ReadOnlySpan<byte> data)
+        {
+            if (data.Length <= 0)
+            {
+                return SendResults.Ignore;
+            }
+            lock (SyncRoot)
+            {
+                if (!Connected || needToClose)
+                {
+                    return SendResults.Faild;
+                }
+                if (PendingSentBuffer.CanWrite(data.Length))
+                {
+                    PendingSentBuffer.Write(data);
+                    bool sending = sendBuffSizes.Count > 0;
+                    sendBuffSizes.Enqueue(data.Length);
                     if (sending)
                     {
                         return SendResults.Pending;

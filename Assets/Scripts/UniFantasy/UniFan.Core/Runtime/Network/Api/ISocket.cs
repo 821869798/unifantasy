@@ -36,14 +36,16 @@ namespace UniFan.Network
         event Action<ISocket, Exception> OnError;
 
         void ChangeIpEndPoint(IPEndPoint ipEndPoint);
+        
+        void ChangeUri(Uri uri);
 
         void Connect(Action<ConnectResults, Exception> callback = null);
 
         SendResults Send(byte[] data);
 
-        SendResults Send(byte[] data, int offset);
-
         SendResults Send(byte[] data, int offset, int count);
+        
+        SendResults Send(ReadOnlySpan<byte> data);
 
         CloseResults Disconnect(Exception exception = null);
 

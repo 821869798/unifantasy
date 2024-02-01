@@ -9,13 +9,13 @@ namespace UniFan.Network
         {
         }
 
-        public virtual bool Input(byte[] source, int offset, int count, out ArraySegment<byte> result, out Exception ex)
+        public virtual bool Input(byte[] source, int offset, int count, out ReadOnlySpan<byte> result, out Exception ex)
         {
             ex = null;
             result = default;
             try
             {
-                result = new ArraySegment<byte>(source, offset, count);
+                result = new ReadOnlySpan<byte>(source, offset, count);
                 return true;
             }
             catch (Exception ex2)
@@ -36,12 +36,12 @@ namespace UniFan.Network
             return WSMsgPacket.Get();
         }
 
-        public virtual ArraySegment<byte> Pack(IMsgPacket packet)
+        public virtual ReadOnlySpan<byte> Pack(IMsgPacket packet)
         {
             return packet.Output();
         }
 
-        public virtual IMsgPacket Unpack(ArraySegment<byte> rawData)
+        public virtual IMsgPacket Unpack(ReadOnlySpan<byte> rawData)
         {
             var packet = CreatePacket();
             packet.Input(rawData);

@@ -69,6 +69,11 @@ public class ByteArray
         return segment;
     }
 
+    public ReadOnlySpan<byte> GetReadOnlySpan()
+    {
+        return new ReadOnlySpan<byte>(rawdata, readIndex, ValidCount);
+    }
+
     /// <summary>
     /// 跳过一定数量的读取
     /// </summary>
@@ -153,6 +158,15 @@ public class ByteArray
         return this;
     }
 
+    public ByteArray WriteSpan(ReadOnlySpan<byte> value)
+    {
+        CheckAndExpand(value.Length);
+        Span<byte> destinationSpan = rawdata.AsSpan().Slice(writeIndex);
+        value.CopyTo(destinationSpan);
+        writeIndex += value.Length;
+        return this;
+    }
+    
     public ByteArray WriteBytes(byte[] value)
     {
         return WriteBytes(value, 0, value.Length);
@@ -161,11 +175,8 @@ public class ByteArray
     public ByteArray WriteBytes(byte[] value, int offset, int len)
     {
         CheckAndExpand(len);
-
-        for (int i = 0; i < len; i++)
-        {
-            rawdata[writeIndex + i] = value[offset + i];
-        }
+        
+        Buffer.BlockCopy(value, offset, rawdata, writeIndex, len);
         writeIndex += len;
 
         return this;

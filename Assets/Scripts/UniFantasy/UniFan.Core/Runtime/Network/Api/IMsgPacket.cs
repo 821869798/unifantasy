@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 
@@ -9,12 +8,13 @@ namespace UniFan.Network
     /// </summary>
     public interface IMsgPacket
     {
-        void Input(ArraySegment<byte> rawData);
+        void Input(ReadOnlySpan<byte> rawData);
         ArraySegment<byte> Output();
+        ReadOnlySpan<byte> OutputSpan();
         void Encode();
         void Encode(byte[] data, int offset, int len);
         void Encode(byte[] data);
-        void Encode(ArraySegment<byte> data);
+        void Encode(ReadOnlySpan<byte> data);
         bool CanReturnPool();
         void Reset();
         void Put();
@@ -29,21 +29,17 @@ namespace UniFan.Network
         /// </summary>
         public virtual uint CmdId { get; set; }
 
-        public abstract void Input(ArraySegment<byte> rawData);
+        public abstract void Input(ReadOnlySpan<byte> rawData);
 
         public abstract ArraySegment<byte> Output();
+        public abstract ReadOnlySpan<byte> OutputSpan();
 
         public void Encode(byte[] data)
         {
             Encode(data, 0, data.Length);
         }
 
-        public void Encode(ArraySegment<byte> data)
-        {
-            Encode(data.Array, data.Offset, data.Count);
-        }
-
-
+        public abstract void Encode(ReadOnlySpan<byte> data);
         public abstract void Encode();
 
         public abstract void Encode(byte[] data, int offset, int len);

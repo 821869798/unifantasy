@@ -7,13 +7,13 @@ namespace UniFan.Network
     /// </summary>
     public interface IMsgCodec
     {
-        bool Input(byte[] source, int offset, int count, out ArraySegment<byte> result, out Exception ex);
+        bool Input(byte[] source, int offset, int count, out ReadOnlySpan<byte> result, out Exception ex);
 
         void Reset();
 
-        ArraySegment<byte> Pack(IMsgPacket packet);
+        ReadOnlySpan<byte> Pack(IMsgPacket packet);
 
-        IMsgPacket Unpack(ArraySegment<byte> rawData);
+        IMsgPacket Unpack(ReadOnlySpan<byte> rawData);
 
         IMsgPacket CreatePacket();
     }

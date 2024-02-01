@@ -259,6 +259,42 @@ namespace UniFan.Network
         }
 
         /// <summary>
+        /// 将数据写入到环型缓冲区
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public int Write(ReadOnlySpan<byte> buffer)
+        { 
+            Guard.Requires<ArgumentNullException>(buffer != null);
+            long writeSize = GetCanWriteSize();
+            if (writeSize > buffer.Length)
+            {
+                writeSize = buffer.Length;
+            }
+            if (writeSize <= 0)
+            {
+                return 0;
+            }
+            long nextWritePos = write + writeSize;
+            long realWritePos = write & mask;
+            if ((nextWritePos & mask) >= realWritePos)
+            {
+                buffer.Slice(0, (int)writeSize).CopyTo(this.buffer.AsSpan((int)realWritePos));
+            }
+            else
+            {
+                int tail = (int)(capacity - realWritePos);
+                buffer.Slice(0, tail).CopyTo(this.buffer.AsSpan((int)realWritePos));
+                if (writeSize - tail > 0)
+                {
+                    buffer.Slice(tail, (int)writeSize - tail).CopyTo(this.buffer.AsSpan(0));
+                }
+            }
+            write = nextWritePos;
+            return (int)write;
+        }
+
+        /// <summary>
         /// 清空缓冲区中的所有数据
         /// </summary>
         public void Flush()
