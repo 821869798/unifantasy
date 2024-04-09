@@ -268,8 +268,6 @@ namespace HotCode.FrameworkEditor
             return template.Render(templateContext);
         }
 
-        const string DefaultObjectBindingCode = @"protected virtual void InitBinding(ObjectBinding __binding){}";
-
         /// <summary>
         /// 获取UI window上的ObjectBinding组件，并且生成绑定的代码
         /// </summary>
@@ -278,7 +276,7 @@ namespace HotCode.FrameworkEditor
         {
             if (string.IsNullOrEmpty(UIWindowName))
             {
-                return DefaultObjectBindingCode;
+                return ObjectBinding.GetBindingEmptyCode();
             }
             string assetPath = UIWindowName;
             if (!string.IsNullOrEmpty(ResParentName))
@@ -289,7 +287,7 @@ namespace HotCode.FrameworkEditor
             var go = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
             if (go == null)
             {
-                return DefaultObjectBindingCode;
+                return ObjectBinding.GetBindingEmptyCode(_customeBaseUIB);
             }
 
             if (!string.IsNullOrEmpty(ObjectBindingPath))
@@ -313,7 +311,7 @@ namespace HotCode.FrameworkEditor
                 }
             }
 
-            return DefaultObjectBindingCode;
+            return ObjectBinding.GetBindingEmptyCode(_customeBaseUIB);
         }
 
         public override void OnGUI()

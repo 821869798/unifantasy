@@ -148,8 +148,12 @@ namespace UniFanEditor
                     }
 
                     // 使用正则表达式找到指定的部分并替换
-                    string pattern = @"(?<=#region ObjectBinding Generate\s*).*?(?=#endregion ObjectBinding Generate)";
-                    string replacement = "\n" + binding.GetBindingCode(baseClassType, 3) + string.Empty.PadLeft(3 * 4);
+                    //string pattern = @"(?<=#region ObjectBinding Generate\s*).*?(?=#endregion ObjectBinding Generate)";
+                    //string replacement = "\n" + binding.GetBindingCode(baseClassType, 3) + string.Empty.PadLeft(3 * 4);
+
+                    string pattern = @$"[ \t]*#region {ObjectBinding.GenerateMark}\s*.*?#endregion {ObjectBinding.GenerateMark}";
+                    string replacement = binding.GetBindingCode(baseClassType, 3) + string.Empty.PadLeft(3 * 4);
+
                     string modifiedContent = Regex.Replace(scriptContent, pattern, replacement, RegexOptions.Singleline);
 
                     // 将修改后的内容写回脚本文件

@@ -42,7 +42,8 @@ namespace HotCode.Game
                 __binding.TryGetVariableValue<UnityEngine.UI.ExLoopVerticalScrollRect>("verticalLoopScroll", out var __tbv2);
                 this.verticalLoopScroll = __tbv2;
             }
-            #endregion ObjectBinding Generate 
+            #endregion ObjectBinding Generate
+             
         }
         #endregion Template Generate,don't modify
 

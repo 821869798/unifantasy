@@ -25,9 +25,7 @@ namespace {{code_namespace}}
         #region Template Generate,don't modify
         protected partial class {{uib_prefix + class_name}}{{if is_custom_baseclass }} : {{base_uibclass_fullname}}{{end}}
         {
-            #region ObjectBinding Generate 
             {{object_binding_code}}
-            #endregion ObjectBinding Generate 
         }
         #endregion Template Generate,don't modify
 

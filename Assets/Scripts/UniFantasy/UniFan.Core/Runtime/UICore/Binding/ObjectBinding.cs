@@ -82,24 +82,29 @@ namespace UniFan
         /// </summary>
         public bool editorChanged { get; set; }
 
+        public const string GenerateMark = "ObjectBinding Generate";
+
         /// <summary>
         /// 通过基类获取空的模板
         /// </summary>
         /// <param name="customBaes"></param>
         /// <param name="indentCount"></param>
         /// <returns></returns>
-        public static string GetBindingEmptyCodeOverride(int indentCount = 0)
+        public static string GetBindingEmptyCode(Type customBaes = null, int indentCount = 0)
         {
             string spaces = string.Empty.PadLeft(4 * indentCount);
             StringBuilder sb = new StringBuilder();
-            sb.Append('\n');
+            sb.Append($"{spaces}#region {GenerateMark}\n");
             sb.Append(spaces);
-            sb.Append("protected override void InitBinding(ObjectBinding __binding)\n");
-            sb.Append(spaces);
-            sb.Append("{\n");
-            sb.Append($"{spaces}    base.InitBinding(__binding);\n");
-            sb.Append(spaces);
-            sb.Append("}\n");
+            if (customBaes != null)
+            {
+                sb.Append("protected override void InitBinding(ObjectBinding __binding){ base.InitBinding(__binding); }\n");
+            }
+            else
+            {
+                sb.Append("protected virtual void InitBinding(ObjectBinding __binding){}\n");
+            }
+            sb.Append($"{spaces}#endregion {GenerateMark}\n");
 
             return sb.ToString();
         }
@@ -126,6 +131,7 @@ namespace UniFan
             }
 
             StringBuilder sb = new StringBuilder();
+            sb.Append($"{spaces}#region {GenerateMark}\n");
 
             foreach (var variable in Variables)
             {
@@ -156,6 +162,8 @@ namespace UniFan
             }
             sb.Append(spaces);
             sb.Append("}\n");
+
+            sb.Append($"{spaces}#endregion {GenerateMark}\n");
 
             return sb.ToString();
         }
