@@ -141,7 +141,6 @@ namespace HotCode.Framework
             _lastWidth = Screen.width;
             _lastHeight = Screen.height;
 
-            CurNotchValue = UIAdaptation.GetDefaultNotchValue();
             CalcScreenAdapter();
 
             InitMaxMask();
@@ -159,7 +158,8 @@ namespace HotCode.Framework
         private void CalcScreenAdapter()
         {
             //UI适配
-            Debug.Log($"Sreen size:{Screen.width} {Screen.height}");
+            CurNotchValue = UIAdaptation.GetDefaultNotchValue();
+            Debug.Log($"Sreen size:{Screen.width} {Screen.height} notch:{CurNotchValue}");
             MatchWidthOrHeight = UIAdaptation.AdaptationCanvasScaler();
             Vector2 referenceResolution = UICanvasScaler.referenceResolution;
             AdaptationCanvasScaler(UICanvasScaler);

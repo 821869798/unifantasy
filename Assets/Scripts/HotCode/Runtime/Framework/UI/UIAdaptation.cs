@@ -77,7 +77,7 @@ namespace HotCode.Framework
             get
             {
                 bool hasNotch = Screen.width > Screen.safeArea.width;
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
                 hasNotch = hasNotch ? true : GetAndroidNotch();
 #endif
                 return hasNotch;
@@ -86,17 +86,17 @@ namespace HotCode.Framework
 
         public static float GetDefaultNotchValue()
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
             float notchHeight = GetAndroidStatusHeight();
             if (HasNotch)
             {
                 return notchHeight / Screen.width * 100;
             }
-#elif UNITY_IOS
-        if (HasNotch)
-        {
-            return (float)(Screen.width - Screen.safeArea.width) / 2 / Screen.width * 100;
-        }
+#else
+            if (HasNotch)
+            {
+                return (float)(Screen.width - Screen.safeArea.width) / 2 / Screen.width * 100;
+            }
 #endif
             return 0;
 

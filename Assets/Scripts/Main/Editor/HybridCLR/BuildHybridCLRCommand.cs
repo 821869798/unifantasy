@@ -1,4 +1,5 @@
 using HybridCLR.Editor;
+using HybridCLR.Editor.AOT;
 using HybridCLR.Editor.Commands;
 using Main;
 using System;
@@ -82,7 +83,9 @@ namespace MainEditor
                     }
                     bw.Write($"{dll}.dll.bytes");
                     string dllBytesPath = Path.Combine(CodeOutputDir, HybridCLRUtil.AOTMetadataPath, dll + ".dll.bytes");
-                    File.Copy(srcDllPath, dllBytesPath, true);
+                    // strip dll
+                    AOTAssemblyMetadataStripper.Strip(srcDllPath, dllBytesPath);
+                    //File.Copy(srcDllPath, dllBytesPath, true);
                     Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
                 }
             }
