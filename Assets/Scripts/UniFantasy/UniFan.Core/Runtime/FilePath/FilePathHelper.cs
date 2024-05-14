@@ -119,18 +119,47 @@ namespace UniFan
 
 
         //获取各平台对应的资源目录名
-        public static string GetResPlatformName()
+        public static string GetPlatformName()
         {
-#if UNITY_STANDALONE_WIN
-            return "Windows";
-#elif UNITY_STANDALONE_OSX
-        return "OSX";
-#elif UNITY_ANDROID
-            return "Android";
-#elif UNITY_IOS
-        return "iOS";
-#elif UNITY_WEBGL
-        return "WebGL";
+#if UNITY_EDITOR
+            var platform = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
+            switch (platform)
+            {
+                case UnityEditor.BuildTarget.Android:
+                    return "Android";
+                case UnityEditor.BuildTarget.iOS:
+                    return "iOS";
+                case UnityEditor.BuildTarget.StandaloneWindows:
+                case UnityEditor.BuildTarget.StandaloneWindows64:
+                    return "Windows";
+                case UnityEditor.BuildTarget.StandaloneOSX:
+                    return "OSX";
+                case UnityEditor.BuildTarget.StandaloneLinux64:
+                    return "Linux";
+                case UnityEditor.BuildTarget.WebGL:
+                    return "WebGL";
+                default:
+                    return platform.ToString();
+            }
+#else
+            var platform = UnityEngine.Application.platform;
+            switch (platform)
+            {
+                case UnityEngine.RuntimePlatform.Android:
+                    return "Android";
+                case UnityEngine.RuntimePlatform.IPhonePlayer:
+                    return "iOS";
+                case UnityEngine.RuntimePlatform.WindowsPlayer:
+                    return "Windows";
+                case UnityEngine.RuntimePlatform.OSXPlayer:
+                    return "OSX";
+                case UnityEngine.RuntimePlatform.LinuxPlayer:
+                    return "Linux";
+                case UnityEngine.RuntimePlatform.WebGLPlayer:
+                    return "WebGL";
+                default:
+                    return platform.ToString();
+            }
 #endif
         }
 
