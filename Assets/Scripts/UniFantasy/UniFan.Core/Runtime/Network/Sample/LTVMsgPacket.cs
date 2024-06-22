@@ -1,11 +1,12 @@
 using System;
-using System.Collections.Generic;
 
 namespace UniFan.Network
 {
     public partial class LTVMsgPacket : BaseMsgPacket<LTVMsgPacket>
     {
         public ByteArray ByteData { private set; get; }
+
+        public object UserData { set; get; }
 
         public const int TotalPackHeadLen = 8;
 
@@ -46,17 +47,29 @@ namespace UniFan.Network
             int msgLen = len;
             this.ByteData.WriteUInt32((uint)(msgLen + TotalPackHeadLen)).WriteUInt32(this.CmdId).WriteBytes(data, offset, len);
         }
-        
+
         public override void Encode(ReadOnlySpan<byte> data)
         {
             int msgLen = data.Length;
             this.ByteData.WriteUInt32((uint)(msgLen + TotalPackHeadLen)).WriteUInt32(this.CmdId).WriteSpan(data);
         }
 
+        /// <summary>
+        /// 重新计算大小并写入包体
+        /// </summary>
+        public void ReWritePacketSize()
+        {
+            int size = ByteData.ValidCount;
+            ByteData.JumpWriteIndex(0);
+            ByteData.WriteUInt32((uint)size);
+            ByteData.JumpWriteIndex(size);
+        }
+
         public override void Reset()
         {
             CmdId = 0;
             ByteData.Clear();
+            UserData = null;
         }
 
         public override bool CanReturnPool()

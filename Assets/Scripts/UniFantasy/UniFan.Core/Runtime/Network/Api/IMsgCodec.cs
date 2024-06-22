@@ -11,10 +11,8 @@ namespace UniFan.Network
 
         void Reset();
 
-        ReadOnlySpan<byte> Pack(IMsgPacket packet);
+        ReadOnlySpan<byte> Pack(object packet);
 
-        IMsgPacket Unpack(ReadOnlySpan<byte> rawData);
-
-        IMsgPacket CreatePacket();
+        object Unpack(ReadOnlySpan<byte> rawData);
     }
 }

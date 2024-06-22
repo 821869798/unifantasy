@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace UniFan.Network
 {
@@ -17,9 +18,6 @@ namespace UniFan.Network
 
         IMsgCodec MsgCodec { get; }
 
-        event Action<INetChannel, IPEndPoint> OnConnecting;
-
-        event Action<INetChannel> OnConnected;
 
         event Action<INetChannel, Exception> OnClosed;
 
@@ -27,24 +25,24 @@ namespace UniFan.Network
 
         event Action<INetChannel> OnReconnected;
 
-        event Action<INetChannel, IMsgPacket> OnPacket;
+        event Action<INetChannel, object> OnPacket;
 
         event Action<INetChannel, Exception> OnError;
 
-        SendResults Send(IMsgPacket packet);
+        SendResults Send(object packet);
 
         SendResults Send(byte[] source);
 
         SendResults Send(byte[] source, int offset, int count);
-        
+
         SendResults Send(ReadOnlySpan<byte> source);
 
-        void Connect(Action<ConnectResults, Exception> callback = null);
+        Task<SocketConnectResult> Connect();
 
-        void Connect(IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback = null);
+        Task<SocketConnectResult> Connect(IPEndPoint ipEndPoint);
 
-        void Connect(Uri uri, Action<ConnectResults, Exception> callback = null);
-        
+        Task<SocketConnectResult> Connect(Uri uri);
+
         bool Reconnect(Exception ex);
 
         CloseResults Disconnect(Exception ex = null);

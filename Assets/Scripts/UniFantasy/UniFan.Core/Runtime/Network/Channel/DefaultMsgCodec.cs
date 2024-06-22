@@ -33,7 +33,7 @@ namespace UniFan.Network
                 {
 #if UNITY_EDITOR
                     //编辑器下检测最大空间，防止因为bug引起的包太大。真机不需要，byteArray可以自动扩容
-                    if (byteArray.availableCapacity < count)
+                    if (byteArray.AvailableCapacity < count)
                     {
                         throw new Exception("The received packet has exceeded the maximum limit:" + byteArray.Capacity);
                     }
@@ -85,19 +85,9 @@ namespace UniFan.Network
             packetLength = 0;
         }
 
-        public abstract IMsgPacket CreatePacket();
+        public abstract ReadOnlySpan<byte> Pack(object packet);
 
-        public virtual ReadOnlySpan<byte> Pack(IMsgPacket packet)
-        {
-            return packet.Output();
-        }
-
-        public virtual IMsgPacket Unpack(ReadOnlySpan<byte> rawData)
-        {
-            var packet = CreatePacket();
-            packet.Input(rawData);
-            return packet;
-        }
+        public abstract object Unpack(ReadOnlySpan<byte> rawData);
 
     }
 }

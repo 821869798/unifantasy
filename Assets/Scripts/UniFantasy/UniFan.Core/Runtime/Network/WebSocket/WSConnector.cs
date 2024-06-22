@@ -84,8 +84,6 @@ namespace UniFan.Network
         /// </summary>
         protected object SyncRoot { get; private set; }
 
-        public event Action<ISocket> OnConnecting;
-        public event Action<ISocket> OnConnected;
         public event Action<ISocket, Exception> OnClosed;
         public event Action<ISocket, ArraySegment<byte>> OnMessage;
         public event Action<ISocket, Exception> OnError;
@@ -120,9 +118,8 @@ namespace UniFan.Network
             this.Uri = uri;
         }
 
-        public virtual async void Connect(Action<ConnectResults, Exception> callback = null)
+        public async Task<SocketConnectResult> Connect()
         {
-
             if (Socket != null)
             {
                 Socket.Dispose();
@@ -133,34 +130,42 @@ namespace UniFan.Network
                 try
                 {
                     Status = SocketStatus.Connecting;
-                    TriggerOnConnecting();
 
                     //start connect
                     await Socket.ConnectAsync(Uri, cts.Token);
 
                     Status = SocketStatus.Establish;
-                    TriggerConnectCallback(callback, null);
-                    TriggerOnConnected();
+
+                    ReceiveMessagesAsync(Socket);
+
+                    return new SocketConnectResult()
+                    {
+                        Result = ConnectResults.Success,
+                        Exception = null
+                    };
                 }
                 catch (OperationCanceledException)
                 {
                     // 连接超时
                     var timeEx = new TimeoutException("Socket connect timeout");
-                    TriggerConnectCallback(callback, timeEx);
                     Close(timeEx, Socket);
-                    return;
+                    return new SocketConnectResult()
+                    {
+                        Result = ConnectResults.Faild,
+                        Exception = timeEx
+                    };
                 }
                 catch (Exception ex)
                 {
                     // 其他错误
-                    TriggerConnectCallback(callback, ex);
                     Close(ex, Socket);
-                    return;
+                    return new SocketConnectResult()
+                    {
+                        Result = ConnectResults.Faild,
+                        Exception = ex
+                    };
                 }
             }
-
-            ReceiveMessagesAsync(Socket);
-
         }
 
         protected void TriggerConnectCallback(Action<ConnectResults, Exception> callback, Exception ex)
@@ -264,7 +269,7 @@ namespace UniFan.Network
             Close(new RuntimeException("Socket[" + Name + "] Send Buffer Full Exception"), Socket);
             return SendResults.Faild;
         }
-        
+
         public SendResults Send(ReadOnlySpan<byte> data)
         {
             if (data.Length <= 0)
@@ -398,36 +403,6 @@ namespace UniFan.Network
             return CloseResults.InClosing;
         }
 
-        protected virtual void TriggerOnConnected()
-        {
-            if (this.OnConnected != null)
-            {
-                try
-                {
-                    this.OnConnected(this);
-                }
-                catch (Exception ex)
-                {
-                    TriggerError(ex);
-                }
-            }
-        }
-
-        protected virtual void TriggerOnConnecting()
-        {
-            if (this.OnConnecting != null)
-            {
-                try
-                {
-                    this.OnConnecting(this);
-                }
-                catch (Exception ex)
-                {
-                    TriggerError(ex);
-                }
-            }
-        }
-
         protected virtual void TriggerOnMessage(ref ArraySegment<byte> receive)
         {
             if (this.OnMessage != null)
@@ -490,7 +465,5 @@ namespace UniFan.Network
             sentBytes = 0L;
             receiveBytes = 0L;
         }
-
-
     }
 }

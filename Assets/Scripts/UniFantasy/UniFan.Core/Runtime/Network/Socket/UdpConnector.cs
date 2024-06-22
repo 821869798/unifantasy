@@ -17,46 +17,6 @@ namespace UniFan.Network
             this.CfgReceiveTimeout = receiveTimeout;
         }
 
-        public override void Connect(Action<ConnectResults, Exception> callback = null)
-        {
-            lock (SyncRoot)
-            {
-                if (Status != SocketStatus.Initial && Status != SocketStatus.Closed)
-                {
-                    throw new InvalidOperationException("Current statu [" + Status + "] can not connect");
-                }
-                connectTimeout = timestamp + CfgConnectTimeout;
-                Status = SocketStatus.Connecting;
-                Reset();
-            }
-            Socket = MakeSocket();
-            TriggerOnConnecting(LastIpEndPort);
-            try
-            {
-                ConnectDataStates.Callback = callback;
-                Socket.Connect(LastIpEndPort);
-                if (Socket.Connected)
-                {
-
-                    if (Status != SocketStatus.Connecting)
-                    {
-                        return;
-                    }
-                    Status = SocketStatus.Establish;
-                    TriggerConnectCallback(ConnectDataStates, null);
-                    TriggerOnConnected();
-                    StartReceive(Socket);
-                }
-            }
-            catch (Exception ex)
-            {
-                TriggerConnectCallback(ConnectDataStates, ex);
-                Close(ex, Socket);
-                return;
-            }
-
-        }
-
         protected override void BeginReceive(SocketReceiveStates states)
         {
             try

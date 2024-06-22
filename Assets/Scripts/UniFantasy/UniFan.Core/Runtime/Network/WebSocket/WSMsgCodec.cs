@@ -13,6 +13,10 @@ namespace UniFan.Network
         {
             ex = null;
             result = default;
+            if (count <= 0)
+            {
+                return false;
+            }
             try
             {
                 result = new ReadOnlySpan<byte>(source, offset, count);
@@ -31,19 +35,18 @@ namespace UniFan.Network
 
         }
 
-        public virtual IMsgPacket CreatePacket()
+        public virtual ReadOnlySpan<byte> Pack(object packet)
         {
-            return WSMsgPacket.Get();
+            if (packet is WSMsgPacket msgPacket)
+            {
+                return msgPacket.OutputSpan();
+            }
+            throw new ArgumentException("packet is not WSMsgPacket");
         }
 
-        public virtual ReadOnlySpan<byte> Pack(IMsgPacket packet)
+        public virtual object Unpack(ReadOnlySpan<byte> rawData)
         {
-            return packet.Output();
-        }
-
-        public virtual IMsgPacket Unpack(ReadOnlySpan<byte> rawData)
-        {
-            var packet = CreatePacket();
+            var packet = WSMsgPacket.Get();
             packet.Input(rawData);
             return packet;
         }

@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace UniFan.Network
 {
@@ -49,8 +49,7 @@ namespace UniFan.Network
         public abstract void Reset();
 
         #region ObjectPool
-        private static readonly Stack<T> objPool = new Stack<T>();
-        private static readonly object syncObject = new object();
+        private static readonly ConcurrentStack<T> objPool = new ConcurrentStack<T>();
         private const int MAX_OBJ_POOL = 20;
 
         public void Put()
@@ -59,26 +58,22 @@ namespace UniFan.Network
             {
                 return;
             }
-            lock (syncObject)
+
+            this.Reset();
+            if (objPool.Count < MAX_OBJ_POOL)
             {
-                this.Reset();
-                if (objPool.Count < MAX_OBJ_POOL)
-                {
-                    objPool.Push((T)this);
-                }
+                objPool.Push((T)this);
             }
+
         }
 
         public static T Get()
         {
-            lock (syncObject)
+            if (objPool.TryPop(out var t))
             {
-                if (objPool.Count > 0)
-                {
-                    return objPool.Pop();
-                }
-                return new T();
+                return t;
             }
+            return new T();
         }
         #endregion;
 

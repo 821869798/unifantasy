@@ -18,12 +18,17 @@ namespace UniFan.Network
             this.Extend("ws", (object ipOrUri) => new WSConnector("ws", ipOrUri as Uri));
         }
 
-        public ISocket Create(string name, IPEndPoint ipEndPoint = null)
+        public ISocket Create(string name)
+        {
+            return CreateInternal(name);
+        }
+
+        public ISocket Create(string name, IPEndPoint ipEndPoint)
         {
             return CreateInternal(name, ipEndPoint);
         }
 
-        public ISocket Create(string name, Uri uri = null)
+        public ISocket Create(string name, Uri uri)
         {
             return CreateInternal(name, uri);
         }

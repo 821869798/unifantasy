@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace UniFan.Network
 {
@@ -7,6 +6,8 @@ namespace UniFan.Network
     {
 
         public ByteArray ByteData { private set; get; }
+
+        public object UserData { private set; get; }
 
         public WSMsgPacket()
         {
@@ -44,7 +45,7 @@ namespace UniFan.Network
         {
             this.ByteData.WriteUInt32(this.CmdId).WriteBytes(data, offset, len);
         }
-        
+
         public override void Encode(ReadOnlySpan<byte> data)
         {
             this.ByteData.WriteUInt32(this.CmdId).WriteSpan(data);
@@ -54,6 +55,7 @@ namespace UniFan.Network
         {
             CmdId = 0;
             ByteData.Clear();
+            UserData = null;
         }
 
         public override bool CanReturnPool()

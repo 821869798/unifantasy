@@ -1,7 +1,8 @@
-using System.Net.Sockets;
-using System.Net;
 using KcpProject;
 using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace UniFan.Network
 {
@@ -45,7 +46,6 @@ namespace UniFan.Network
             PendingSentBuffer = new RingBuffer(2);
             ReceiveDataStates = new SocketReceiveStates(4096);
             SentDataStates = new SocketSentStates(2);
-            ConnectDataStates = new ConnectStates();
         }
 
         protected virtual void InitKcp()
@@ -55,13 +55,13 @@ namespace UniFan.Network
             kcp.SetStreamMode(true);
         }
 
-        public override void Connect(Action<ConnectResults, Exception> callback = null)
+        public override Task<SocketConnectResult> Connect()
         {
             if (kcp == null)
             {
                 InitKcp();
             }
-            base.Connect(callback);
+            return base.Connect();
         }
 
         protected override void OnReset()

@@ -1,19 +1,14 @@
-using System.Net.Sockets;
-using System.Net;
 using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace UniFan.Network
 {
     using Socket = System.Net.Sockets.Socket;
     public abstract class SocketConnector : ISocket
     {
-
-        protected class ConnectStates
-        {
-            internal Action<ConnectResults, Exception> Callback;
-
-            internal Socket Socket { get; set; }
-        }
 
         protected class SocketReceiveStates
         {
@@ -91,11 +86,6 @@ namespace UniFan.Network
         protected RingBuffer PendingSentBuffer { get; set; }
 
         /// <summary>
-        /// 连接状态
-        /// </summary>
-        protected ConnectStates ConnectDataStates { get; set; }
-
-        /// <summary>
         /// 接受状态
         /// </summary>
         protected SocketReceiveStates ReceiveDataStates { get; set; }
@@ -123,8 +113,6 @@ namespace UniFan.Network
         public event Action<ISocket, Exception> OnError;
 
         protected float timestamp;
-
-        protected float connectTimeout;
 
         protected virtual float CfgConnectTimeout => 5f;
 
@@ -160,7 +148,6 @@ namespace UniFan.Network
             PendingSentBuffer = new RingBuffer(65536);
             ReceiveDataStates = new SocketReceiveStates(4096);
             SentDataStates = new SocketSentStates(4096);
-            ConnectDataStates = new ConnectStates();
         }
 
         public virtual void ChangeIpEndPoint(IPEndPoint ipEndPoint)
@@ -171,42 +158,100 @@ namespace UniFan.Network
             }
             LastIpEndPort = ipEndPoint;
         }
-        
+
         public void ChangeUri(Uri uri)
         {
             throw new NotSupportedException("Normal Socket Client no supported ChangeUri");
         }
 
-        public virtual void Connect(Action<ConnectResults, Exception> callback = null)
+        public virtual async Task<SocketConnectResult> Connect()
         {
             if (LastIpEndPort == null)
             {
                 throw new InvalidOperationException("Current IpEndPort is null,can't to connect,please call ChangeIpEndPoint to set");
             }
+            if (Status == SocketStatus.Connecting)
+            {
+                return new SocketConnectResult
+                {
+                    Result = ConnectResults.Faild,
+                    Exception = new InvalidOperationException("Abnormal status [" + Status + "]")
+                };
+            }
+
             lock (SyncRoot)
             {
                 if (Status != SocketStatus.Initial && Status != SocketStatus.Closed)
                 {
                     throw new InvalidOperationException("Current statu [" + status + "] can not connect");
                 }
-                connectTimeout = timestamp + CfgConnectTimeout;
                 Status = SocketStatus.Connecting;
             }
+
             Reset();
             Socket = MakeSocket();
-            BeginConnect(Socket, LastIpEndPort, callback);
-        }
 
+            try
+            {
+                Task taskConnect = Socket.ConnectAsync(LastIpEndPort);
+                CancellationTokenSource timeoutCts = new();
+                Task taskTimeout = Task.Delay((int)(CfgConnectTimeout * 1000), timeoutCts.Token);
+                Task taskComplete = await Task.WhenAny(taskConnect, taskTimeout);
+                if (taskComplete == taskConnect)
+                {
+                    //连接完成
+                    timeoutCts.Cancel();
+                    timeoutCts.Dispose();
+                    if (Socket.Connected)
+                    {
+                        lock (SyncRoot)
+                        {
+                            if (Status == SocketStatus.Connecting)
+                            {
+                                Status = SocketStatus.Establish;
+                                StartReceive(Socket);
+                                return new SocketConnectResult
+                                {
+                                    Result = ConnectResults.Success,
+                                    Exception = null
+                                };
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    // 链接超时
+                    var exp = new TimeoutException("Socket connect timeout");
+                    Close(exp, Socket);
+                    return new SocketConnectResult
+                    {
+                        Result = ConnectResults.Faild,
+                        Exception = exp
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Close(ex, Socket);
+                return new SocketConnectResult
+                {
+                    Result = ConnectResults.Faild,
+                    Exception = ex
+                };
+            }
+
+            return new SocketConnectResult
+            {
+                Result = ConnectResults.Faild,
+                Exception = new InvalidOperationException("Abnormal status [" + Status + "]")
+            };
+        }
 
         public virtual void OnUpdate(float deltaTime, float unsacaleTime)
         {
             timestamp += unsacaleTime;
-            if (Status == SocketStatus.Connecting && connectTimeout <= timestamp)
-            {
-                var ex = new TimeoutException("Socket connect timeout");
-                TriggerConnectCallback(ConnectDataStates, ex);
-                Close(ex, Socket);
-            }
         }
 
         public SendResults Send(byte[] data)
@@ -412,95 +457,6 @@ namespace UniFan.Network
             receiveBytes = 0L;
         }
 
-        private void BeginConnect(Socket socket, IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback)
-        {
-            TriggerOnConnecting(ipEndPoint);
-            try
-            {
-                ConnectDataStates.Socket = socket;
-                ConnectDataStates.Callback = callback;
-                socket.BeginConnect(ipEndPoint, EndConnect, ConnectDataStates);
-            }
-            catch (Exception ex)
-            {
-                TriggerConnectCallback(ConnectDataStates, ex);
-                Close(ex, socket);
-                return;
-            }
-        }
-
-        private void EndConnect(IAsyncResult result)
-        {
-            ConnectStates states = (ConnectStates)result.AsyncState;
-            try
-            {
-                states.Socket.EndConnect(result);
-            }
-            catch (Exception ex)
-            {
-                TriggerConnectCallback(states, ex);
-                Close(ex, states.Socket);
-                return;
-            }
-            lock (SyncRoot)
-            {
-                if (Status != SocketStatus.Connecting)
-                {
-                    return;
-                }
-                Status = SocketStatus.Establish;
-                TriggerConnectCallback(states, null);
-            }
-            TriggerOnConnected();
-            StartReceive(states.Socket);
-        }
-
-        protected void TriggerConnectCallback(ConnectStates states, Exception ex)
-        {
-            if (states != null && states.Callback != null)
-            {
-                try
-                {
-                    states.Callback((ex == null) ? ConnectResults.Success : ConnectResults.Faild, ex);
-                }
-                catch (Exception exception)
-                {
-                    TriggerError(exception);
-                }
-            }
-        }
-
-
-        protected virtual void TriggerOnConnecting(IPEndPoint ipEndPoint)
-        {
-            if (this.OnConnecting != null)
-            {
-                try
-                {
-                    this.OnConnecting(this);
-                }
-                catch (Exception ex)
-                {
-                    TriggerError(ex);
-                }
-            }
-        }
-
-        protected virtual void TriggerOnConnected()
-        {
-            if (this.OnConnected != null)
-            {
-                try
-                {
-                    this.OnConnected(this);
-                }
-                catch (Exception ex)
-                {
-                    TriggerError(ex);
-                }
-            }
-        }
-
         protected void StartReceive(Socket socket)
         {
             if (Status != SocketStatus.Establish)
@@ -606,7 +562,6 @@ namespace UniFan.Network
         {
             return new Socket(LastIpEndPort.AddressFamily, SocketType.Stream, GetDefaultProtocolType());
         }
-
     }
 
 }

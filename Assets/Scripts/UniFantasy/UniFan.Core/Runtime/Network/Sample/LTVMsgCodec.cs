@@ -8,9 +8,20 @@ namespace UniFan.Network
         {
         }
 
-        public override IMsgPacket CreatePacket()
+        public override ReadOnlySpan<byte> Pack(object packet)
         {
-            return LTVMsgPacket.Get();
+            if (packet is LTVMsgPacket ltvMsgPacket)
+            {
+                return ltvMsgPacket.OutputSpan();
+            }
+            throw new ArgumentException("packet is not LTVMsgPacket");
+        }
+
+        public override object Unpack(ReadOnlySpan<byte> rawData)
+        {
+            var packet = LTVMsgPacket.Get();
+            packet.Input(rawData);
+            return packet;
         }
     }
 }

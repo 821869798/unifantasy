@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using HotCode.Framework;
-using System.Net;
 using System.Text;
 using UniFan;
 using UniFan.Network;
@@ -43,7 +42,7 @@ namespace HotCode.Game
                 this.verticalLoopScroll = __tbv2;
             }
             #endregion ObjectBinding Generate
-             
+
         }
         #endregion Template Generate,don't modify
 
@@ -79,7 +78,7 @@ namespace HotCode.Game
 
             TestLoopScrollView();
 
-            //TestNetwork();
+            //TestNetwork().Forget();
         }
 
         private void BtnClicked()
@@ -138,9 +137,9 @@ namespace HotCode.Game
         #region 网络测试
 
         NetChannel netChannel;
-        private void TestNetwork()
+        private async UniTask TestNetwork()
         {
-            //ISocket socket = SocketFactory.Instance.Create("ws", new Uri("ws://127.0.0.1:7801"));
+            //ISocket socket = SocketFactory.Instance.Create("ws", new System.Uri("ws://127.0.0.1:7801"));
             //netChannel = new NetChannel(socket, new WSMsgCodec());
 
             ISocket socket = SocketFactory.Instance.Create("tcp", new System.Net.IPEndPoint(NetworkUtility.ParseIpAddress("127.0.0.1"), 7801));
@@ -156,30 +155,22 @@ namespace HotCode.Game
             };
             netChannel.OnPacket += (net, packet) =>
             {
-                var rawData = packet.OutputSpan();
+                var msgPacket = (packet as IMsgPacket);
+                var rawData = msgPacket.OutputSpan();
                 var str = Encoding.UTF8.GetString(rawData);
                 Debug.Log($"recv message:{str}");
-                packet.Put();
-            };
-            netChannel.OnConnecting += (net, ip) =>
-            {
-                Debug.Log($"start connecting!");
-            };
-            netChannel.OnConnected += (net) =>
-            {
-                Debug.Log($"net connected!");
-                TestSendMsg("hello server!");
-                TestSendMsg("test message1!");
-                TestSendMsg("test message2!");
-                TestSendMsg("test message3!");
-                TestSendMsg("test message4!");
-                TestSendMsg("test message5!");
+                msgPacket.Put();
             };
             netChannel.OnClosed += (net, e) =>
             {
                 Debug.Log($"net disconnected:{e}");
             };
-            netChannel.Connect();
+            netChannel.OnError += (net, e) =>
+            {
+                Debug.LogError($"net error:{e}");
+            }; ;
+            var result = await netChannel.Connect();
+            Debug.Log($"connect result:" + result.Result);
         }
 
         private void TestSendMsg(string str)
@@ -188,7 +179,7 @@ namespace HotCode.Game
             {
                 return;
             }
-            IMsgPacket packet = netChannel.MsgCodec.CreatePacket();
+            IMsgPacket packet = LTVMsgPacket.Get();
             packet.Encode(Encoding.UTF8.GetBytes(str));
             netChannel.Send(packet);
             packet.Put();

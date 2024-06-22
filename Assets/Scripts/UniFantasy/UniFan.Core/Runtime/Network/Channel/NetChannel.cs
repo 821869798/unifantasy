@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace UniFan.Network
 {
@@ -9,9 +10,6 @@ namespace UniFan.Network
     {
         protected enum NetworkEventTypes
         {
-            ConnectingInline,
-            Connecting,
-            Connected,
             Closed,
             Reconnecting,
             Reconnected,
@@ -76,9 +74,6 @@ namespace UniFan.Network
 
         public long ReceiveBytes => Socket.ReceiveBytes;
 
-        public event Action<INetChannel, IPEndPoint> OnConnecting;
-
-        public event Action<INetChannel> OnConnected;
 
         public event Action<INetChannel, Exception> OnClosed;
 
@@ -86,7 +81,7 @@ namespace UniFan.Network
 
         public event Action<INetChannel> OnReconnected;
 
-        public event Action<INetChannel, IMsgPacket> OnPacket;
+        public event Action<INetChannel, object> OnPacket;
 
         public event Action<INetChannel, Exception> OnError;
 
@@ -107,8 +102,6 @@ namespace UniFan.Network
             Reconnecting = false;
             BeConnected = false;
             Socket.OnMessage += OnChannelMessage;
-            Socket.OnConnecting += OnChannelConnecting;
-            Socket.OnConnected += OnChannelConnected;
             Socket.OnClosed += OnChannelClosed;
             Socket.OnError += OnChannelError;
         }
@@ -127,8 +120,6 @@ namespace UniFan.Network
             Socket?.Dispose();
             Reset();
             Socket.OnMessage -= OnChannelMessage;
-            Socket.OnConnecting -= OnChannelConnecting;
-            Socket.OnConnected -= OnChannelConnected;
             Socket.OnClosed -= OnChannelClosed;
             Socket.OnError -= OnChannelError;
             this.SyncNetworkLoop();
@@ -173,43 +164,51 @@ namespace UniFan.Network
             plugins.Add(netPing);
         }
 
-        public void Connect(Action<ConnectResults, Exception> callback = null)
+        public Task<SocketConnectResult> Connect()
         {
             Reset();
-            Socket.Connect(MakeConnectInlineAction(callback));
+            return Socket.Connect();
         }
 
-        public void Connect(IPEndPoint ipEndPoint, Action<ConnectResults, Exception> callback = null)
+        public Task<SocketConnectResult> Connect(IPEndPoint ipEndPoint)
         {
             Reset();
             Socket.ChangeIpEndPoint(ipEndPoint);
-            Socket.Connect(MakeConnectInlineAction(callback));
+            return ConnectInternal();
         }
 
-        public void Connect(Uri uri, Action<ConnectResults, Exception> callback = null)
+        public Task<SocketConnectResult> Connect(Uri uri)
         {
             Reset();
             Socket.ChangeUri(uri);
-            Socket.Connect(MakeConnectInlineAction(callback));
+            return ConnectInternal();
         }
 
-        private Action<ConnectResults, Exception> MakeConnectInlineAction(Action<ConnectResults, Exception> callback)
+        protected async Task<SocketConnectResult> ConnectInternal()
         {
-            if (callback == null)
+            var result = await Socket.Connect();
+
+            if (result.Result == ConnectResults.Success)
             {
-                return null;
-            }
-            return delegate (ConnectResults result, Exception ex)
-            {
-                Action context = delegate
+                BeConnected = true;
+                if (Reconnecting)
                 {
-                    callback(result, ex);
-                };
-                EnqueueNetworkEvent(NetworkEventTypes.ConnectingInline, context);
-            };
+                    try
+                    {
+                        Reconnection.Reconnected();
+                    }
+                    finally
+                    {
+                        Reconnecting = false;
+                        EnqueueNetworkEvent(NetworkEventTypes.Reconnected);
+                    }
+                }
+
+            }
+            return result;
         }
 
-        public SendResults Send(IMsgPacket packet)
+        public SendResults Send(object packet)
         {
             try
             {
@@ -235,7 +234,7 @@ namespace UniFan.Network
             }
             return Send(source, 0, source.Length);
         }
-        
+
 
         public SendResults Send(byte[] source, int offset, int count)
         {
@@ -263,40 +262,10 @@ namespace UniFan.Network
             return Socket.Send(source);
         }
 
-        protected virtual void OnChannelConnecting(ISocket channel)
-        {
-            if (!Connected)
-            {
-                EnqueueNetworkEvent(NetworkEventTypes.Connecting);
-            }
-        }
-
-        protected virtual void OnChannelConnected(ISocket channel)
-        {
-
-            BeConnected = true;
-            if (Reconnecting)
-            {
-                try
-                {
-                    Reconnection.Reconnected();
-                }
-                finally
-                {
-                    Reconnecting = false;
-                    EnqueueNetworkEvent(NetworkEventTypes.Reconnected);
-                }
-                return;
-            }
-
-            EnqueueNetworkEvent(NetworkEventTypes.Connected);
-        }
-
         protected virtual void OnChannelClosed(ISocket socket, Exception ex)
         {
             Reconnecting = false;
             EnqueueNetworkEvent(NetworkEventTypes.Closed, ex);
-
         }
 
 
@@ -318,7 +287,7 @@ namespace UniFan.Network
                         HeartBeat.Reset();
                     }
 
-                    IMsgPacket packet = MsgCodec.Unpack(receive);
+                    object packet = MsgCodec.Unpack(receive);
                     try
                     {
                         if (NetPing != null)
@@ -435,16 +404,7 @@ namespace UniFan.Network
             switch (delivery.DeliveryType)
             {
                 case NetworkEventTypes.Packet:
-                    DeliveryPacket(delivery.Context as IMsgPacket);
-                    break;
-                case NetworkEventTypes.ConnectingInline:
-                    DeliveryConnectingInline(delivery.Context as Action);
-                    break;
-                case NetworkEventTypes.Connecting:
-                    DeliveryConnecting(delivery.Context as IPEndPoint);
-                    break;
-                case NetworkEventTypes.Connected:
-                    DeliveryConnected();
+                    DeliveryPacket(delivery.Context);
                     break;
                 case NetworkEventTypes.Closed:
                     DeliveryClosed(delivery.Context as Exception);
@@ -464,7 +424,7 @@ namespace UniFan.Network
         }
 
 
-        protected virtual void DeliveryPacket(IMsgPacket packet)
+        protected virtual void DeliveryPacket(object packet)
         {
             if (this.OnPacket != null)
             {
@@ -475,22 +435,6 @@ namespace UniFan.Network
         protected virtual void DeliveryConnectingInline(Action action)
         {
             action?.Invoke();
-        }
-
-        protected virtual void DeliveryConnecting(IPEndPoint ipEndPoint)
-        {
-            if (this.OnConnecting != null)
-            {
-                this.OnConnecting(this, ipEndPoint);
-            }
-        }
-
-        protected virtual void DeliveryConnected()
-        {
-            if (this.OnConnected != null)
-            {
-                this.OnConnected(this);
-            }
         }
 
         protected virtual void DeliveryClosed(Exception ex)
