@@ -28,7 +28,7 @@ MonoBehaviour:
     m_ConfigSource: 0
   - m_Id: scoped:project:package.openupm.cn
     m_Name: package.openupm.cn
-    m_Url: https://package.openupm.cn
+    m_Url: https://package.openupm.com
     m_Scopes:
     - com.cysharp.unitask
     - org.icsharpcode.sharpziplib
@@ -47,6 +47,6 @@ MonoBehaviour:
   m_RegistryInfoDraft:
     m_Modified: 0
     m_ErrorMessage: 
-    m_UserModificationsInstanceId: -830
-    m_OriginalInstanceId: -834
+    m_UserModificationsInstanceId: -828
+    m_OriginalInstanceId: -832
   m_LoadAssets: 0
