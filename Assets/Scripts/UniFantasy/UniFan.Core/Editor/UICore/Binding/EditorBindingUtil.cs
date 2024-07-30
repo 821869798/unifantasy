@@ -84,36 +84,14 @@ namespace UniFanEditor
                 EditorUtility.DisplayDialog("警告", $"当前ObjectBinding对象为空，生成失败", "ok");
                 return;
             }
-            string name;
-            if (!string.IsNullOrEmpty(binding.editorCustomClass))
-            {
-                name = binding.editorCustomClass;
-            }
-            else
-            {
-                name = binding.gameObject.name;
-            }
+            string name = binding.EditorGetTargetName(false);
 
             //先找到对应的脚本
-            string[] guids = AssetDatabase.FindAssets("t:Script " + name);
-            string scriptPath = string.Empty;
-            MonoScript dstScript = null;
-            if (guids != null)
+            if (!TryFindScript(name, out var scriptPath, out MonoScript dstScript))
             {
-                foreach (string guid in guids)
-                {
-                    string path = AssetDatabase.GUIDToAssetPath(guid);
-                    MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
-
-                    if (script != null && script.GetClass().Name == name)
-                    {
-                        dstScript = script;
-                        scriptPath = path;
-                        // 读取脚本内容
-
-                    }
-                }
+                //TryFindScript(name + "View", out scriptPath, out dstScript);
             }
+
             if (string.IsNullOrEmpty(scriptPath))
             {
                 EditorUtility.DisplayDialog("警告", $"没有找到对应名字的代码脚本:{name}\n请拷贝代码自行替换", "ok");
@@ -123,8 +101,6 @@ namespace UniFanEditor
             try
             {
                 string scriptContent = File.ReadAllText(scriptPath);
-
-
 
                 if (EditorUtility.DisplayDialog("警告", $"是否替换[{scriptPath}]中ObjectBinding Generate的部分", "ok", "cancel"))
                 {
@@ -151,8 +127,8 @@ namespace UniFanEditor
                     //string pattern = @"(?<=#region ObjectBinding Generate\s*).*?(?=#endregion ObjectBinding Generate)";
                     //string replacement = "\n" + binding.GetBindingCode(baseClassType, 3) + string.Empty.PadLeft(3 * 4);
 
-                    string pattern = @$"[ \t]*#region {ObjectBinding.GenerateMark}\s*.*?#endregion {ObjectBinding.GenerateMark}";
-                    string replacement = binding.GetBindingCode(baseClassType, 3) + string.Empty.PadLeft(3 * 4);
+                    string pattern = @$"[ \t]*#region {ObjectBinding.GenerateMark}\s*.*?#endregion {ObjectBinding.GenerateMark}[ \t]*";
+                    string replacement = binding.GetBindingCode(baseClassType, 3);
 
                     string modifiedContent = Regex.Replace(scriptContent, pattern, replacement, RegexOptions.Singleline);
 
@@ -173,6 +149,31 @@ namespace UniFanEditor
             }
 
 
+        }
+
+        private static bool TryFindScript(string name, out string scriptPath, out MonoScript dstScript)
+        {
+            //先找到对应的脚本
+            string[] guids = AssetDatabase.FindAssets("t:Script " + name);
+            scriptPath = string.Empty;
+            dstScript = null;
+            if (guids != null)
+            {
+                foreach (string guid in guids)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guid);
+                    MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+
+                    if (script != null && script.GetClass().Name == name)
+                    {
+                        dstScript = script;
+                        scriptPath = path;
+                        // 读取脚本内容
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 

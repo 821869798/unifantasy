@@ -1,5 +1,4 @@
 using Sirenix.OdinInspector.Editor;
-using System;
 using System.Collections.Generic;
 using UniFan;
 using UnityEditor;
@@ -40,34 +39,40 @@ namespace UniFanEditor
                 if (variable.variableType == VariableType.Component)
                 {
                     int index = 0;
-                    List<System.Type> types = new List<System.Type>();
+                    List<(System.Type Type, int Index)> types = new List<(System.Type Type, int Index)>();
+                    Dictionary<System.Type, int> typeIndex = new Dictionary<System.Type, int>();
                     var component = variable.editorObjectValue as Component;
                     if (component != null)
                     {
                         GameObject go = component.gameObject;
-                        foreach (var c in go.GetComponents<Component>())
+                        var components = go.GetComponents<Component>();
+                        for (var i = 0; i < components.Length; i++)
                         {
-                            if (!types.Contains(c.GetType()))
-                                types.Add(c.GetType());
-                        }
-
-                        for (int i = 0; i < types.Count; i++)
-                        {
-                            if (component.GetType().Equals(types[i]))
+                            var c = components[i];
+                            int tc = 0;
+                            typeIndex.TryGetValue(c.GetType(), out tc);
+                            types.Add((c.GetType(), tc));
+                            typeIndex[c.GetType()] = tc + 1;
+                            if (c == component)
                             {
                                 index = i;
-                                break;
                             }
                         }
+
                     }
 
                     if (types.Count <= 0)
-                        types.Add(typeof(Transform));
+                        types.Add((typeof(Transform), 0));
 
                     List<GUIContent> contents = new List<GUIContent>();
                     foreach (var t in types)
                     {
-                        contents.Add(new GUIContent(t.Name, t.FullName));
+                        var Name = t.Type.Name;
+                        if (t.Index > 0)
+                        {
+                            Name += "#" + t.Item2;
+                        }
+                        contents.Add(new GUIContent(Name, t.Type.FullName));
                     }
 
                     EditorGUI.BeginChangeCheck();
@@ -75,9 +80,23 @@ namespace UniFanEditor
                     if (EditorGUI.EndChangeCheck())
                     {
                         if (component != null)
-                            variable.editorObjectValue = component.gameObject.GetComponent(types[newIndex]);
+                        {
+                            var t = types[newIndex];
+                            UnityEngine.Object newComponet;
+                            if (t.Index == 0)
+                            {
+                                newComponet = component.gameObject.GetComponent(t.Type);
+                            }
+                            else
+                            {
+                                newComponet = component.gameObject.GetComponents(t.Type)[t.Index];
+                            }
+                            variable.editorObjectValue = newComponet;
+                        }
                         else
+                        {
                             variable.editorObjectValue = null;
+                        }
                     }
                 }
                 else if (variable.variableType == VariableType.Array)

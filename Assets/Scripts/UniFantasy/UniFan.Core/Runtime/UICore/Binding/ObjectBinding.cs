@@ -24,7 +24,7 @@ namespace UniFan
 #endif
 
 #if UNITY_EDITOR
-        [ListDrawerSettings(NumberOfItemsPerPage = 30, HideAddButton = true, Expanded = true)]
+        [ListDrawerSettings(NumberOfItemsPerPage = 30, HideAddButton = true)]
 #endif
         [SerializeField]
         private List<Variable> variables;
@@ -47,6 +47,14 @@ namespace UniFan
 
         private void Awake()
         {
+            if (variableMap == null)
+            {
+                InitVariableMap();
+            }
+        }
+
+        private void InitVariableMap()
+        {
             variableMap = new Dictionary<string, Variable>(variables.Count);
             foreach (var variable in variables)
             {
@@ -57,6 +65,10 @@ namespace UniFan
 
         public Variable GetVariableByName(string name)
         {
+            if (variableMap == null)
+            {
+                InitVariableMap();
+            }
             if (variableMap.TryGetValue(name, out var variable))
             {
                 return variable;
@@ -66,6 +78,10 @@ namespace UniFan
 
         public bool TryGetVariableValue<T>(string name, out T value)
         {
+            if (variableMap == null)
+            {
+                InitVariableMap();
+            }
             if (variableMap.TryGetValue(name, out var variable))
             {
                 value = variable.GetValue<T>();
@@ -163,7 +179,7 @@ namespace UniFan
             sb.Append(spaces);
             sb.Append("}\n");
 
-            sb.Append($"{spaces}#endregion {GenerateMark}\n");
+            sb.Append($"{spaces}#endregion {GenerateMark}");
 
             return sb.ToString();
         }
@@ -329,6 +345,25 @@ namespace UniFan
             }
             return propertyNames;
         }
+
+        public string EditorGetTargetName(bool view = false)
+        {
+            string name;
+            if (!string.IsNullOrEmpty(this.editorCustomClass))
+            {
+                name = this.editorCustomClass;
+            }
+            else
+            {
+                name = this.gameObject.name;
+                if (view)
+                {
+                    name += "View";
+                }
+            }
+            return name;
+        }
+
 #endif
 
     }

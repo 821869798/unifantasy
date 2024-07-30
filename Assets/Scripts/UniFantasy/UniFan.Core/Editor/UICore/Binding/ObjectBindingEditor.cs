@@ -174,7 +174,7 @@ namespace UniFanEditor
                     // 使用该ObjectBinding组件创建一个新的cs文件
                     if (CreateCSTemplateAction != null)
                     {
-                        CreateCSTemplateAction?.Invoke(objectBinding, _enableCustomClassName ? objectBinding.editorCustomClass : objectBinding.gameObject.name);
+                        CreateCSTemplateAction?.Invoke(objectBinding, objectBinding.EditorGetTargetName());
                     }
                 }
                 if (GUILayout.Button("copy code", EditorStyles.miniButtonLeft, LayoutMinWidth))
@@ -345,7 +345,7 @@ namespace UniFanEditor
             {
                 return;
             }
-            Editor repaint = ScriptableObject.CreateInstance<Editor>();
+            UnityEditor.Editor repaint = ScriptableObject.CreateInstance<UnityEditor.Editor>();
 
             GameObject gameObject = dragObj[0];
             //拿到物体下的组件
