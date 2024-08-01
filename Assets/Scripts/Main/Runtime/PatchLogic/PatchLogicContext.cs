@@ -2,7 +2,6 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UniFan;
-using UniFan.Res;
 using UnityEngine;
 
 namespace Main.HotUpdate
@@ -81,13 +80,7 @@ namespace Main.HotUpdate
             //string hostServerIP = "http://10.0.2.2"; //安卓模拟器地址
             string hostServerIP = "http://127.0.0.1";
             // 临时版本号
-
-            var platformName = string.Empty;
-#if UNITY_EDITOR
-            platformName = AssetBundleUtility.GetPlatformName();
-#else
-            platformName = FilePathHelper.GetResPlatformName();
-#endif
+            var platformName = FilePathHelper.GetPlatformName();
             return $"{hostServerIP}/CDN/{platformName}/{version}";
         }
 

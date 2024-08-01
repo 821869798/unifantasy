@@ -22,17 +22,19 @@ namespace Main
             /// 注意，补充元数据是给AOT dll补充元数据，而不是给热更新dll补充元数据。
             /// 热更新dll不缺元数据，不需要补充，如果调用LoadMetadataForAOTAssembly会返回错误
             /// 
-
-            var fileListBinary = resloader.LoadABAsset<TextAsset>(HybridCLRUtil.CodeDllPath + HybridCLRUtil.AOTMetadataPath + "/" + HybridCLRUtil.AotFileListName);
-            if (fileListBinary == null || fileListBinary.bytes == null)
-            {
-                Debug.LogError("LoadMetadataForAOTAssemblies FileList failed:" + HybridCLRUtil.AotFileListName);
-                return;
-            }
             List<string> aotFileList = new List<string>();
+
             try
             {
-                using (MemoryStream ms = new MemoryStream(fileListBinary.bytes))
+                var fileListBinary = await resloader.LoadABAssetAwait<TextAsset>(HybridCLRUtil.CodeDllPath + HybridCLRUtil.AOTMetadataPath + "/" + HybridCLRUtil.AotFileListName);
+                if (fileListBinary == null || fileListBinary.bytes == null)
+                {
+                    Debug.LogError($"[{nameof(LoadMetadataForAOTAssemblies)}] FileList failed:" + HybridCLRUtil.AotFileListName);
+                    return;
+                }
+                var bs = fileListBinary.bytes;
+                resloader.ReleaseAllRes();
+                using (MemoryStream ms = new MemoryStream(bs))
                 using (BinaryReader br = new BinaryReader(ms))
                 {
                     var count = br.ReadInt32();
@@ -44,24 +46,32 @@ namespace Main
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Read AotFileList[{HybridCLRUtil.AotFileListName}] failed:{ex}");
+                Debug.LogError($"[{nameof(LoadMetadataForAOTAssemblies)}] Read AotFileList[{HybridCLRUtil.AotFileListName}] failed:{ex}");
             }
 
-
-            HomologousImageMode mode = HomologousImageMode.SuperSet;
-            foreach (var aotDllName in aotFileList)
+            try
             {
-                //byte[] dllBytes = BetterStreamingAssets.ReadAllBytes(aotDllName + ".bytes");
-                var text = await resloader.LoadABAssetAwait<TextAsset>(HybridCLRUtil.CodeDllPath + HybridCLRUtil.AOTMetadataPath + "/" + aotDllName);
-                if (text == null)
+                HomologousImageMode mode = HomologousImageMode.SuperSet;
+                foreach (var aotDllName in aotFileList)
                 {
-                    return;
+                    //byte[] dllBytes = BetterStreamingAssets.ReadAllBytes(aotDllName + ".bytes");
+                    var text = await resloader.LoadABAssetAwait<TextAsset>(HybridCLRUtil.CodeDllPath + HybridCLRUtil.AOTMetadataPath + "/" + aotDllName);
+                    if (text == null)
+                    {
+                        return;
+                    }
+                    byte[] dllBytes = text.bytes;
+                    resloader.ReleaseAllRes();
+                    // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
+                    LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, mode);
+                    Debug.Log($"[{nameof(LoadMetadataForAOTAssemblies)}]:{aotDllName}. mode:{mode} ret:{err}");
                 }
-                byte[] dllBytes = text.bytes;
-                // 加载assembly对应的dll，会自动为它hook。一旦aot泛型函数的native函数不存在，用解释器版本代码
-                LoadImageErrorCode err = RuntimeApi.LoadMetadataForAOTAssembly(dllBytes, mode);
-                Debug.Log($"LoadMetadataForAOTAssembly:{aotDllName}. mode:{mode} ret:{err}");
             }
+            catch (Exception e)
+            {
+                Debug.LogError($"[{nameof(LoadMetadataForAOTAssemblies)}] exception:{e}");
+            }
+
 
         }
 
@@ -71,19 +81,74 @@ namespace Main
         /// <returns></returns>
         public static async UniTask<Assembly> LoadHotUpdateAssembly(ResLoader resloader, string fileName)
         {
-            var filePath = HybridCLRUtil.CodeDllPath + fileName;
-
-
-            var text = await resloader.LoadABAssetAwait<TextAsset>(filePath);
-            if (text == null)
+            try
             {
-                Debug.LogError($"Load {fileName} Failed");
+                var filePath = HybridCLRUtil.CodeDllPath + HybridCLRUtil.HotDllPath + "/" + fileName;
+                var text = await resloader.LoadABAssetAwait<TextAsset>(filePath);
+                if (text == null)
+                {
+                    Debug.LogError($"[{nameof(LoadHotUpdateAssembly)}] Load {fileName} Failed");
+                    return null;
+                }
+                byte[] assemblyData = text.bytes;
+                resloader.ReleaseAllRes();
+                Assembly ass = Assembly.Load(assemblyData);
+
+                return ass;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[{nameof(LoadHotUpdateAssembly)}] exception:{e}");
                 return null;
             }
-            byte[] assemblyData = text.bytes;
-            Assembly ass = Assembly.Load(assemblyData);
-
-            return ass;
         }
+
+        public static async UniTask<Dictionary<string, Assembly>> LoadAllHotUpdateAssembly(ResLoader resloader, Func<string, bool> validLoadFunc = null)
+        {
+            List<string> hotDllFileList = new List<string>();
+
+            Dictionary<string, Assembly> result = new Dictionary<string, Assembly>();
+            try
+            {
+                var fileListBinary = await resloader.LoadABAssetAwait<TextAsset>(HybridCLRUtil.CodeDllPath + HybridCLRUtil.HotDllPath + "/" + HybridCLRUtil.HotDllFileListName);
+
+                if (fileListBinary == null || fileListBinary.bytes == null)
+                {
+                    Debug.LogError($"[{nameof(LoadAllHotUpdateAssembly)}] FileList failed:" + HybridCLRUtil.AotFileListName);
+                    return result;
+                }
+                var bs = fileListBinary.bytes;
+                resloader.ReleaseAllRes();
+                using (MemoryStream ms = new MemoryStream(bs))
+                using (BinaryReader br = new BinaryReader(ms))
+                {
+                    var count = br.ReadInt32();
+                    for (int i = 0; i < count; i++)
+                    {
+                        var name = br.ReadString();
+                        if (validLoadFunc == null || validLoadFunc(name))
+                        {
+                            hotDllFileList.Add(name);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[{nameof(LoadAllHotUpdateAssembly)}] Read HotDllFileList[{HybridCLRUtil.HotDllFileListName}] failed:{ex}");
+            }
+
+            // load
+            foreach (var hotDllName in hotDllFileList)
+            {
+                var assembly = await LoadHotUpdateAssembly(resloader, hotDllName);
+                if (assembly != null)
+                {
+                    result[assembly.GetName().Name] = assembly;
+                }
+            }
+            return result;
+        }
+
     }
 }

@@ -68,6 +68,8 @@ namespace MainEditor
             var target = EditorUserBuildSettings.activeBuildTarget;
             string aotAssembliesSrcDir = SettingsUtil.GetAssembliesPostIl2CppStripDir(target);
             string fileList = Path.Combine(CodeOutputDir, HybridCLRUtil.AOTMetadataPath, HybridCLRUtil.AotFileListName);
+            Directory.CreateDirectory(Path.GetDirectoryName(fileList));
+
             using (var fs = File.OpenWrite(fileList))
             using (BinaryWriter bw = new BinaryWriter(fs))
             {
@@ -83,7 +85,7 @@ namespace MainEditor
                     }
                     bw.Write($"{dll}.dll.bytes");
                     string dllBytesPath = Path.Combine(CodeOutputDir, HybridCLRUtil.AOTMetadataPath, dll + ".dll.bytes");
-                    // strip dll
+                    // strip metadata dll
                     AOTAssemblyMetadataStripper.Strip(srcDllPath, dllBytesPath);
                     //File.Copy(srcDllPath, dllBytesPath, true);
                     Debug.Log($"[CopyAOTAssembliesToStreamingAssets] copy AOT dll {srcDllPath} -> {dllBytesPath}");
@@ -94,15 +96,23 @@ namespace MainEditor
         public static void CopyHotUpdateAssembliesToCodeAssets()
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
-
             string hotfixDllSrcDir = SettingsUtil.GetHotUpdateDllsOutputDirByTarget(target);
+            string fileList = Path.Combine(CodeOutputDir, HybridCLRUtil.HotDllPath, HybridCLRUtil.HotDllFileListName);
+            Directory.CreateDirectory(Path.GetDirectoryName(fileList));
 
-            foreach (var dll in SettingsUtil.HotUpdateAssemblyFilesExcludePreserved)
+            using (var fs = File.OpenWrite(fileList))
+            using (BinaryWriter bw = new BinaryWriter(fs))
             {
-                string dllPath = $"{hotfixDllSrcDir}/{dll}";
-                string dllBytesPath = Path.Combine(CodeOutputDir, dll + ".bytes");
-                File.Copy(dllPath, dllBytesPath, true);
-                Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dllPath} -> {dllBytesPath}");
+                var hotupdateAssemblies = SettingsUtil.HotUpdateAssemblyFilesExcludePreserved;
+                bw.Write(hotupdateAssemblies.Count);
+                foreach (var dll in hotupdateAssemblies)
+                {
+                    bw.Write($"{dll}.bytes");
+                    string dllPath = $"{hotfixDllSrcDir}/{dll}";
+                    string dllBytesPath = Path.Combine(CodeOutputDir, HybridCLRUtil.HotDllPath, dll + ".bytes");
+                    File.Copy(dllPath, dllBytesPath, true);
+                    Debug.Log($"[CopyHotUpdateAssembliesToStreamingAssets] copy hotfix dll {dllPath} -> {dllBytesPath}");
+                }
             }
         }
 

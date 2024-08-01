@@ -9,6 +9,8 @@ namespace Main
         public static string CodeDllPath = "Res/99_Codes/";
         public static string AotFileListName = "AotGenericList.bytes";
         public const string AOTMetadataPath = "AOTMetadata";
+        public const string HotDllPath = "HotDlls";
+        public const string HotDllFileListName = "HotDllList.bytes";
 
         #region 编辑器使用相关
 #if UNITY_EDITOR

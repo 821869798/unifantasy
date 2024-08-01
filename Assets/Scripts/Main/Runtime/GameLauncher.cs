@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using Main.HotUpdate;
+using System;
 
 namespace Main
 {
@@ -30,7 +31,7 @@ namespace Main
 
             //初始化资源管理
             ResManager.Instance.InitAssetBundle();
-            
+
             InitAOTManager();
 
             // 开始加载dll
@@ -89,12 +90,14 @@ namespace Main
 
         async UniTask StartLoadHotDllAsync()
         {
+            const string HotDllAssemblyName = "HotCode.Runtime";
             Assembly assembly;
+
 #if UNITY_EDITOR
             if (!HybridCLRUtil.HybridCLREditActive)
             {
                 //编辑器直接反射调用本地dll
-                string dllPath = Path.Combine(Directory.GetCurrentDirectory(), "Library", "ScriptAssemblies", "HotCode.Runtime.dll");
+                string dllPath = Path.Combine(Directory.GetCurrentDirectory(), "Library", "ScriptAssemblies", HotDllAssemblyName + ".dll");
                 assembly = Assembly.LoadFile(dllPath);
             }
             else
@@ -102,20 +105,21 @@ namespace Main
             {
                 ResLoader resloader = ResLoader.Create();
                 await LoadHotDlls.LoadMetadataForAOTAssemblies(resloader);
-                assembly = await LoadHotDlls.LoadHotUpdateAssembly(resloader, "HotCode.Runtime.dll.bytes");
+                var assemblyMap = await LoadHotDlls.LoadAllHotUpdateAssembly(resloader);
+                assemblyMap.TryGetValue(HotDllAssemblyName, out assembly);
                 resloader.Put2Pool();
             }
 
             if (assembly == null)
             {
-                Debug.LogError("Load HotUpdate Assembly HotCode.Runtime.dll.bytes failed!");
+                Debug.LogError($"Load HotUpdate Assembly {HotDllAssemblyName} failed!");
                 return;
             }
             var t = assembly.GetType("HotCode.Game.HotMain");
             if (t != null)
             {
+                Debug.Log($"Load HotUpdate Assembly {HotDllAssemblyName} Success!");
                 t.InvokeMember("EnterHotMain", BindingFlags.InvokeMethod, null, null, null);
-                Debug.Log("LoadHotUpdateAssembly HotCode.Runtime.dll.bytes Success!");
             }
             else
             {
