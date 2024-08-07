@@ -2,23 +2,12 @@
 using Sirenix.OdinInspector;
 #endif
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace UniFan
 {
-    public enum VariableComponentType
-    {
-        Transform = 0,
-        RectTransform,
-        ExButton,
-        ExText,
-        ExImage,
-        ExRawImage,
-        ExToggle,
-        ExSlider,
-        Canvas,
-    }
-
 
     [Serializable]
     public class VariableArray
@@ -28,10 +17,10 @@ namespace UniFan
 
         public VariableType arrayType => _arrayType;
 
-        [SerializeField]
-        protected VariableComponentType _componentType;
+        //[SerializeField]
+        //protected VariableComponentType _componentType;
 
-        public VariableComponentType componentType => _componentType;
+        //public VariableComponentType componentType => _componentType;
 
 #if UNITY_EDITOR
         [ListDrawerSettings()]
@@ -87,43 +76,68 @@ namespace UniFan
             }
         }
 
-        public VariableComponentType editorComponentType
-        {
-            get
-            {
-                return _componentType;
-            }
-            set
-            {
-                this._componentType = value;
-            }
-        }
+        //public VariableComponentType editorComponentType
+        //{
+        //    get
+        //    {
+        //        return _componentType;
+        //    }
+        //    set
+        //    {
+        //        this._componentType = value;
+        //    }
+        //}
 
         public Type EditorGetComponentType()
         {
-            switch (componentType)
+            // 使用第一个非空的元素的类型，否则返回Transform
+            foreach (var element in _arrayValue)
             {
-                case VariableComponentType.Transform:
-                    return typeof(Transform);
-                case VariableComponentType.RectTransform:
-                    return typeof(RectTransform);
-                case VariableComponentType.ExButton:
-                    return typeof(ExButton);
-                case VariableComponentType.ExText:
-                    return typeof(ExText);
-                case VariableComponentType.ExImage:
-                    return typeof(ExImage);
-                case VariableComponentType.ExRawImage:
-                    return typeof(ExRawImage);
-                case VariableComponentType.ExToggle:
-                    return typeof(ExToggle);
-                case VariableComponentType.ExSlider:
-                    return typeof(ExSlider);
-                case VariableComponentType.Canvas:
-                    return typeof(Canvas);
-                default:
-                    throw new NotImplementedException();
+                if (element.editorObjectValue != null)
+                {
+                    return element.editorObjectValue.GetType();
+                }
             }
+            return typeof(Transform);
+        }
+
+        /// <summary>
+        /// 获取可选择的组件类型，从第一个非空的元素中获取
+        /// </summary>
+        /// <returns></returns>
+        public List<Type> EditorGetSelectableComponentType(out int selectIndex)
+        {
+            selectIndex = 0;
+            List<Type> selectList = new List<Type>();
+            foreach (var element in _arrayValue)
+            {
+                if (element.editorObjectValue != null && element.editorObjectValue is Component component)
+                {
+                    var typeSet = new HashSet<Type>();
+                    GameObject go = component.gameObject;
+                    var components = go.GetComponents<Component>();
+                    for (var i = 0; i < components.Length; i++)
+                    {
+                        var c = components[i];
+                        var tc = c.GetType();
+                        if (typeSet.Contains(tc))
+                        {
+                            continue;
+                        }
+                        typeSet.Add(tc);
+                        selectList.Add(tc);
+                        if (c == component)
+                        {
+                            selectIndex = i;
+                        }
+                    }
+                }
+            }
+            if (selectList.Count == 0)
+            {
+                selectList.Add(typeof(Transform));
+            }
+            return selectList;
         }
 
         public VariableElement[] editorArrayValue
@@ -138,7 +152,7 @@ namespace UniFan
             }
         }
 
-        public void EditorUpdateComponntType()
+        public void EditorUpdateComponntType(Type type)
         {
             if (this.arrayType != VariableType.Component)
             {
@@ -157,7 +171,7 @@ namespace UniFan
                     element.editorObjectValue = null;
                     continue;
                 }
-                element.editorObjectValue = go.GetComponent(this.componentType.ToString());
+                element.editorObjectValue = go.GetComponent(type);
             }
         }
 #endif

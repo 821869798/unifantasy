@@ -225,7 +225,7 @@ namespace UniFan
                     }
                     foreach (var ele in _variableArray.editorArrayValue)
                     {
-                        if (!ele.EditorCheckVariableElementValid(_variableArray.arrayType, _variableArray.componentType))
+                        if (!ele.EditorCheckVariableElementValid(_variableArray.arrayType))
                         {
                             return false;
                         }

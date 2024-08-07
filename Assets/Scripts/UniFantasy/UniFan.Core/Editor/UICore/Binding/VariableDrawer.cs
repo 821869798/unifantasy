@@ -122,13 +122,25 @@ namespace UniFanEditor
                     }
                     if (vType == VariableType.Component)
                     {
-                        //绘制组件类型选项，Array是固定的,所以比较特殊需要先选
-                        var componentType = arrayValue.componentType;
-                        var newComponnetType = (VariableComponentType)EditorGUILayout.EnumPopup(componentType, EditorBindingUtil.ValueTypeStyle, GUILayout.MaxWidth(100), EditorBindingUtil.MinWidthStyle);
-                        if (newComponnetType != componentType)
+                        //var componentType = arrayValue.componentType;
+                        //var newComponnetType = (VariableComponentType)EditorGUILayout.EnumPopup(componentType, EditorBindingUtil.ValueTypeStyle, GUILayout.MaxWidth(100), EditorBindingUtil.MinWidthStyle);
+                        //if (newComponnetType != componentType)
+                        //{
+                        //    arrayValue.editorComponentType = newComponnetType;
+                        //    arrayValue.EditorUpdateComponntType();
+                        //}
+                        var typeList = arrayValue.EditorGetSelectableComponentType(out var selectIndex);
+                        List<GUIContent> contents = new List<GUIContent>();
+                        foreach (var t in typeList)
                         {
-                            arrayValue.editorComponentType = newComponnetType;
-                            arrayValue.EditorUpdateComponntType();
+                            contents.Add(new GUIContent(t.Name));
+                        }
+
+                        var newIndex = EditorGUILayout.Popup(selectIndex, contents.ToArray(), EditorBindingUtil.ValueTypeStyle, GUILayout.ExpandWidth(true), EditorBindingUtil.MinWidthStyle);
+                        if (newIndex != selectIndex)
+                        {
+                            var type = typeList[newIndex];
+                            arrayValue.EditorUpdateComponntType(type);
                         }
                     }
                 }

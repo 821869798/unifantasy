@@ -85,7 +85,7 @@ namespace UniFan
             }
         }
 
-        public bool EditorCheckVariableElementValid(VariableType arrayType, VariableComponentType componentType)
+        public bool EditorCheckVariableElementValid(VariableType arrayType)
         {
             switch (arrayType)
             {
