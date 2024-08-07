@@ -163,8 +163,9 @@ namespace UniFanEditor
                 {
                     string path = AssetDatabase.GUIDToAssetPath(guid);
                     MonoScript script = AssetDatabase.LoadAssetAtPath<MonoScript>(path);
+                    Type classType = script?.GetClass() ?? null;
 
-                    if (script != null && script.GetClass().Name == name)
+                    if (classType != null && classType.Name == name)
                     {
                         dstScript = script;
                         scriptPath = path;
