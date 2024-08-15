@@ -63,7 +63,7 @@ namespace Main.HotUpdate
     }
 
     [Serializable]
-    public class PatchFileInfo
+    public class PatchFileInfo : IDownloadFile
     {
         /// <summary>
         /// 文件路径
@@ -79,5 +79,13 @@ namespace Main.HotUpdate
         /// md5值
         /// </summary>
         public string fileMd5;
+
+        public string Name => filePath;
+
+        public string Hash => fileMd5;
+
+        public long FileSize => fileSize;
+
+        public object UserData => this;
     }
 }

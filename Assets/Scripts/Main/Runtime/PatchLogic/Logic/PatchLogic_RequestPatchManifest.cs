@@ -65,10 +65,10 @@ namespace Main.HotUpdate
 
             var fileUrl = $"{patchContext.GetHostServerURL(versionString)}/{PatchLogicUtility.PatchManfistRootPath}/{PatchLogicUtility.GetPatchManfistFileName(versionString)}";
             var cachePath = FilePathHelper.Instance.GetPersistentDataPath(PatchLogicUtility.DownloadCachePath + "/" + hashValue + ".bytes");
-            WebRequestFileDownload webRequestFileDownload = new WebRequestFileDownload();
+            UnityWebRequestFileDownload webRequestFileDownload = new UnityWebRequestFileDownload();
             var downloadResult = await webRequestFileDownload.DownloadFile(fileUrl, cachePath);
 
-            if (downloadResult != WebRequestFileDownload.FileDownloadResult.Success)
+            if (downloadResult != UnityWebRequestFileDownload.FileDownloadResult.Success)
             {
                 // TODO 错误提示
                 UnityEngine.Debug.LogWarning($"Download patch manifest failed:{downloadResult}");

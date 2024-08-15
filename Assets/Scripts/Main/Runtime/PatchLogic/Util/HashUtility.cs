@@ -102,9 +102,11 @@ namespace Main.HotUpdate
         /// </summary>
         public static string StreamMD5(Stream stream)
         {
-            MD5CryptoServiceProvider provider = new MD5CryptoServiceProvider();
-            byte[] hashBytes = provider.ComputeHash(stream);
-            return ToString(hashBytes);
+            using (var provider = MD5.Create())
+            {
+                byte[] hashBytes = provider.ComputeHash(stream);
+                return ToString(hashBytes);
+            }
         }
 
         /// <summary>

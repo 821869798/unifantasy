@@ -9,7 +9,7 @@ namespace Main.HotUpdate
     /// <summary>
     /// 热更逻辑的上下文可传递数据
     /// </summary>
-    public class PatchLogicContext : IDisposable
+    public class PatchLogicContext : IDisposable, IDownloadContext
     {
         /// <summary>
         /// 匹配到的远程版本信息
@@ -89,6 +89,22 @@ namespace Main.HotUpdate
             return FilePathHelper.Instance.GetPersistentDataPath(PatchLogicUtility.DownloadCachePath + "/" + filePath.Replace('/', '-'));
         }
 
+        public string GetDownloadUrl(IDownloadFile downloadFile)
+        {
+            var url = GetHostServerURL(remoteVersion.resVersion.ToString()) + "/" + downloadFile.Name;
+            return url;
+        }
+
+        public string GetTargetFilePath(IDownloadFile downloadFile)
+        {
+            var cachePath = GetPatchFileDownloadCachePath(downloadFile.Name);
+            return cachePath;
+        }
+
+        public void OnOneFileDownloaded(IDownloadFile downloadFile)
+        {
+
+        }
     }
 
     [Serializable]
