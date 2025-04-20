@@ -1,15 +1,14 @@
 using HotCode.Framework;
-using UniFan;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
 namespace HotCode.FrameworkEditor
 {
-    [CustomEditor(typeof(UITextItemInfo))]
-    public class UITextItemInfoEditor : Editor
+    [CustomEditor(typeof(UITMPItemInfo))]
+    public class UITMPItemInfoEditor : UnityEditor.Editor
     {
-        private UITextItemInfo textItemInfo;
+        private UITMPItemInfo textItemInfo;
         //
         private ReorderableList _List;
         //
@@ -17,7 +16,7 @@ namespace HotCode.FrameworkEditor
 
         private void OnEnable()
         {
-            textItemInfo = target as UITextItemInfo;
+            textItemInfo = target as UITMPItemInfo;
             _dataArray = serializedObject.FindProperty("dataArray");
             InitReorderableList(_dataArray);
             CheckExistExText();
@@ -139,7 +138,7 @@ namespace HotCode.FrameworkEditor
         private void CheckExistExText()
         {
             // TODO 重新适配本地化
-            //ExText exText = textItemInfo.gameObject.GetComponent<ExText>();
+            //var exText = textItemInfo.gameObject.GetComponent<TextMeshProUGUI>();
             //if (exText != null)
             //{
             //    exText.tid = 0;
@@ -149,100 +148,5 @@ namespace HotCode.FrameworkEditor
 
         }
     }
-
-    [CustomPropertyDrawer(typeof(TextItem))]
-    public class TextItemDrawer : PropertyDrawer
-    {
-        private SerializedProperty _id;
-        private SerializedProperty _content;
-        private SerializedProperty _strColor;
-        private bool _hasTextId;
-
-        private Rect idRect;
-        private Rect contentRect;
-        private Rect btnRect;
-        private Rect colorRect;
-
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            //创建一个属性包装器
-            using (new EditorGUI.PropertyScope(position, label, property))
-            {
-                GetSerializedProperty(property);
-                RefreshElementRect(position);
-
-                _content.stringValue = EditorGUI.TextField(contentRect, _content.displayName, _content.stringValue);
-                _strColor.colorValue = EditorGUI.ColorField(colorRect, _strColor.colorValue);
-
-
-                if (_id.longValue < 0)
-                {
-                    _id.longValue = 0;
-                }
-
-                if (!_hasTextId)
-                {
-                    _id.longValue = EditorGUI.LongField(idRect, _id.displayName, _id.longValue);
-
-                    //todo 本地化判断当前是否有id
-                    //var has = LanguageEditorHelper.Instance.ContainsWordById(_id.longValue);
-                    //if (has)
-                    //{
-                    //    _hasTextId = true;
-                    //}
-                }
-                if (_hasTextId)
-                {
-                    EditorGUI.LabelField(idRect, _id.displayName, _id.longValue.ToString());
-                    if (GUI.Button(btnRect, "重置"))
-                    {
-                        _hasTextId = false;
-                        _id.longValue = 0;
-                    }
-                }
-            }
-        }
-        //获取序列化属性
-        private void GetSerializedProperty(SerializedProperty property)
-        {
-            _id = property.FindPropertyRelative("_tid");
-            _content = property.FindPropertyRelative("_strContent");
-            _strColor = property.FindPropertyRelative("_strColor");
-            _hasTextId = false;
-        }
-
-        //刷新元素区域
-        private void RefreshElementRect(Rect position)
-        {
-            //设定高度
-            position.height = EditorGUIUtility.singleLineHeight;
-            //设定宽度
-            EditorGUIUtility.labelWidth = 80;
-
-            idRect = new Rect(position)
-            {
-                width = position.width / 2,
-            };
-            contentRect = new Rect(position)
-            {
-                y = position.y + 18,
-                width = position.width - 130,
-            };
-            btnRect = new Rect(position)
-            {
-                y = position.y + 18,
-                x = position.width - 85,
-                width = 50,
-            };
-
-            colorRect = new Rect(position)
-            {
-                y = position.y + 18,
-                x = position.width - 30,
-                width = 60,
-            };
-        }
-    }
-
 
 }

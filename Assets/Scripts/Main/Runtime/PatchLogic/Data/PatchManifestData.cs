@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -86,6 +87,7 @@ namespace Main.HotUpdate
 
         public long FileSize => fileSize;
 
+        [JsonIgnore]
         public object UserData => this;
     }
 }

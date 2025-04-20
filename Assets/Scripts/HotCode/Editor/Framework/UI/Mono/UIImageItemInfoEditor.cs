@@ -6,35 +6,40 @@ using UnityEngine;
 namespace HotCode.FrameworkEditor
 {
     [CustomEditor(typeof(UIImageItemInfo))]
-    public class UiImageItemInfoEditor : Editor
+    public class UIImageItemInfoEditor : UnityEditor.Editor
     {
         ReorderableList _List;
-        SerializedProperty prop;
+        SerializedProperty _dataArray;
+        SerializedProperty _isHasDiffColor;
 
         UIImageItemInfo imageItemInfo;
         private void OnEnable()
         {
             imageItemInfo = target as UIImageItemInfo;
-            prop = serializedObject.FindProperty("dataArray");
-            _List = new ReorderableList(serializedObject, prop, true, true, true, true);
+            _dataArray = serializedObject.FindProperty("dataArray");
+            _isHasDiffColor = serializedObject.FindProperty("isHasDiffColor");
+            _List = new ReorderableList(serializedObject, _dataArray, true, true, true, true);
             _List.drawElementCallback = OnListElementGUI;
             _List.drawHeaderCallback = OnListHeaderGUI;
             _List.onChangedCallback = OnChangedCallback;
+            _List.onAddCallback = OnAddCallBack;
             _List.draggable = true;
             _List.elementHeight = 70;
-
-            if (_List.count > 0)
-                imageItemInfo.SetIndex(0);
         }
         private void OnChangedCallback(ReorderableList list)
         {
-            if (list.count > 0)
+            serializedObject.ApplyModifiedProperties();
+            if (!Application.isPlaying && list.count > 0)
                 imageItemInfo.SetIndex(0);
         }
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+            // 绘制 _isHasDiffColor
+            // 创建自定义的 GUIContent
+            GUIContent dynamicLabel = new GUIContent("是否需要连带设置颜色");
+            EditorGUILayout.PropertyField(_isHasDiffColor, dynamicLabel);
             _List.DoLayoutList();
             serializedObject.ApplyModifiedProperties();
         }
@@ -42,16 +47,17 @@ namespace HotCode.FrameworkEditor
         //绘制单个元素
         void OnListElementGUI(Rect rect, int index, bool isactive, bool isfocused)
         {
-            var element = prop.GetArrayElementAtIndex(index);
+            var element = _dataArray.GetArrayElementAtIndex(index);
             rect.height -= 4;
             rect.y += 2;
             EditorGUI.PropertyField(rect, element);
             EditorGUIUtility.labelWidth = 40;
             Rect indexRect = new Rect(rect)
             {
-                x = rect.x + 270,
+                x = rect.x + 240,
             };
-            EditorGUI.LabelField(indexRect, "Index:", index.ToString());
+            indexRect.height = EditorGUIUtility.singleLineHeight;
+            EditorGUI.LabelField(indexRect, "Index:" + index.ToString());
         }
         //绘制头
         void OnListHeaderGUI(Rect rect)
@@ -60,7 +66,19 @@ namespace HotCode.FrameworkEditor
             {
                 height = rect.height + 4
             };
-            EditorGUI.LabelField(rect, $"当前Texture条目为:{prop.arraySize}");
+            EditorGUI.LabelField(rect, $"当前Texture条目为:{_dataArray.arraySize}");
+        }
+
+        private void OnAddCallBack(ReorderableList list)
+        {
+            int index = _dataArray.arraySize;
+            _dataArray.InsertArrayElementAtIndex(index);
+            var property = _dataArray.GetArrayElementAtIndex(index);
+            if (index == 0 && imageItemInfo.image.sprite != null)
+            {
+                property.FindPropertyRelative("_icon").objectReferenceValue = imageItemInfo.image.sprite;
+                property.FindPropertyRelative("_spriteColor").colorValue = Color.white;
+            }
         }
     }
 
@@ -80,7 +98,7 @@ namespace HotCode.FrameworkEditor
 
                 Rect IconRect = new Rect(position)
                 {
-                    width = 160,
+                    width = 180,
                     height = 65
                 };
                 var IconProperty = property.FindPropertyRelative("_icon");
@@ -95,8 +113,17 @@ namespace HotCode.FrameworkEditor
                         name = "";
                 }
                 IconProperty.objectReferenceValue = EditorGUI.ObjectField(IconRect, name, IconProperty.objectReferenceValue, typeof(Sprite), false);
+
+                Rect ColorRect = new Rect(position)
+                {
+                    x = position.x + 200,
+                    y = position.y + 40,
+                    width = 60,
+                };
+
+                var ColorProperty = property.FindPropertyRelative("_spriteColor");
+                ColorProperty.colorValue = EditorGUI.ColorField(ColorRect, ColorProperty.colorValue);
             }
         }
     }
-
 }

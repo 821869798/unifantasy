@@ -1,21 +1,20 @@
-using UniFan;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace HotCode.Framework
 {
-    [RequireComponent(typeof(ExText))]
-    public class UITextItemInfo : MonoBehaviour
+    [RequireComponent(typeof(TextMeshProUGUI))]
+    public class UITMPItemInfo : MonoBehaviour
     {
-        private Text _text = null;
+        private TextMeshProUGUI _text = null;
 
-        public Text text
+        public TextMeshProUGUI text
         {
             get
             {
                 if (_text == null)
                 {
-                    _text = this.gameObject.GetComponent<Text>();
+                    _text = this.gameObject.GetComponent<TextMeshProUGUI>();
 #if UNITY_EDITOR
                     initedText = true;
 #endif
@@ -91,11 +90,11 @@ namespace HotCode.Framework
 
         public void SetText(string content)
         {
-            if (text is ExText exText)
-            {
-                exText.SetTextSafe(content);
-            }
-            else
+            //if (text is ExText exText)
+            //{
+            //    exText.SetTextSafe(content);
+            //}
+            //else
             {
                 text.text = content;
             }
@@ -128,54 +127,6 @@ namespace HotCode.Framework
                 ClearText();
         }
 #endif
-    }
-
-    [System.Serializable]
-    public class TextItem : IExText
-    {
-        [SerializeField]
-        private long _tid = 0;
-        [SerializeField]
-        private string _strContent = "";
-        [SerializeField]
-        private Color _strColor = Color.black;
-
-        public long tid
-        {
-            get => _tid;
-            set => _tid = value;
-        }
-        //与ExText不同 TextItemInfo 只有在SetIndex时才会拿一次Word
-        public string Content
-        {
-            get
-            {
-                if (_tid <= 0)
-                {
-                    return _strContent;
-                }
-
-                return _strContent;
-
-                //TODO 本地化
-                //var content = LanguageHelper.Instance.QueryWordById(ID);
-                //if (content == null)
-                //{
-                //    content = _strContent;
-                //}
-                //return content;
-            }
-        }
-        public Color TextColor
-        {
-            get => _strColor;
-            set => _strColor = value;
-        }
-
-        public string GetText()
-        {
-            return _strContent;
-        }
     }
 
 }
