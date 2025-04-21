@@ -246,11 +246,11 @@ namespace UniFan
             if (fileSize == 0)
             {
                 // 获取文件大小
-                result = await downloader.DownloadFile(downloadUrl, downloadTempFilePath);
+                result = await downloader.DownloadFile(downloadUrl, downloadTempFilePath, cancellationToken);
             }
             else
             {
-                result = await downloader.DownloadFile(downloadUrl, downloadTempFilePath, fileSize);
+                result = await downloader.DownloadFile(downloadUrl, downloadTempFilePath, fileSize, cancellationToken);
             }
 
             if (result != UnityWebRequestFileDownload.FileDownloadResult.Success)

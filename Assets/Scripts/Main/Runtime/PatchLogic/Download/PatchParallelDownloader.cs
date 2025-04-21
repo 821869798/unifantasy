@@ -180,7 +180,7 @@ namespace Main.HotUpdate
             _downloadingFiles.Add(patchFileInfo);
             try
             {
-                int failedCount = 0;
+                int failedCount = -1;
                 do
                 {
                     var downloadUrl = this._downloadContext.GetDownloadUrl(patchFileInfo);
@@ -207,7 +207,7 @@ namespace Main.HotUpdate
                     // 失败次数加1
                     failedCount++;
 
-                } while (failedCount > this._failedTryAgain);
+                } while (failedCount < this._failedTryAgain);
 
 
             }
