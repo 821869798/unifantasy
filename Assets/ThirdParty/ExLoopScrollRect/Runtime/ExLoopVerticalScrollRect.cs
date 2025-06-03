@@ -39,5 +39,34 @@ namespace UnityEngine.UI
             this.dataSource = m_source;
             m_source.Init(transform);
         }
+
+
+        public GameObject GetCellByIndex(int index)
+        {
+            if (totalCount >= 0 && (index < 0 || index >= totalCount))
+            {
+                Debug.LogWarningFormat("invalid index {0}", index);
+                return null;
+            }
+
+            var start = reverseDirection ? itemTypeEnd : itemTypeStart;
+            var end = reverseDirection ? itemTypeStart : itemTypeEnd;
+
+            if (index >= start && index < end)
+            {
+                var child = content.GetChild(index - itemTypeStart);
+                if (child != null)
+                {
+                    return child.gameObject;
+                }
+                else
+                {
+                    Debug.LogError($"index({index}) out of range({content.childCount})");
+                    return null;
+                }
+            }
+
+            return null;
+        }
     }
 }

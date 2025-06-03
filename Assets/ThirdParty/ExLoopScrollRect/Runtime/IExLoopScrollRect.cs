@@ -13,5 +13,7 @@ namespace UnityEngine.UI
         public ExLoopScrollSource source { get; }
 
         public LoopScrollRectBase loopScrollRect { get; }
+
+        GameObject GetCellByIndex(int index);
     }
 }
