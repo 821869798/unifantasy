@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace HotCode.Framework
 {
+    [RequireComponent(typeof(RectTransform))]
     public class UIBackgroundAdapter : MonoBehaviour
     {
         public enum BGAdapter
@@ -20,9 +21,14 @@ namespace HotCode.Framework
         [Tooltip("在最终的大小上进行大小的偏移")]
         [SerializeField]
         Vector2 m_sizeOffset = Vector2.zero;
+
         [HideInInspector]
         [SerializeField]
         bool m_onlyWidth = false;
+
+        [HideInInspector]
+        [SerializeField]
+        bool m_halfScreenWidth = false;
 
         void Awake()
         {
@@ -45,10 +51,19 @@ namespace HotCode.Framework
                         break;
                     case BGAdapter.Stretch:
                         size = rectTransform.sizeDelta;
+                        var stretchSize = UIManager.Instance.BackgroundStretchSize;
                         if (m_onlyWidth)
-                            size.x = UIManager.Instance.BackgroundStretchSize.x;
+                        {
+                            size.x = stretchSize.x;
+                        }
                         else
-                            size = UIManager.Instance.BackgroundStretchSize;
+                        {
+                            size = stretchSize;
+                        }
+                        if (m_halfScreenWidth)
+                        {
+                            size.x = stretchSize.x / 2;
+                        }
                         break;
                     case BGAdapter.MovieCull:
                         size = UIManager.Instance.MovieCullSize;

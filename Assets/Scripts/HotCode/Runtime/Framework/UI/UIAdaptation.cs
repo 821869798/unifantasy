@@ -10,6 +10,7 @@ namespace HotCode.Framework
     {
         public const float StandardRatio = 16.0f / 9.0f;
         public const float BackgroundRatio = 2f;
+        public static readonly Vector2 StandardResolution = new Vector2(1920, 1080);
 
 
         public static float AdaptationCanvasScaler()
