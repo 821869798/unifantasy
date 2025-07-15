@@ -1,24 +1,23 @@
 {
   "dependencies": {
-    "com.code-philosophy.hybridclr": "7.9.0",
+    "com.code-philosophy.hybridclr": "8.3.0",
     "com.cysharp.unitask": "2.5.10",
+    "com.github-glitchenzo.nugetforunity": "4.4.0",
     "com.shniqq.hierarchy-labels": "1.0.1-preview.2",
     "com.unity.2d.sprite": "1.0.0",
+    "com.unity.ai.navigation": "1.1.6",
     "com.unity.ide.rider": "3.0.36",
     "com.unity.ide.visualstudio": "2.0.23",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.nuget.newtonsoft-json": "3.2.1",
-    "com.unity.scriptablebuildpipeline": "1.20.2",
+    "com.unity.scriptablebuildpipeline": "1.21.25",
     "com.unity.test-framework": "1.1.33",
     "com.unity.textmeshpro": "3.0.9",
-    "com.unity.timeline": "1.6.5",
+    "com.unity.timeline": "1.7.7",
     "com.unity.ugui": "1.0.0",
     "com.wooshii.hierarchydecorator": "0.10.1",
     "me.qiankanglai.loopscrollrect": "1.1.2",
     "org.icsharpcode.sharpziplib": "1.4.1",
-    "org.nuget.scriban": "5.7.0",
-    "org.nuget.system.runtime.compilerservices.unsafe": "6.0.0",
-    "org.nuget.system.threading.tasks.extensions": "4.5.4",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -56,12 +55,10 @@
         "com.cysharp.unitask",
         "org.icsharpcode.sharpziplib",
         "com.code-philosophy.hybridclr",
-        "org.nuget.system.threading.tasks.extensions",
-        "org.nuget.system.runtime.compilerservices.unsafe",
-        "org.nuget.scriban",
         "com.wooshii.hierarchydecorator",
         "com.shniqq.hierarchy-labels",
-        "me.qiankanglai.loopscrollrect"
+        "me.qiankanglai.loopscrollrect",
+        "com.github-glitchenzo.nugetforunity"
       ]
     }
   ]
