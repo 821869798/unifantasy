@@ -14,7 +14,7 @@ namespace UniFan
 
         protected override void SaveValue(bool value)
         {
-            UnityEngine.PlayerPrefs.GetInt(key, value ? 1 : 0);
+            UnityEngine.PlayerPrefs.SetInt(key, value ? 1 : 0);
         }
 
         public static implicit operator bool(PlayerPreferenceBool pref)
