@@ -51,16 +51,16 @@ namespace HotCode.Framework
             return this;
         }
 
-        public void RefillCells(int totalCount, int startItem = 0, bool fillViewRect = false, float contentOffset = 0)
+        public void RefillCells(int totalCount, int startItem = 0, float contentOffset = 0)
         {
             originLoopScrollRect.totalCount = totalCount;
-            originLoopScrollRect.RefillCells(startItem, fillViewRect, contentOffset);
+            originLoopScrollRect.RefillCells(startItem, contentOffset);
         }
 
-        public void RefillCellsFromEnd(int totalCount, int endItem = 0, bool alignStart = false)
+        public void RefillCellsFromEnd(int totalCount, int endItem = 0, float contentOffset = 0)
         {
             originLoopScrollRect.totalCount = totalCount;
-            originLoopScrollRect.RefillCellsFromEnd(endItem, alignStart);
+            originLoopScrollRect.RefillCellsFromEnd(endItem, contentOffset);
         }
 
         public void RefreshCells()
@@ -70,18 +70,33 @@ namespace HotCode.Framework
 
         public void ScrollToCell(int index, float speed)
         {
-            originLoopScrollRect.SrollToCell(index, speed);
+            originLoopScrollRect.ScrollToCell(index, speed);
         }
 
         public void ScrollToCellWithinTime(int index, float time)
         {
-            originLoopScrollRect.SrollToCellWithinTime(index, time);
+            originLoopScrollRect.ScrollToCellWithinTime(index, time);
         }
 
         public void StopMovement()
         {
             originLoopScrollRect.StopMovement();
         }
+
+        public T GetItemByIndex(int index)
+        {
+            var go = exLoopScrollRect.GetCellByIndex(index);
+            if (go == null)
+            {
+                return default(T);
+            }
+            if (itemNodeMapping.TryGetValue(go, out var item))
+            {
+                return item;
+            }
+            return default(T);
+        }
+
 
         protected virtual void OnCreateItemObject(GameObject go)
         {

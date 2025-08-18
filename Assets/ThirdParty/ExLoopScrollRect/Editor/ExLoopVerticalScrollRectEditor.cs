@@ -5,10 +5,24 @@ namespace UnityEditor.UI
     [CustomEditor(typeof(ExLoopVerticalScrollRect))]
     public class ExLoopVerticalScrollRectEditor : LoopScrollRectInspector
     {
-        private void OnEnable()
+        SerializedProperty m_source;
+        protected override void OnEnable()
         {
-            var source = serializedObject.FindProperty("m_source");
-            source.isExpanded = true;
+            m_source = serializedObject.FindProperty("m_source");
+            m_source.isExpanded = true;
+            base.OnEnable();
+        }
+
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+
+            // 绘制 m_source
+            EditorGUILayout.PropertyField(m_source);
+
+            serializedObject.ApplyModifiedProperties();
+
+            base.OnInspectorGUI();
         }
     }
 }
