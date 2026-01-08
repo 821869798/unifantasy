@@ -13,26 +13,32 @@ namespace HotCode.FrameworkEditor
         public static readonly string SpriteAtlasPackSrcDir = Path.Combine(Application.dataPath, "Res", "03_AtlasClips");
         public static readonly string SpriteAtlasPackDstDir = Path.Combine(Application.dataPath, "Res", "04_SpriteAtlas");
 
-        public const string SpriteAtlasExt = ".spriteatlasv2";
+        public const string SpriteAtlasExtV2 = ".spriteatlasv2";
+
+        public const string SpriteAtlasExt = ".spriteatlas";
 
         [MenuItem("GameEditor/SpirteAtlas/MakerAllSpriteAtlas")]
         public static void MakerAllSpriteAtlas()
         {
+
             string[] packPaths = Directory.GetDirectories(SpriteAtlasPackSrcDir);
-            if (EditorSettings.spritePackerMode == SpritePackerMode.SpriteAtlasV2)
+
+            switch (EditorSettings.spritePackerMode)
             {
+                case SpritePackerMode.SpriteAtlasV2:
+                case SpritePackerMode.SpriteAtlasV2Build:
 
 #if UNITY_2022_1_OR_NEWER
-                foreach (var path in packPaths)
-                {
-                    CreateSingleSpriteAtlasV2(path.Replace("\\", "/"), SpriteAtlasPackDstDir.Replace("\\", "/"));
-                }
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-                ModifyImporterAllSpriteAtlasV2(SpriteAtlasPackDstDir);
+                    foreach (var path in packPaths)
+                    {
+                        CreateSingleSpriteAtlasV2(path.Replace("\\", "/"), SpriteAtlasPackDstDir.Replace("\\", "/"));
+                    }
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                    ModifyImporterAllSpriteAtlasV2(SpriteAtlasPackDstDir);
 
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
 #else
 
                 foreach (var path in packPaths)
@@ -42,18 +48,20 @@ namespace HotCode.FrameworkEditor
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 #endif
-
-            }
-            else
-            {
-                foreach (var path in packPaths)
-                {
-                    MakeSingleSpriteAtlas(path.Replace("\\", "/"), SpriteAtlasPackDstDir.Replace("\\", "/"));
-                }
-                //打包
-                AssetDatabase.Refresh();
-                SpriteAtlasUtility.PackAllAtlases(EditorUserBuildSettings.activeBuildTarget);
-                AssetDatabase.SaveAssets();
+                    break;
+                case SpritePackerMode.Disabled:
+                    UnityEngine.Debug.LogError("Sprite Packer Mode is Disabled");
+                    break;
+                default:
+                    foreach (var path in packPaths)
+                    {
+                        MakeSingleSpriteAtlas(path.Replace("\\", "/"), SpriteAtlasPackDstDir.Replace("\\", "/"));
+                    }
+                    //打包
+                    AssetDatabase.Refresh();
+                    SpriteAtlasUtility.PackAllAtlases(EditorUserBuildSettings.activeBuildTarget);
+                    AssetDatabase.SaveAssets();
+                    break;
             }
 
         }
@@ -66,7 +74,7 @@ namespace HotCode.FrameworkEditor
         public static void CreateSingleSpriteAtlasV2(string srcDir, string dstDir)
         {
             string atlasName = Path.GetFileName(srcDir);
-            string dstResPath = Path.Combine(dstDir, atlasName + SpriteAtlasExt).Replace("\\", "/");
+            string dstResPath = Path.Combine(dstDir, atlasName + SpriteAtlasExtV2).Replace("\\", "/");
             string dstResDir = Path.GetDirectoryName(dstResPath);
             if (!Directory.Exists(dstResDir))
             {
@@ -152,7 +160,7 @@ namespace HotCode.FrameworkEditor
         public static void MakeSingleSpriteAtlasV2(string srcDir, string dstDir)
         {
             string atlasName = Path.GetFileName(srcDir);
-            string dstResPath = Path.Combine(dstDir, atlasName + SpriteAtlasExt).Replace("\\", "/");
+            string dstResPath = Path.Combine(dstDir, atlasName + SpriteAtlasExtV2).Replace("\\", "/");
             string dstResDir = Path.GetDirectoryName(dstResPath);
             if (!Directory.Exists(dstResDir))
             {
