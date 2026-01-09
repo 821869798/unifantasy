@@ -67,9 +67,16 @@ namespace AutoBuild
         //build方式
         public enum BuildMode
         {
+            [InspectorName("全量打包")]
             AllBuild = 0,           //全量打包
-            NoAssetBundle = 1,      //不打包AssetBundle，直接Build
+
+            [InspectorName("直接Build App")]
+            DirectBuildApp = 1,      //不打包AssetBundle，直接Build
+
+            [InspectorName("Build App，不带资源，会删除旧资源")]
             EmptyApp = 2,           //打空包，不带资源
+
+            [InspectorName("打热更资源版本")]
             BuildResVersion = 3,    // 打热更资源
         }
 
@@ -115,6 +122,11 @@ namespace AutoBuild
             var appVersion = string.IsNullOrEmpty(appVersionNumber) ? version.ToString(3) : appVersionNumber;
 
             return appVersion;
+        }
+
+        public static AutoBuildArgs GetDefaultArgs()
+        {
+            return new AutoBuildArgs();
         }
 
         /// <summary>

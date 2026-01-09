@@ -1,10 +1,13 @@
-using HybridCLR.Editor.Installer;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 namespace AutoBuild
 {
+    /// <summary>
+    /// 自动打包入口
+    /// 方便Jenkins集成
+    /// </summary>
     public static class AutoBuildEntry
     {
         public static bool UseAutoBuild = false;
@@ -12,6 +15,7 @@ namespace AutoBuild
 
         public static bool AutoBuildLogic(AutoBuildPlatformBase builder)
         {
+            builder.buildArgs = AutoBuildArgs.ParseFromCommandLine();
             builder.SwitchPlatform();
             if (builder.ResetData())
             {
@@ -68,7 +72,7 @@ namespace AutoBuild
         {
             AutoBuildMenu(new AutoBuildiOS());
         }
-        
+
         public static void BuildiOS()
         {
             if (!AutoBuildLogic(new AutoBuildiOS()))
@@ -76,7 +80,7 @@ namespace AutoBuild
                 EditorApplication.Exit(1);
             }
         }
-        
+
         [MenuItem("GameEditor/AutoBuild/BuildMacOS")]
         static void BuildMacOSMenu()
         {

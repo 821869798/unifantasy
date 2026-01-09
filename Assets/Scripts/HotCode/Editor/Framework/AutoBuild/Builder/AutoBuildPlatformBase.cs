@@ -12,13 +12,7 @@ using MainEditor;
 using HotCode.FrameworkEditor;
 using HybridCLR.Editor.Installer;
 using MainEditor.HotUpdate;
-
-
-#if UNITY_2019_3_OR_NEWER
 using UnityEditor.Compilation;
-#elif UNITY_2017_1_OR_NEWER
-using System.Reflection;
-#endif
 
 namespace AutoBuild
 {
@@ -41,7 +35,6 @@ namespace AutoBuild
             // 不要在自动打包代码中使用类似UNITY_ANDROID这样的平台宏，因为切换平台这些需要在下次构建才生效。使用BuildTarget判断
 
             AutoBuildEntry.UseAutoBuild = true;
-            buildArgs = AutoBuildArgs.ParseFromCommandLine();
 
             // HyBridCLR如果没有安装，需要安装一下
             InstallerController hybridclrController = new InstallerController();
@@ -139,7 +132,7 @@ namespace AutoBuild
                     AssetDatabase.Refresh();
 
                     break;
-                case AutoBuildArgs.BuildMode.NoAssetBundle:
+                case AutoBuildArgs.BuildMode.DirectBuildApp:
                     break;
                 case AutoBuildArgs.BuildMode.EmptyApp:
 
@@ -279,16 +272,8 @@ namespace AutoBuild
             AutoBuildUtility.SetScriptingDefineSymbolActive("GameDev", buildArgs.enableGameDevelopment);
             //SetScriptingDefineSymbolActive(MTPEditorMenu.MTPSDKSysbolDefine, buildArgs.enableMTP);
 
-
             //强制编译
-#if UNITY_2019_3_OR_NEWER
             CompilationPipeline.RequestScriptCompilation();
-#elif UNITY_2017_1_OR_NEWER
-            var editorAssembly = Assembly.GetAssembly(typeof(Editor));
-            var editorCompilationInterfaceType = editorAssembly.GetType("UnityEditor.Scripting.ScriptCompilation.EditorCompilationInterface");
-            var dirtyAllScriptsMethod = editorCompilationInterfaceType.GetMethod("DirtyAllScripts", BindingFlags.Static | BindingFlags.Public);
-            dirtyAllScriptsMethod.Invoke(editorCompilationInterfaceType, null);
-#endif
         }
 
         /// <summary>
