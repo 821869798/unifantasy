@@ -11,15 +11,7 @@ namespace AutoBuild
     public class AutoBuildEditorWindow : EditorWindow
     {
         // 平台选择
-        private enum BuildPlatform
-        {
-            Windows,
-            Android,
-            iOS,
-            MacOS
-        }
-
-        private BuildPlatform selectedPlatform = BuildPlatform.Windows;
+        private AutoBuildPlatform selectedPlatform = AutoBuildPlatform.Windows;
 
         // 打包参数
         private string outputPath;
@@ -31,7 +23,7 @@ namespace AutoBuild
         private bool enableBuildExcel = true;
         private bool enableIncrement = true;
         private AutoBuildArgs.BuildMode buildMode = AutoBuildArgs.BuildMode.AllBuild;
-        private AutoBuildArgs.AndroidBuildOption androidBuildOption = AutoBuildArgs.AndroidBuildOption.Il2cpp64AndX86;
+        private AutoBuildArgs.AndroidBuildOption androidBuildOption = AutoBuildArgs.AndroidBuildOption.Il2cppArm64AndX86;
         private int androidVersionEndNum2;
         private bool copyToResVersion = true;
         private string sourceVersionPath;
@@ -65,26 +57,32 @@ namespace AutoBuild
         {
             outputPath = AutoBuildArgs.DefaultBuildOutputPath;
             versionNumber = AutoBuildArgs.FormatVersion(new Version(PlayerSettings.bundleVersion), 4);
-            buildVersionName = "temp_manual_build";
             enableUnityDevelopment = EditorUserBuildSettings.development;
             enableGameDevelopment = AutoBuildUtility.ContainScriptingDefineSymbol("GameDev");
             sourceVersionPath = Path.Combine(AutoBuildArgs.DefaultBuildOutputPath, "patch_version").Replace('\\', '/');
 
-            // 根据当前平台设置默认选择
+            // 根据当前平台设置默认选择和版本标识名
             switch (EditorUserBuildSettings.activeBuildTarget)
             {
                 case BuildTarget.StandaloneWindows64:
                 case BuildTarget.StandaloneWindows:
-                    selectedPlatform = BuildPlatform.Windows;
+                    selectedPlatform = AutoBuildPlatform.Windows;
+                    buildVersionName = "Windows";
                     break;
                 case BuildTarget.Android:
-                    selectedPlatform = BuildPlatform.Android;
+                    selectedPlatform = AutoBuildPlatform.Android;
+                    buildVersionName = "Android";
                     break;
                 case BuildTarget.iOS:
-                    selectedPlatform = BuildPlatform.iOS;
+                    selectedPlatform = AutoBuildPlatform.iOS;
+                    buildVersionName = "iOS";
                     break;
                 case BuildTarget.StandaloneOSX:
-                    selectedPlatform = BuildPlatform.MacOS;
+                    selectedPlatform = AutoBuildPlatform.MacOS;
+                    buildVersionName = "MacOS";
+                    break;
+                default:
+                    buildVersionName = "Windows";
                     break;
             }
         }
@@ -105,7 +103,7 @@ namespace AutoBuild
             DrawAdvancedSettings();
             EditorGUILayout.Space(5);
 
-            if (selectedPlatform == BuildPlatform.Android)
+            if (selectedPlatform == AutoBuildPlatform.Android)
             {
                 DrawAndroidSettings();
                 EditorGUILayout.Space(5);
@@ -163,31 +161,35 @@ namespace AutoBuild
             };
 
             // Windows 按钮
-            GUI.backgroundColor = selectedPlatform == BuildPlatform.Windows ? Color.cyan : Color.white;
+            GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.Windows ? Color.cyan : Color.white;
             if (GUILayout.Button("Windows", buttonStyle))
             {
-                selectedPlatform = BuildPlatform.Windows;
+                selectedPlatform = AutoBuildPlatform.Windows;
+                buildVersionName = "Windows";
             }
 
             // Android 按钮
-            GUI.backgroundColor = selectedPlatform == BuildPlatform.Android ? Color.green : Color.white;
+            GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.Android ? Color.green : Color.white;
             if (GUILayout.Button("Android", buttonStyle))
             {
-                selectedPlatform = BuildPlatform.Android;
+                selectedPlatform = AutoBuildPlatform.Android;
+                buildVersionName = "Android";
             }
 
             // iOS 按钮
-            GUI.backgroundColor = selectedPlatform == BuildPlatform.iOS ? Color.yellow : Color.white;
+            GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.iOS ? Color.yellow : Color.white;
             if (GUILayout.Button("iOS", buttonStyle))
             {
-                selectedPlatform = BuildPlatform.iOS;
+                selectedPlatform = AutoBuildPlatform.iOS;
+                buildVersionName = "iOS";
             }
 
             // MacOS 按钮
-            GUI.backgroundColor = selectedPlatform == BuildPlatform.MacOS ? Color.magenta : Color.white;
+            GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.MacOS ? Color.magenta : Color.white;
             if (GUILayout.Button("MacOS", buttonStyle))
             {
-                selectedPlatform = BuildPlatform.MacOS;
+                selectedPlatform = AutoBuildPlatform.MacOS;
+                buildVersionName = "MacOS";
             }
 
             GUI.backgroundColor = Color.white;
@@ -321,11 +323,12 @@ namespace AutoBuild
             string helpText = androidBuildOption switch
             {
                 AutoBuildArgs.AndroidBuildOption.Mono => "Mono: ARMv7 + X86",
-                AutoBuildArgs.AndroidBuildOption.Il2cpp64 => "IL2CPP: ARMv7 + ARM64",
-                AutoBuildArgs.AndroidBuildOption.AABMode => "AAB: ARMv7 + ARM64 (Google Play)",
-                AutoBuildArgs.AndroidBuildOption.Il2cpp64AndX86 => "IL2CPP: ARMv7 + ARM64 + X86",
+                AutoBuildArgs.AndroidBuildOption.Il2cppArmFull => "IL2CPP: ARMv7 + ARM64",
+                AutoBuildArgs.AndroidBuildOption.AABModeArmFull => "AAB: ARMv7 + ARM64 (Google Play)",
+                AutoBuildArgs.AndroidBuildOption.Il2cppArmFullAndX86 => "IL2CPP: ARMv7 + ARM64 + X86",
                 AutoBuildArgs.AndroidBuildOption.Il2cpp32 => "IL2CPP: ARMv7 + X86 (32位)",
-                AutoBuildArgs.AndroidBuildOption.AABAndX86 => "AAB: X86",
+                AutoBuildArgs.AndroidBuildOption.AABModeArmFullAndX86 => "AAB: X86",
+                AutoBuildArgs.AndroidBuildOption.Il2cppArm64AndX86 => "IL2CPP: ARM64 + X86 (32位)",
                 _ => ""
             };
             if (!string.IsNullOrEmpty(helpText))
@@ -519,10 +522,10 @@ namespace AutoBuild
         {
             return selectedPlatform switch
             {
-                BuildPlatform.Windows => new AutoBuildWindows(),
-                BuildPlatform.Android => new AutoBuildAndroid(),
-                BuildPlatform.iOS => new AutoBuildiOS(),
-                BuildPlatform.MacOS => new AutoBuildMacOS(),
+                AutoBuildPlatform.Windows => new AutoBuildWindows(),
+                AutoBuildPlatform.Android => new AutoBuildAndroid(),
+                AutoBuildPlatform.iOS => new AutoBuildiOS(),
+                AutoBuildPlatform.MacOS => new AutoBuildMacOS(),
                 _ => null
             };
         }
@@ -533,7 +536,7 @@ namespace AutoBuild
         private AutoBuildArgs CreateBuildArgs()
         {
             // 使用反射创建实例（因为构造函数是私有的）
-            var args = AutoBuildArgs.GetDefaultArgs();
+            var args = AutoBuildArgs.GetDefaultArgs(selectedPlatform);
 
             args.outputPath = outputPath;
             args.versionNumber = versionNumber;

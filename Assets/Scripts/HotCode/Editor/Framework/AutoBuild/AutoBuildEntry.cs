@@ -15,7 +15,7 @@ namespace AutoBuild
 
         public static bool AutoBuildLogic(AutoBuildPlatformBase builder)
         {
-            builder.buildArgs = AutoBuildArgs.ParseFromCommandLine();
+            builder.buildArgs = AutoBuildArgs.ParseFromCommandLine(builder.buildPlatform);
             builder.SwitchPlatform();
             if (builder.ResetData())
             {

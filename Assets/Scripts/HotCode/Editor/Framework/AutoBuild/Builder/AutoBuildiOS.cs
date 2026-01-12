@@ -5,6 +5,8 @@ namespace AutoBuild
 {
     public class AutoBuildiOS : AutoBuildPlatformBase
     {
+
+        public override AutoBuildPlatform buildPlatform => AutoBuildPlatform.iOS;
         public override void SwitchPlatform()
         {
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.iOS)

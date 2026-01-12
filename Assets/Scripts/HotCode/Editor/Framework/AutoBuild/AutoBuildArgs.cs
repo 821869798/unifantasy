@@ -5,8 +5,19 @@ using UnityEngine;
 
 namespace AutoBuild
 {
+    public enum AutoBuildPlatform
+    {
+        Windows,
+        Android,
+        iOS,
+        MacOS
+    }
+
+
     public class AutoBuildArgs
     {
+
+        public AutoBuildPlatform platform;
         //打包输出的目录
         public string outputPath;
         //最终的打包路径
@@ -85,27 +96,44 @@ namespace AutoBuild
         {
             Undefine = -1,
             Mono = 0,
-            Il2cpp64 = 1,
-            AABMode = 2,
-            Il2cpp64AndX86 = 3,
+            Il2cppArmFull = 1,
+            AABModeArmFull = 2,
+            Il2cppArmFullAndX86 = 3,
             Il2cpp32 = 4,
-            AABAndX86 = 5,
+            AABModeArmFullAndX86 = 5,
+            Il2cppArm64AndX86 = 6,
         }
 
         public static readonly string DefaultBuildOutputPath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "build_output").Replace('\\', '/');
 
-        private AutoBuildArgs()
+        private AutoBuildArgs(AutoBuildPlatform platform)
         {
+            this.platform = platform;
             // 默认值
             this.versionNumber = FormatVersion(new Version(PlayerSettings.bundleVersion), 4);
             this.outputPath = DefaultBuildOutputPath;
-            if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS)
+            if (platform == AutoBuildPlatform.iOS)
             {
                 this.outputPath = Path.Combine(DefaultBuildOutputPath, "xcode_project");
             }
-            this.buildVersionName = "temp_manual_build";
+            switch (platform)
+            {
+                case AutoBuildPlatform.iOS:
+                    this.outputPath = Path.Combine(DefaultBuildOutputPath, "xcode_project");
+                    this.buildVersionName = "iOS";
+                    break;
+                case AutoBuildPlatform.Windows:
+                    this.buildVersionName = "Windows";
+                    break;
+                case AutoBuildPlatform.Android:
+                    this.buildVersionName = "Android";
+                    break;
+                case AutoBuildPlatform.MacOS:
+                    this.buildVersionName = "MacOS";
+                    break;
+            }
             this.buildMode = BuildMode.AllBuild;
-            this.androidBuildOption = AndroidBuildOption.Il2cpp64AndX86;
+            this.androidBuildOption = AndroidBuildOption.Il2cppArm64AndX86;
             this.enableUnityDevelopment = EditorUserBuildSettings.development;
             this.enableGameDevelopment = AutoBuildUtility.ContainScriptingDefineSymbol("GameDev");
             this.enableBuildExcel = true;
@@ -124,18 +152,18 @@ namespace AutoBuild
             return appVersion;
         }
 
-        public static AutoBuildArgs GetDefaultArgs()
+        public static AutoBuildArgs GetDefaultArgs(AutoBuildPlatform platform)
         {
-            return new AutoBuildArgs();
+            return new AutoBuildArgs(platform);
         }
 
         /// <summary>
         /// 解析命令行参数
         /// </summary>
         /// <returns></returns>
-        public static AutoBuildArgs ParseFromCommandLine()
+        public static AutoBuildArgs ParseFromCommandLine(AutoBuildPlatform platform)
         {
-            AutoBuildArgs buildArgs = new AutoBuildArgs();
+            AutoBuildArgs buildArgs = new AutoBuildArgs(platform);
             string[] args = Environment.GetCommandLineArgs();
             UnityEngine.Debug.Log("build command line arg:" + string.Join(" ", args));
             // 检查参数列表中是否包含 -executeMethod 参数，判断是否是jenkins调用的

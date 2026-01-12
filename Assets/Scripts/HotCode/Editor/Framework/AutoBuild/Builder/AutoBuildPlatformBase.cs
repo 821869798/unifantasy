@@ -22,6 +22,9 @@ namespace AutoBuild
         //public eLanguageType buildLang;
 
         public AutoBuildArgs buildArgs;
+
+        public abstract AutoBuildPlatform buildPlatform { get; }
+
         /// <summary>
         /// 切换平台 
         /// </summary>

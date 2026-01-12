@@ -5,6 +5,7 @@ namespace AutoBuild
 {
     public class AutoBuildMacOS : AutoBuildWindows
     {
+        public override AutoBuildPlatform buildPlatform => AutoBuildPlatform.MacOS;
         public override void SwitchPlatform()
         {
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.StandaloneWindows64)

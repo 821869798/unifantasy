@@ -96,7 +96,7 @@ namespace AutoBuild
         }
 
         //先把需要放在StreamingAssets下的文件都放好，然后使用该工具查找生成需要替换的文本内容，并替换GradleReplaceContent
-        [MenuItem("GameEditor/BuildTools/Test/查找StreamingAssets目录下用于gradle不压缩的文件", priority = int.MaxValue)]
+        [MenuItem("GameEditor/AutoBuild/Test/查找StreamingAssets目录下用于gradle不压缩的文件", priority = int.MaxValue)]
         static void GenStreamingAssetsSuffix()
         {
             var fileSuffixSet = new HashSet<string>();

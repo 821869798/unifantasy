@@ -13,6 +13,8 @@ namespace AutoBuild
         const string AndroidKeystorePass = "123456";
         const string AndroidKeyaliasPass = "123456";
 
+        public override AutoBuildPlatform buildPlatform => AutoBuildPlatform.Android;
+
 
         public override void SwitchPlatform()
         {
@@ -64,13 +66,13 @@ namespace AutoBuild
                 Directory.CreateDirectory(finalPathDir);
             }
 
-            var filenameExtension = (AutoBuildArgs.AndroidBuildOption)buildArgs.androidBuildOption == AutoBuildArgs.AndroidBuildOption.AABMode ? ".aab" : ".apk";
+            var filenameExtension = (AutoBuildArgs.AndroidBuildOption)buildArgs.androidBuildOption == AutoBuildArgs.AndroidBuildOption.AABModeArmFull ? ".aab" : ".apk";
             buildArgs.outputFinalPath = Path.Combine(finalPathDir,
                 PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android) + "_" + buildArgs.buildVersionName) + filenameExtension;
 
             //aab bundle
             var androidBuildOption = (AutoBuildArgs.AndroidBuildOption)buildArgs.androidBuildOption;
-            EditorUserBuildSettings.buildAppBundle = androidBuildOption == AutoBuildArgs.AndroidBuildOption.AABMode || androidBuildOption == AutoBuildArgs.AndroidBuildOption.AABAndX86;
+            EditorUserBuildSettings.buildAppBundle = androidBuildOption == AutoBuildArgs.AndroidBuildOption.AABModeArmFull || androidBuildOption == AutoBuildArgs.AndroidBuildOption.AABModeArmFullAndX86;
 
             SetAndroidKey(false);
 
@@ -81,12 +83,12 @@ namespace AutoBuild
                     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
                     PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.X86;
                     break;
-                case AutoBuildArgs.AndroidBuildOption.Il2cpp64:
-                case AutoBuildArgs.AndroidBuildOption.AABMode:
+                case AutoBuildArgs.AndroidBuildOption.Il2cppArmFull:
+                case AutoBuildArgs.AndroidBuildOption.AABModeArmFull:
                     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
                     PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
                     break;
-                case AutoBuildArgs.AndroidBuildOption.Il2cpp64AndX86:
+                case AutoBuildArgs.AndroidBuildOption.Il2cppArmFullAndX86:
                     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
                     PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64 | AndroidArchitecture.X86;
                     break;
@@ -94,9 +96,13 @@ namespace AutoBuild
                     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
                     PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.X86;
                     break;
-                case AutoBuildArgs.AndroidBuildOption.AABAndX86:
+                case AutoBuildArgs.AndroidBuildOption.AABModeArmFullAndX86:
                     PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
                     PlayerSettings.Android.targetArchitectures = AndroidArchitecture.X86;
+                    break;
+                case AutoBuildArgs.AndroidBuildOption.Il2cppArm64AndX86:
+                    PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+                    PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64 | AndroidArchitecture.X86;
                     break;
                 default:
                     Debug.LogError("no support androidBuildOption :" + buildArgs.androidBuildOption);

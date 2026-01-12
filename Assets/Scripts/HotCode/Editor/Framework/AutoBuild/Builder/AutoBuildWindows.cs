@@ -5,6 +5,8 @@ namespace AutoBuild
 {
     public class AutoBuildWindows : AutoBuildPlatformBase
     {
+        public override AutoBuildPlatform buildPlatform => AutoBuildPlatform.Windows;
+
         public override void SwitchPlatform()
         {
             if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.StandaloneWindows64)
