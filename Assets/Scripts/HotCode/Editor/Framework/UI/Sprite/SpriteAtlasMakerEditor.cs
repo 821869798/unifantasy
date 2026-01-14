@@ -153,6 +153,8 @@ namespace HotCode.FrameworkEditor
                 importer.SetPlatformSettings(importerSettings_PC);
                 importer.SetPlatformSettings(importerSettings_Andorid);
                 importer.SetPlatformSettings(importerSettings_IOS);
+
+                importer.SaveAndReimport();
             }
         }
 
