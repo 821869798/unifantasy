@@ -62,6 +62,11 @@ namespace AutoBuild
             // development模式
             EditorUserBuildSettings.development = buildArgs.enableUnityDevelopment;
 
+#if UNITY_EDITOR_WIN
+            // 重置变量，防止hybridCLR generate all 失败时杀进程，这个变量没有重置
+            UnityEditor.WindowsStandalone.UserBuildSettings.createSolution = false;
+#endif
+
             //buildLang = LanguageGlobal.GetDefaultLanguage(buildArgs.AndroidChannelType);
             //打包时不可设置该值
             //LanguageGlobal.LanguageEditorMode = buildLang;
