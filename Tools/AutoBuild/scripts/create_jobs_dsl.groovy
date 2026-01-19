@@ -51,6 +51,13 @@ if (!osName.contains('windows')) {
 def defaultOutputPath = "${defaultWorkPath}Output";
 
 projects.each { project ->
+    // 预先生成所有 Active Choice 脚本（避免在闭包内调用方法导致沙箱限制）
+    def buildPlatformScript = generateActiveChoiceScript('0,1,2', project.buildPlatform, 'Windows64,Android,iOS')
+    def buildModeScript = generateActiveChoiceScript('0,1,2', '0', '全量打包,不打包AssetBundle直接Build,打空包')
+    def versionControlScript = generateActiveChoiceScript('0,1', '0', 'Git(需要安装Git),SVN(需要安装SVN并有SVN命令可用)')
+    def androidBuildOptionScript = generateActiveChoiceScript('0,1,2,3,4,5', '3', 'Mono,Il2cpp64,AABMode,Il2cpp64AndX86,Il2cpp32,AABAndX86')
+    def iOSSigningTypeScript = generateActiveChoiceScript('1,2,3', '1,2', 'appstore发布包,development开发者包,企业证书包')
+    
     pipelineJob("${project.name}") {
         // Define job properties
         description("${project.description}")
@@ -62,7 +69,7 @@ projects.each { project ->
                 description('选择打包平台')
                 choiceType('SINGLE_SELECT')
                 groovyScript {
-                    script(generateActiveChoiceScript('0,1,2', project.buildPlatform, 'Windows64,Android,iOS'))
+                    script(buildPlatformScript)
                     fallbackScript('return ["0"]')
                 }
             }
@@ -70,7 +77,7 @@ projects.each { project ->
                 description('选择打包模式')
                 choiceType('SINGLE_SELECT')
                 groovyScript {
-                    script(generateActiveChoiceScript('0,1,2', '0', '全量打包,不打包AssetBundle直接Build,打空包'))
+                    script(buildModeScript)
                     fallbackScript('return ["0"]')
                 }
             }
@@ -80,7 +87,7 @@ projects.each { project ->
                 description('版本控制软件')
                 choiceType('SINGLE_SELECT')
                 groovyScript {
-                    script(generateActiveChoiceScript('0,1', '0', 'Git(需要安装Git),SVN(需要安装SVN并有SVN命令可用)'))
+                    script(versionControlScript)
                     fallbackScript('return ["0"]')
                 }
             }
@@ -92,7 +99,7 @@ projects.each { project ->
                 description('打包特殊选项')
                 choiceType('SINGLE_SELECT')
                 groovyScript {
-                    script(generateActiveChoiceScript('0,1,2,3,4,5', '3', 'Mono,Il2cpp64,AABMode,Il2cpp64AndX86,Il2cpp32,AABAndX86'))
+                    script(androidBuildOptionScript)
                     fallbackScript('return ["3"]')
                 }
             }
@@ -102,7 +109,7 @@ projects.each { project ->
                 description('iOS出包证书签名类型，可以多选')
                 choiceType('CHECKBOX')
                 groovyScript {
-                    script(generateActiveChoiceScript('1,2,3', '1,2', 'appstore发布包,development开发者包,企业证书包'))
+                    script(iOSSigningTypeScript)
                     fallbackScript('return ["1"]')
                 }
             }
