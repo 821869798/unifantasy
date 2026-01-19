@@ -1,14 +1,3 @@
-import org.apache.commons.lang.SystemUtils
-
-// dsl中没法用isUnix函数，只能自己写一个
-def DSL_IsUnix() {
-    if (SystemUtils.IS_OS_UNIX || SystemUtils.IS_OS_MAC) {
-        return true;
-    }
-    else {
-        return false
-    }
-}
 
 // 生成 Active Choice 的选项脚本（支持 Map 格式：显示值 -> 实际值）
 def generateActiveChoiceScript(values, defaultValues, descriptions) {
@@ -46,7 +35,7 @@ def projects = [
 
 // 默认的工作目录
 def defaultWorkPath = "D:/JenkinsHome/";
-if (DSL_IsUnix()) {
+if (isUnix()) {
     // macos linux，获取User目录
     def userHome = System.getProperty('user.home')
     // 下面这行代码效果是一样的，dsl中能直接用env，需要用System.getenv
