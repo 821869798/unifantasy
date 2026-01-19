@@ -1,5 +1,6 @@
 
-// 生成 Active Choice 的选项脚本（支持 Map 格式：显示值 -> 实际值）
+// 生成 Active Choice 的选项脚本（使用列表格式，显示文本│实际值）
+// pipeline中使用 split('│')[1] 获取实际值
 def generateActiveChoiceScript(values, defaultValues, descriptions) {
     def valueList = values.split(',')
     def defaultList = defaultValues.split(',')
@@ -10,8 +11,9 @@ def generateActiveChoiceScript(values, defaultValues, descriptions) {
         def val = valueList[i].trim()
         def desc = (i < descList.size()) ? descList[i].trim() : val
         def isSelected = defaultList.contains(val)
-        def key = isSelected ? "${desc}:selected" : desc
-        lines.add("\"${key}\": \"${val}\"")
+        // 使用 │ 连接显示文本和实际值
+        def option = "${desc}│${val}"
+        lines.add(isSelected ? "\"${option}:selected\"" : "\"${option}\"")
     }
     return "return [${lines.join(', ')}]"
 }
