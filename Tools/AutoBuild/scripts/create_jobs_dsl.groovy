@@ -37,7 +37,9 @@ def projects = [
 
 // 默认的工作目录
 def defaultWorkPath = "D:/JenkinsHome/";
-if (isUnix()) {
+// 使用 os.name 判断操作系统（isUnix() 在 Job DSL 沙箱中不可用）
+def osName = System.getProperty('os.name').toLowerCase()
+if (!osName.contains('windows')) {
     // macos linux，获取User目录
     def userHome = System.getProperty('user.home')
     // 下面这行代码效果是一样的，dsl中能直接用env，需要用System.getenv
