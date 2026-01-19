@@ -13,7 +13,8 @@ def generateActiveChoiceScript(values, defaultValues, descriptions) {
         def isSelected = defaultList.contains(val)
         // 使用 │ 连接显示文本和实际值
         def option = "${desc}│${val}"
-        lines.add(isSelected ? "\"${option}:selected\"" : "\"${option}\"")
+        // 使用单引号格式，与Jenkins Active Choice兼容
+        lines.add(isSelected ? "'${option}:selected'" : "'${option}'")
     }
     return "return [${lines.join(', ')}]"
 }
