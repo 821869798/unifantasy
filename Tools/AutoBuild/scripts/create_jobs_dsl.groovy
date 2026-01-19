@@ -53,9 +53,17 @@ def defaultOutputPath = "${defaultWorkPath}Output";
 // 预先读取 pipeline 脚本（避免在闭包内调用方法导致沙箱限制）
 def pipelineScript = readFileFromWorkspace('Tools/AutoBuild/scripts/unity_pipeline.groovy')
 
+// 创建文件夹（归属于当前文件夹）
+def folderName = dsl_pipelineName
+folder(folderName) {
+    description('构建流水线文件夹')
+}
+
 projects.each { project ->
 
     def scmUrl = dsl_scmUrl
+    // job 名称包含文件夹路径
+    def jobFullName = "${folderName}/${project.name}"
     
     // 预先生成所有 Active Choice 脚本
     def buildPlatformScript = generateActiveChoiceScript('0,1,2', project.buildPlatform, 'Windows64,Android,iOS')
@@ -64,7 +72,7 @@ projects.each { project ->
     def androidBuildOptionScript = generateActiveChoiceScript('0,1,2,3,4,5', '3', 'Mono,Il2cpp64,AABMode,Il2cpp64AndX86,Il2cpp32,AABAndX86')
     def iOSSigningTypeScript = generateActiveChoiceScript('1,2,3', '1,2', 'appstore发布包,development开发者包,企业证书包')
     
-    pipelineJob("${project.name}") {
+    pipelineJob(jobFullName) {
         // Define job properties
         description("${project.description}")
         //job parameters
@@ -132,6 +140,7 @@ projects.each { project ->
     }
 }
 
+/*
 // 预先保存变量（避免在闭包内访问外部变量导致沙箱限制）
 def viewName = "${dsl_pipelineName}-view"
 def jobRegex = "${dsl_pipelineName}-.+"
@@ -154,3 +163,4 @@ listView(viewName) {
         buildButton()
     }
 }
+*/
