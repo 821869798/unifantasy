@@ -132,13 +132,17 @@ projects.each { project ->
     }
 }
 
-listView("${dsl_pipelineName}-view") {
+// 预先保存变量（避免在闭包内访问外部变量导致沙箱限制）
+def viewName = "${dsl_pipelineName}-view"
+def jobRegex = "${dsl_pipelineName}-.+"
+
+listView(viewName) {
     //description('All unstable jobs for project A')
     filterBuildQueue()
     filterExecutors()
     jobs {
         //name('trunk-Pipeline')
-        regex(/${dsl_pipelineName}-.+/)
+        regex(jobRegex)
     }
     columns {
         status()
