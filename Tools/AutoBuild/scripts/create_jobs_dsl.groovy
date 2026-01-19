@@ -10,44 +10,21 @@ def DSL_IsUnix() {
     }
 }
 
-
-//定义choice的函数
-def SimpleExtendedChoice(n, t, count, delimiter, v, dv, descValue, desc) {
-    def choice = {
-        name(n)
-        type(t)
-        value(v)
-        defaultValue(dv)
-        visibleItemCount(count)
-        multiSelectDelimiter(delimiter)
-        descriptionPropertyValue(descValue)
-        description(desc)
-        saveJSONParameterToFile(false)
-        quoteValue(false)
-        // The name of the parameter.
-        projectName('')
-        propertyFile('')
-        groovyScript('')
-        groovyScriptFile('')
-        bindings('')
-        groovyClasspath('')
-        propertyKey('')
-        defaultPropertyFile('')
-        defaultGroovyScript('')
-        defaultGroovyScriptFile('')
-        defaultBindings('')
-        defaultGroovyClasspath('')
-        defaultPropertyKey('')
-        descriptionPropertyFile('')
-        descriptionGroovyScript('')
-        descriptionGroovyScriptFile('')
-        descriptionBindings('')
-        descriptionGroovyClasspath('')
-        descriptionPropertyKey('')
-        javascriptFile('')
-        javascript('')
+// 生成 Active Choice 的选项脚本（支持 Map 格式：显示值 -> 实际值）
+def generateActiveChoiceScript(values, defaultValues, descriptions) {
+    def valueList = values.split(',')
+    def defaultList = defaultValues.split(',')
+    def descList = descriptions.split(',')
+    
+    def lines = []
+    for (int i = 0; i < valueList.size(); i++) {
+        def val = valueList[i].trim()
+        def desc = (i < descList.size()) ? descList[i].trim() : val
+        def isSelected = defaultList.contains(val)
+        def key = isSelected ? "${desc}:selected" : desc
+        lines.add("\"${key}\": \"${val}\"")
     }
-    choice
+    return "return [${lines.join(', ')}]"
 }
 
 class PipelineProject {
@@ -88,19 +65,54 @@ projects.each { project ->
         parameters {
             stringParam('projectPath', "${defaultWorkPath}Project/${project.name}", '打包项目所在的目录，不存在通过url拉取')
             stringParam('outputPath', "${defaultOutputPath}", '打包的输出目录')
-            extendedChoice SimpleExtendedChoice('buildPlatform','PT_SINGLE_SELECT',3,',','0,1,2',project.buildPlatform,'Windows64,Android,iOS','选择打包平台')
-            extendedChoice SimpleExtendedChoice('buildMode','PT_SINGLE_SELECT',3,',','0,1,2','0','全量打包,不打包AssetBundle，直接Build,打空包','选择打包模式')
+            activeChoiceParam('buildPlatform') {
+                description('选择打包平台')
+                choiceType('SINGLE_SELECT')
+                groovyScript {
+                    script(generateActiveChoiceScript('0,1,2', project.buildPlatform, 'Windows64,Android,iOS'))
+                    fallbackScript('return ["0"]')
+                }
+            }
+            activeChoiceParam('buildMode') {
+                description('选择打包模式')
+                choiceType('SINGLE_SELECT')
+                groovyScript {
+                    script(generateActiveChoiceScript('0,1,2', '0', '全量打包,不打包AssetBundle直接Build,打空包'))
+                    fallbackScript('return ["0"]')
+                }
+            }
             booleanParam('enableUnityDevelopment',false,'开启unity的developmentbuild')
             booleanParam('enableGameDevelopment',false,'Game的开发者模式,指代码的逻辑是开发者模式')
-            extendedChoice SimpleExtendedChoice('versionControl','PT_SINGLE_SELECT',2,',','0,1','0','Git(需要安装Git),SVN(需要安装SVN，并有SVN命令可用)','版本控制软件')
+            activeChoiceParam('versionControl') {
+                description('版本控制软件')
+                choiceType('SINGLE_SELECT')
+                groovyScript {
+                    script(generateActiveChoiceScript('0,1', '0', 'Git(需要安装Git),SVN(需要安装SVN并有SVN命令可用)'))
+                    fallbackScript('return ["0"]')
+                }
+            }
             stringParam('scmUrl',dsl_scmUrl,'项目url(git|svn),直接填url或者执行git填url|branch')
             booleanParam('enableProjectUpdate',true,'使用Git或者SVN更新项目')
             booleanParam('enableBuildExcel',true,'是否导表')
             booleanParam('enableIncrement',false,'是否是增量打包')
-            extendedChoice SimpleExtendedChoice('androidBuildOption','PT_SINGLE_SELECT',6,',','0,1,2,3,4,5','3','Mono,Il2cpp64,AABMode,Il2cpp64AndX86,Il2cpp32,AABAndX86','打包特殊选项')
+            activeChoiceParam('androidBuildOption') {
+                description('打包特殊选项')
+                choiceType('SINGLE_SELECT')
+                groovyScript {
+                    script(generateActiveChoiceScript('0,1,2,3,4,5', '3', 'Mono,Il2cpp64,AABMode,Il2cpp64AndX86,Il2cpp32,AABAndX86'))
+                    fallbackScript('return ["3"]')
+                }
+            }
             stringParam('versionNumber', '1.0.0.0', '打包版本(前三位为app版本,最后一位资源)')
             stringParam('iOSBundleVersion', '0', 'iOS构建版本号(数字)')
-            extendedChoice SimpleExtendedChoice('iOSSigningType','PT_CHECKBOX',3,',','1,2,3','1,2','appstore发布包,development开发者包,企业证书包','iOS出包证书签名类型，可以多选')
+            activeChoiceParam('iOSSigningType') {
+                description('iOS出包证书签名类型，可以多选')
+                choiceType('CHECKBOX')
+                groovyScript {
+                    script(generateActiveChoiceScript('1,2,3', '1,2', 'appstore发布包,development开发者包,企业证书包'))
+                    fallbackScript('return ["1"]')
+                }
+            }
             booleanParam('iOSIpaResign', true, 'iOS打包多个证书包时，后面的包使用重签名的方式加速')
             booleanParam('SkipUnityBuild', false, '跳过Unity打包,例如只测试Xcode打包')
         }
