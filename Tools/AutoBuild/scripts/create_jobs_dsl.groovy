@@ -50,10 +50,14 @@ if (!osName.contains('windows')) {
  // 默认的输出目录:TODO，推荐把输出目录修改成打包机本地挂载的局域网共享盘（windows和macos都支持挂载的），这样远程打包完直接去共享盘取。
 def defaultOutputPath = "${defaultWorkPath}Output";
 
+// 预先读取 pipeline 脚本（避免在闭包内调用方法导致沙箱限制）
+def pipelineScript = readFileFromWorkspace('Tools/AutoBuild/scripts/unity_pipeline.groovy')
+
 projects.each { project ->
 
     def scmUrl = dsl_scmUrl
-    // 预先生成所有 Active Choice 脚本（避免在闭包内调用方法导致沙箱限制）
+    
+    // 预先生成所有 Active Choice 脚本
     def buildPlatformScript = generateActiveChoiceScript('0,1,2', project.buildPlatform, 'Windows64,Android,iOS')
     def buildModeScript = generateActiveChoiceScript('0,1,2', '0', '全量打包,不打包AssetBundle直接Build,打空包')
     def versionControlScript = generateActiveChoiceScript('0,1', '0', 'Git(需要安装Git),SVN(需要安装SVN并有SVN命令可用)')
@@ -121,7 +125,7 @@ projects.each { project ->
 
         definition {
             cps {
-                script(readFileFromWorkspace('Tools/AutoBuild/scripts/unity_pipeline.groovy'))
+                script(pipelineScript)
                 sandbox()
             }
         }
