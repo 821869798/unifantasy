@@ -53,8 +53,9 @@ def defaultOutputPath = "${defaultWorkPath}Output";
 // 预先读取 pipeline 脚本（避免在闭包内调用方法导致沙箱限制）
 def pipelineScript = readFileFromWorkspace('Tools/AutoBuild/scripts/unity_pipeline.groovy')
 
-// 创建文件夹（归属于当前文件夹）
-def folderName = dsl_pipelineName
+// 创建文件夹（基于父文件夹路径）
+def parentFolder = dsl_parentFolder ?: ''  // 从参数获取父文件夹路径
+def folderName = parentFolder ? "${parentFolder}/${dsl_pipelineName}" : dsl_pipelineName
 folder(folderName) {
     description('构建流水线文件夹')
 }
