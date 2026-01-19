@@ -8,7 +8,7 @@ namespace UnityEngine.UI
         public Action<GameObject> eventReturnItemObject { get; set; }
         public Action<GameObject, int> eventItemDataChange { get; set; }
 
-        public Func<int, Vector2> eventGetItemSize { get; set; }
+        public Func<int, int, float> eventGetItemSize { get; set; }
 
         public ExLoopScrollSource source { get; }
 

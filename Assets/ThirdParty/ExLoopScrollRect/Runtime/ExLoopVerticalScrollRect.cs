@@ -11,7 +11,7 @@ namespace UnityEngine.UI
         public Action<GameObject> eventReturnItemObject { get => m_source.eventReturnItemObject; set => m_source.eventReturnItemObject = value; }
         public Action<GameObject, int> eventItemDataChange { get => m_source.eventItemDataChange; set => m_source.eventItemDataChange = value; }
 
-        public Func<int, Vector2> eventGetItemSize
+        public Func<int, int, float> eventGetItemSize
         {
             get { return m_source.eventGetItemSize; }
             set

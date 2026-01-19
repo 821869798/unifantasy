@@ -10,7 +10,7 @@ namespace UnityEngine.UI
         [NonSerialized] public Action<GameObject> eventCreateItemObject;
         [NonSerialized] public Action<GameObject> eventReturnItemObject;
         [NonSerialized] public Action<GameObject, int> eventItemDataChange;
-        [NonSerialized] public Func<int, Vector2> eventGetItemSize;
+        [NonSerialized] public Func<int, int, float> eventGetItemSize;
 
         [SerializeField]
         public GameObject prefab;
@@ -35,9 +35,13 @@ namespace UnityEngine.UI
             prefab.transform.SetParent(poolHolder);
         }
 
-        public Vector2 GetItemsSize(int itemsCount)
+        public float GetItemsSize(int itemStart, int itemEnd)
         {
-            return eventGetItemSize.Invoke(itemsCount);
+            if (itemEnd <= itemStart)
+            {
+                return 0f;
+            }
+            return eventGetItemSize.Invoke(itemStart, itemEnd);
         }
 
         public GameObject GetObject(int index)

@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.code-philosophy.hybridclr": {
-      "version": "8.3.0",
+      "version": "8.9.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -147,7 +147,7 @@
       "url": "https://package.openupm.com"
     },
     "me.qiankanglai.loopscrollrect": {
-      "version": "1.1.4",
+      "version": "1.1.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
