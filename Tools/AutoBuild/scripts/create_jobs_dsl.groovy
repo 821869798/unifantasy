@@ -91,7 +91,7 @@ projects.each { project ->
                     fallbackScript('return ["0"]')
                 }
             }
-            stringParam('scmUrl',dsl_scmUrl,'项目url(git|svn),直接填url或者执行git填url|branch')
+            stringParam('scmUrl', "${dsl_scmUrl}", '项目url(git|svn),直接填url或者执行git填url|branch')
             booleanParam('enableProjectUpdate',true,'使用Git或者SVN更新项目')
             booleanParam('enableBuildExcel',true,'是否导表')
             booleanParam('enableIncrement',false,'是否是增量打包')
