@@ -51,6 +51,8 @@ if (!osName.contains('windows')) {
 def defaultOutputPath = "${defaultWorkPath}Output";
 
 projects.each { project ->
+
+    def scmUrl = dsl_scmUrl
     // 预先生成所有 Active Choice 脚本（避免在闭包内调用方法导致沙箱限制）
     def buildPlatformScript = generateActiveChoiceScript('0,1,2', project.buildPlatform, 'Windows64,Android,iOS')
     def buildModeScript = generateActiveChoiceScript('0,1,2', '0', '全量打包,不打包AssetBundle直接Build,打空包')
@@ -91,7 +93,7 @@ projects.each { project ->
                     fallbackScript('return ["0"]')
                 }
             }
-            stringParam('scmUrl', "${dsl_scmUrl}", '项目url(git|svn),直接填url或者执行git填url|branch')
+            stringParam('scmUrl', "${scmUrl}", '项目url(git|svn),直接填url或者执行git填url|branch')
             booleanParam('enableProjectUpdate',true,'使用Git或者SVN更新项目')
             booleanParam('enableBuildExcel',true,'是否导表')
             booleanParam('enableIncrement',false,'是否是增量打包')
