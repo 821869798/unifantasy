@@ -1,24 +1,4 @@
 
-// 生成 Active Choice 的选项脚本（使用列表格式，显示文本│实际值）
-// pipeline中使用 split('│')[1] 获取实际值
-def generateActiveChoiceScript(values, defaultValues, descriptions) {
-    def valueList = values.split(',')
-    def defaultList = defaultValues.split(',')
-    def descList = descriptions.split(',')
-    
-    def lines = []
-    for (int i = 0; i < valueList.size(); i++) {
-        def val = valueList[i].trim()
-        def desc = (i < descList.size()) ? descList[i].trim() : val
-        def isSelected = defaultList.contains(val)
-        // 使用 │ 连接显示文本和实际值
-        def option = "${desc}│${val}"
-        // 使用单引号格式，与Jenkins Active Choice兼容
-        lines.add(isSelected ? "'${option}:selected'" : "'${option}'")
-    }
-    return "return [${lines.join(', ')}]"
-}
-
 class PipelineProject {
     String name
     String buildPlatform
@@ -36,17 +16,8 @@ def projects = [
     new PipelineProject(name: "${dsl_pipelineName}-Windows",      buildPlatform: '0',     description: 'build Windows')
 ]
 
-// 默认的工作目录
-def defaultWorkPath = "D:/JenkinsHome/";
-// 使用 os.name 判断操作系统（isUnix() 在 Job DSL 沙箱中不可用）
-def osName = System.getProperty('os.name').toLowerCase()
-if (!osName.contains('windows')) {
-    // macos linux，获取User目录
-    def userHome = System.getProperty('user.home')
-    // 下面这行代码效果是一样的，dsl中能直接用env，需要用System.getenv
-    // def userHome = System.getenv('HOME')
-    defaultWorkPath = "${userHome}/JenkinsHome/";
-}
+// 从传入参数获取默认工作目录（已在 pipeline 中根据操作系统判断好）
+def defaultWorkPath = dsl_defaultWorkPath
 
  // 默认的输出目录:TODO，推荐把输出目录修改成打包机本地挂载的局域网共享盘（windows和macos都支持挂载的），这样远程打包完直接去共享盘取。
 def defaultOutputPath = "${defaultWorkPath}Output";
@@ -66,13 +37,8 @@ projects.each { project ->
     def scmUrl = dsl_scmUrl
     // job 名称包含文件夹路径
     def jobFullName = "${folderName}/${project.name}"
-    
-    // 预先生成所有 Active Choice 脚本
-    def buildPlatformScript = generateActiveChoiceScript('0,1,2', project.buildPlatform, 'Windows64,Android,iOS')
-    def buildModeScript = generateActiveChoiceScript('0,1,2', '0', '全量打包,不打包AssetBundle直接Build,打空包')
-    def versionControlScript = generateActiveChoiceScript('0,1', '0', 'Git(需要安装Git),SVN(需要安装SVN并有SVN命令可用)')
-    def androidBuildOptionScript = generateActiveChoiceScript('0,1,2,3,4,5', '3', 'Mono,Il2cpp64,AABMode,Il2cpp64AndX86,Il2cpp32,AABAndX86')
-    def iOSSigningTypeScript = generateActiveChoiceScript('1,2,3', '1,2', 'appstore发布包,development开发者包,企业证书包')
+
+    def buildPlatformScript = 'return ["0":"Windows64","1":"Android","2":"iOS"]'.replaceAll(/"${project.buildPlatform}":"(.+?)"/, /"${project.buildPlatform}":"$1:selected"/)
     
     pipelineJob(jobFullName) {
         // Define job properties
@@ -81,54 +47,128 @@ projects.each { project ->
         parameters {
             stringParam('projectPath', "${defaultWorkPath}Project/${project.name}", '打包项目所在的目录，不存在通过url拉取')
             stringParam('outputPath', "${defaultOutputPath}", '打包的输出目录')
-            activeChoiceParam('buildPlatform') {
+            
+            // buildPlatform - Extended Choice 参数
+            choiceParameter {
+                name('buildPlatform')
+                filterable(false)
                 description('选择打包平台')
-                choiceType('SINGLE_SELECT')
-                groovyScript {
-                    script(buildPlatformScript)
-                    fallbackScript('return ["0"]')
+                choiceType('PT_SINGLE_SELECT')
+                script {
+                    groovyScript {
+                        script {
+                            script(buildPlatformScript)
+                            sandbox(true)
+                        }
+                        fallbackScript {
+                            script("return [\"${project.buildPlatform}\"]")
+                            sandbox(true)
+                        }
+                    }
+                    randomName('')
+                    filterLength(0)
                 }
             }
-            activeChoiceParam('buildMode') {
+            
+            // buildMode - Extended Choice 参数
+            choiceParameter {
+                name('buildMode')
+                filterable(false)
                 description('选择打包模式')
-                choiceType('SINGLE_SELECT')
-                groovyScript {
-                    script(buildModeScript)
-                    fallbackScript('return ["0"]')
+                choiceType('PT_SINGLE_SELECT')
+                script {
+                    groovyScript {
+                        script {
+                            script('return ["0":"全量打包","1":"直接Build App","2":"打空包","3":"打热更资源版本"]')
+                            sandbox(true)
+                        }
+                        fallbackScript {
+                            script('return ["0"]')
+                            sandbox(true)
+                        }
+                    }
+                    randomName('')
+                    filterLength(0)
                 }
             }
+            
             booleanParam('enableUnityDevelopment',false,'开启unity的developmentbuild')
             booleanParam('enableGameDevelopment',false,'Game的开发者模式,指代码的逻辑是开发者模式')
-            activeChoiceParam('versionControl') {
+            
+            // versionControl - Extended Choice 参数
+            choiceParameter {
+                name('versionControl')
+                filterable(false)
                 description('版本控制软件')
-                choiceType('SINGLE_SELECT')
-                groovyScript {
-                    script(versionControlScript)
-                    fallbackScript('return ["0"]')
+                choiceType('PT_SINGLE_SELECT')
+                script {
+                    groovyScript {
+                        script {
+                            script('return ["0":"Git(需要安装Git)","1":"SVN(需要安装SVN并有SVN命令可用)"]')
+                            sandbox(true)
+                        }
+                        fallbackScript {
+                            script('return ["0"]')
+                            sandbox(true)
+                        }
+                    }
+                    randomName('')
+                    filterLength(0)
                 }
             }
+            
             stringParam('scmUrl', "${scmUrl}", '项目url(git|svn),直接填url或者执行git填url|branch')
             booleanParam('enableProjectUpdate',true,'使用Git或者SVN更新项目')
             booleanParam('enableBuildExcel',true,'是否导表')
             booleanParam('enableIncrement',false,'是否是增量打包')
-            activeChoiceParam('androidBuildOption') {
+            
+            // androidBuildOption - Extended Choice 参数
+            choiceParameter {
+                name('androidBuildOption')
+                filterable(false)
                 description('打包特殊选项')
-                choiceType('SINGLE_SELECT')
-                groovyScript {
-                    script(androidBuildOptionScript)
-                    fallbackScript('return ["3"]')
+                choiceType('PT_SINGLE_SELECT')
+                script {
+                    groovyScript {
+                        script {
+                            script('return ["0":"Mono","1":"Il2cppArmFull","2":"AABModeArmFull","3":"Il2cppArmFullAndX86","4":"Il2cpp32","5":"AABModeArmFullAndX86","6":"Il2cppArm64AndX86:selected"]')
+                            sandbox(true)
+                        }
+                        fallbackScript {
+                            script('return ["6"]')
+                            sandbox(true)
+                        }
+                    }
+                    randomName('')
+                    filterLength(0)
                 }
             }
+            
             stringParam('versionNumber', '1.0.0.0', '打包版本(前三位为app版本,最后一位资源)')
             stringParam('iOSBundleVersion', '0', 'iOS构建版本号(数字)')
-            activeChoiceParam('iOSSigningType') {
+            
+            // iOSSigningType - Extended Choice 参数（多选）
+            choiceParameter {
+                name('iOSSigningType')
+                filterable(false)
                 description('iOS出包证书签名类型，可以多选')
-                choiceType('CHECKBOX')
-                groovyScript {
-                    script(iOSSigningTypeScript)
-                    fallbackScript('return ["1"]')
+                choiceType('PT_CHECKBOX')
+                script {
+                    groovyScript {
+                        script {
+                            script('return ["1":"appstore发布包:selected","2":"development开发者包:selected","3":"企业证书包"]')
+                            sandbox(true)
+                        }
+                        fallbackScript {
+                            script('return ["1:selected","2:selected"]')
+                            sandbox(true)
+                        }
+                    }
+                    randomName('')
+                    filterLength(0)
                 }
             }
+            
             booleanParam('iOSIpaResign', true, 'iOS打包多个证书包时，后面的包使用重签名的方式加速')
             booleanParam('SkipUnityBuild', false, '跳过Unity打包,例如只测试Xcode打包')
         }

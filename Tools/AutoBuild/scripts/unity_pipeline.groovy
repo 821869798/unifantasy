@@ -14,13 +14,13 @@ def CallCmd(cmdline) {
 def GetUnityExePath() {
   // 优先使用jenkins环境变量中的Unity路径，其次才是代码中定义的默认值
   def unityExePath = ''
-  if (env.Unity2021) {
-    unityExePath = env.Unity2021
+  if (env.Unity2022) {
+    unityExePath = env.Unity2022
   } else {
     if (isUnix()) {
-      unityExePath = env.Unity2021_DefaultPath_Unix
+      unityExePath = env.Unity2022_DefaultPath_Unix
     } else {
-      unityExePath = env.Unity2021_DefaultPath
+      unityExePath = env.Unity2022_DefaultPath
     }
   }
   return unityExePath
@@ -50,8 +50,8 @@ pipeline {
   agent any
 
   environment {
-    Unity2021_DefaultPath = 'C:/Program Files/Unity/Hub/Editor/2021.3.16f1/Editor/Unity.exe'
-    Unity2021_DefaultPath_Unix = '/Applications/Unity/Hub/Editor/2021.3.16f1/Unity.app/Contents/MacOS/Unity'
+    Unity2022_DefaultPath = 'C:/Program Files/Unity/Hub/Editor/2022.3.62f1/Editor/Unity.exe'
+    Unity2022_DefaultPath_Unix = '/Applications/Unity/Hub/Editor/2022.3.62f1/Unity.app/Contents/MacOS/Unity'
   }
 
   stages {
@@ -310,7 +310,7 @@ pipeline {
             def resignShell = """
               echo "Start resign ipa......"
               source ${tempIpaInfoProperties}
-    	        /bin/bash ${projectPath}/Tools/AutoBuild/resign.sh \\
+    	        /bin/bash ${projectPath}/Tools/AutoBuild/tools/resign.sh \\
                 -s "${xcodeProject.ipaOutputPath}/\${iOSIpaName}.ipa" -c "${signingParam.codeSignIdentity}" \\
                 -p ${signingParam.mobileprovisionFilePath} || exit 1
               ipaResignOutput="${xcodeProject.ipaOutputPath}/${signingParam.filePrefix}\${iOSProductName}.ipa"
