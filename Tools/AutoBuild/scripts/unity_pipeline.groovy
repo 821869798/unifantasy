@@ -196,9 +196,9 @@ pipeline {
 
           //调用unity的命令行参数
           env.unity_execute_arg = ("-quit -batchmode -nographics -logfile -projectPath \"${projectPath}\" -executeMethod ${buildMethod} -buildTarget ${buildTarget} "
-          + "\"buildPlatform|${buildPlatform}\" \"outputPath|${finalOutputPath}\" \"buildVersionName|${buildVersionName}\" \"buildMode|${buildMode}\" "
-          + "\"versionNumber|${versionNumber}\" \"enableIncrement|${enableIncrement}\" \"androidBuildOption|${androidBuildOption}\" \"enableBuildExcel|${enableBuildExcel}\" "
-          + "\"enableUnityDevelopment|${enableUnityDevelopment}\" \"enableGameDevelopment|${enableGameDevelopment}\" "
+          + "\"buildPlatform=${buildPlatform}\" \"outputPath=${finalOutputPath}\" \"buildVersionName=${buildVersionName}\" \"buildMode=${buildMode}\" "
+          + "\"versionNumber=${versionNumber}\" \"enableIncrement=${enableIncrement}\" \"androidBuildOption=${androidBuildOption}\" \"enableBuildExcel=${enableBuildExcel}\" "
+          + "\"enableUnityDevelopmen=${enableUnityDevelopment}\" \"enableGameDevelopment=${enableGameDevelopment}\" "
           )
         }
       }

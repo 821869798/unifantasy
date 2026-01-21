@@ -175,65 +175,65 @@ namespace AutoBuild
                     isExecuteMethod = true;
                     continue;
                 }
-                if (TryParseOneArg(arg, "outputPath|", out var outputPath))
+                if (TryParseOneArg(arg, "outputPath=", out var outputPath))
                 {
                     buildArgs.outputPath = outputPath;
                     continue;
                 }
-                if (TryParseOneArg(arg, "ipaOutputPath|", out var ipaOutputPath))
+                if (TryParseOneArg(arg, "ipaOutputPath=", out var ipaOutputPath))
                 {
                     buildArgs.ipaOutputPath = ipaOutputPath;
                     continue;
                 }
-                if (TryParseOneArg(arg, "buildVersionName|", out var buildVersionName))
+                if (TryParseOneArg(arg, "buildVersionName=", out var buildVersionName))
                 {
                     buildArgs.buildVersionName = buildVersionName;
                     continue;
                 }
-                if (TryParseOneArg(arg, "versionNumber|", out var versionNumber))
+                if (TryParseOneArg(arg, "versionNumber=", out var versionNumber))
                 {
                     buildArgs.versionNumber = versionNumber;
                     continue;
                 }
-                if (TryParseOneArg(arg, "appVersionNumber|", out var appVersionNumber))
+                if (TryParseOneArg(arg, "appVersionNumber=", out var appVersionNumber))
                 {
                     buildArgs.appVersionNumber = appVersionNumber;
                     continue;
                 }
-                if (TryParseOneArg(arg, "buildMode|", out var buildMode))
+                if (TryParseOneArg(arg, "buildMode=", out var buildMode))
                 {
                     buildArgs.buildMode = (AutoBuildArgs.BuildMode)int.Parse(buildMode);
                     continue;
                 }
-                if (TryParseOneArg(arg, "enableUnityDevelopment|", out var enableUnityDevelopment))
+                if (TryParseOneArg(arg, "enableUnityDevelopment=", out var enableUnityDevelopment))
                 {
                     buildArgs.enableUnityDevelopment = bool.Parse(enableUnityDevelopment);
                     continue;
                 }
-                if (TryParseOneArg(arg, "enableGameDevelopment|", out var enableGameDevelopment))
+                if (TryParseOneArg(arg, "enableGameDevelopment=", out var enableGameDevelopment))
                 {
                     buildArgs.enableGameDevelopment = bool.Parse(enableGameDevelopment);
                     continue;
                 }
 
-                if (TryParseOneArg(arg, "enableIncrement|", out var enableIncrement))
+                if (TryParseOneArg(arg, "enableIncrement=", out var enableIncrement))
                 {
                     buildArgs.enableIncrement = bool.Parse(enableIncrement);
                 }
 
-                if (TryParseOneArg(arg, "androidBuildOption|", out var androidBuildOption))
+                if (TryParseOneArg(arg, "androidBuildOption=", out var androidBuildOption))
                 {
                     buildArgs.androidBuildOption = (AutoBuildArgs.AndroidBuildOption)int.Parse(androidBuildOption);
                 }
-                if (TryParseOneArg(arg, "enableBuildExcel|", out var enableBuildExcel))
+                if (TryParseOneArg(arg, "enableBuildExcel=", out var enableBuildExcel))
                 {
                     buildArgs.enableBuildExcel = bool.Parse(enableBuildExcel);
                 }
-                if (TryParseOneArg(arg, "androidVersionEndNum2|", out var androidVersionEndNum2))
+                if (TryParseOneArg(arg, "androidVersionEndNum2=", out var androidVersionEndNum2))
                 {
                     buildArgs.androidVersionEndNum2 = int.Parse(androidVersionEndNum2);
                 }
-                if (TryParseOneArg(arg, "sourceVersionPath|", out var sourceVersionPath))
+                if (TryParseOneArg(arg, "sourceVersionPath=", out var sourceVersionPath))
                 {
                     buildArgs.sourceVersionPath = sourceVersionPath;
                 }
