@@ -23,7 +23,7 @@ namespace AutoBuild
         private bool enableBuildExcel = true;
         private bool enableIncrement = true;
         private AutoBuildArgs.BuildMode buildMode = AutoBuildArgs.BuildMode.AllBuild;
-        private AutoBuildArgs.AndroidBuildOption androidBuildOption = AutoBuildArgs.AndroidBuildOption.Il2cppArm64AndX86;
+        private AutoBuildArgs.AndroidBuildOption androidBuildOption = AutoBuildArgs.AndroidBuildOption.Il2cppArm64AndX86_64;
         private int androidVersionEndNum2;
         private bool copyToResVersion = true;
         private string sourceVersionPath;
@@ -89,36 +89,37 @@ namespace AutoBuild
 
         private void OnGUI()
         {
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-
-            DrawHeader();
-            EditorGUILayout.Space(10);
-
-            DrawPlatformSelection();
-            EditorGUILayout.Space(10);
-
-            DrawBasicSettings();
-            EditorGUILayout.Space(5);
-
-            DrawAdvancedSettings();
-            EditorGUILayout.Space(5);
-
-            if (selectedPlatform == AutoBuildPlatform.Android)
+            using (var scrollView = new EditorGUILayout.ScrollViewScope(scrollPosition))
             {
-                DrawAndroidSettings();
+                scrollPosition = scrollView.scrollPosition;
+
+                DrawHeader();
+                EditorGUILayout.Space(10);
+
+                DrawPlatformSelection();
+                EditorGUILayout.Space(10);
+
+                DrawBasicSettings();
                 EditorGUILayout.Space(5);
-            }
 
-            if (buildMode == AutoBuildArgs.BuildMode.BuildResVersion)
-            {
-                DrawResVersionSettings();
+                DrawAdvancedSettings();
                 EditorGUILayout.Space(5);
+
+                if (selectedPlatform == AutoBuildPlatform.Android)
+                {
+                    DrawAndroidSettings();
+                    EditorGUILayout.Space(5);
+                }
+
+                if (buildMode == AutoBuildArgs.BuildMode.BuildResVersion)
+                {
+                    DrawResVersionSettings();
+                    EditorGUILayout.Space(5);
+                }
+
+                EditorGUILayout.Space(20);
+                DrawBuildButtons();
             }
-
-            EditorGUILayout.Space(20);
-            DrawBuildButtons();
-
-            EditorGUILayout.EndScrollView();
         }
 
         /// <summary>
@@ -126,16 +127,17 @@ namespace AutoBuild
         /// </summary>
         private void DrawHeader()
         {
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
+            using (new EditorGUILayout.HorizontalScope())
             {
-                fontSize = 18,
-                alignment = TextAnchor.MiddleCenter
-            };
-            EditorGUILayout.LabelField("AutoBuild 打包工具", titleStyle, GUILayout.Height(30));
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
+                GUILayout.FlexibleSpace();
+                GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
+                {
+                    fontSize = 18,
+                    alignment = TextAnchor.MiddleCenter
+                };
+                EditorGUILayout.LabelField("AutoBuild 打包工具", titleStyle, GUILayout.Height(30));
+                GUILayout.FlexibleSpace();
+            }
 
             // 显示当前平台信息
             EditorGUILayout.HelpBox($"当前Unity平台: {EditorUserBuildSettings.activeBuildTarget}", MessageType.Info);
@@ -146,57 +148,58 @@ namespace AutoBuild
         /// </summary>
         private void DrawPlatformSelection()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField("目标平台", EditorStyles.boldLabel);
-            EditorGUILayout.Space(5);
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-
-            GUIStyle buttonStyle = new GUIStyle(GUI.skin.button)
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
-                fixedHeight = 40,
-                fixedWidth = 90,
-                fontSize = 12
-            };
+                EditorGUILayout.LabelField("目标平台", EditorStyles.boldLabel);
+                EditorGUILayout.Space(5);
 
-            // Windows 按钮
-            GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.Windows ? Color.cyan : Color.white;
-            if (GUILayout.Button("Windows", buttonStyle))
-            {
-                selectedPlatform = AutoBuildPlatform.Windows;
-                buildVersionName = "Windows";
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    GUILayout.FlexibleSpace();
+
+                    GUIStyle buttonStyle = new GUIStyle(GUI.skin.button)
+                    {
+                        fixedHeight = 40,
+                        fixedWidth = 90,
+                        fontSize = 12
+                    };
+
+                    // Windows 按钮
+                    GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.Windows ? Color.cyan : Color.white;
+                    if (GUILayout.Button("Windows", buttonStyle))
+                    {
+                        selectedPlatform = AutoBuildPlatform.Windows;
+                        buildVersionName = "Windows";
+                    }
+
+                    // Android 按钮
+                    GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.Android ? Color.green : Color.white;
+                    if (GUILayout.Button("Android", buttonStyle))
+                    {
+                        selectedPlatform = AutoBuildPlatform.Android;
+                        buildVersionName = "Android";
+                    }
+
+                    // iOS 按钮
+                    GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.iOS ? Color.yellow : Color.white;
+                    if (GUILayout.Button("iOS", buttonStyle))
+                    {
+                        selectedPlatform = AutoBuildPlatform.iOS;
+                        buildVersionName = "iOS";
+                    }
+
+                    // MacOS 按钮
+                    GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.MacOS ? Color.magenta : Color.white;
+                    if (GUILayout.Button("MacOS", buttonStyle))
+                    {
+                        selectedPlatform = AutoBuildPlatform.MacOS;
+                        buildVersionName = "MacOS";
+                    }
+
+                    GUI.backgroundColor = Color.white;
+                    GUILayout.FlexibleSpace();
+                }
             }
-
-            // Android 按钮
-            GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.Android ? Color.green : Color.white;
-            if (GUILayout.Button("Android", buttonStyle))
-            {
-                selectedPlatform = AutoBuildPlatform.Android;
-                buildVersionName = "Android";
-            }
-
-            // iOS 按钮
-            GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.iOS ? Color.yellow : Color.white;
-            if (GUILayout.Button("iOS", buttonStyle))
-            {
-                selectedPlatform = AutoBuildPlatform.iOS;
-                buildVersionName = "iOS";
-            }
-
-            // MacOS 按钮
-            GUI.backgroundColor = selectedPlatform == AutoBuildPlatform.MacOS ? Color.magenta : Color.white;
-            if (GUILayout.Button("MacOS", buttonStyle))
-            {
-                selectedPlatform = AutoBuildPlatform.MacOS;
-                buildVersionName = "MacOS";
-            }
-
-            GUI.backgroundColor = Color.white;
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.EndVertical();
         }
 
         /// <summary>
@@ -205,41 +208,44 @@ namespace AutoBuild
         private void DrawBasicSettings()
         {
             showBasicSettings = EditorGUILayout.BeginFoldoutHeaderGroup(showBasicSettings, "基础设置");
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
             if (showBasicSettings)
             {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                EditorGUI.indentLevel++;
-
-                // 打包模式
-                buildMode = (AutoBuildArgs.BuildMode)EditorGUILayout.EnumPopup("打包模式", buildMode);
-                DrawBuildModeHelp();
-
-                EditorGUILayout.Space(5);
-
-                // 版本号
-                versionNumber = EditorGUILayout.TextField("资源版本号", versionNumber);
-                appVersionNumber = EditorGUILayout.TextField("App版本号 (可选)", appVersionNumber);
-                buildVersionName = EditorGUILayout.TextField("版本标识名", buildVersionName);
-
-                EditorGUILayout.Space(5);
-
-                // 输出路径
-                EditorGUILayout.BeginHorizontal();
-                outputPath = EditorGUILayout.TextField("输出路径", outputPath);
-                if (GUILayout.Button("...", GUILayout.Width(30)))
+                using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
                 {
-                    string path = EditorUtility.OpenFolderPanel("选择输出目录", outputPath, "");
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        outputPath = path;
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
+                    EditorGUI.indentLevel++;
 
-                EditorGUI.indentLevel--;
-                EditorGUILayout.EndVertical();
+                    // 打包模式
+                    buildMode = (AutoBuildArgs.BuildMode)EditorGUILayout.EnumPopup("打包模式", buildMode);
+                    DrawBuildModeHelp();
+
+                    EditorGUILayout.Space(5);
+
+                    // 版本号
+                    versionNumber = EditorGUILayout.TextField("资源版本号", versionNumber);
+                    appVersionNumber = EditorGUILayout.TextField("App版本号 (可选)", appVersionNumber);
+                    buildVersionName = EditorGUILayout.TextField("版本标识名", buildVersionName);
+
+                    EditorGUILayout.Space(5);
+
+                    // 输出路径
+                    using (new EditorGUILayout.HorizontalScope())
+                    {
+                        outputPath = EditorGUILayout.TextField("输出路径", outputPath);
+                        if (GUILayout.Button("...", GUILayout.Width(30)))
+                        {
+                            string path = EditorUtility.OpenFolderPanel("选择输出目录", outputPath, "");
+                            if (!string.IsNullOrEmpty(path))
+                            {
+                                outputPath = path;
+                            }
+                        }
+                    }
+
+                    EditorGUI.indentLevel--;
+                }
             }
-            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         /// <summary>
@@ -267,26 +273,28 @@ namespace AutoBuild
         private void DrawAdvancedSettings()
         {
             showAdvancedSettings = EditorGUILayout.BeginFoldoutHeaderGroup(showAdvancedSettings, "高级设置");
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
             if (showAdvancedSettings)
             {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                EditorGUI.indentLevel++;
+                using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+                {
+                    EditorGUI.indentLevel++;
 
-                // 临时增加标签宽度以确保文字完整显示
-                var oldLabelWidth = EditorGUIUtility.labelWidth;
-                EditorGUIUtility.labelWidth = 180;
+                    // 临时增加标签宽度以确保文字完整显示
+                    var oldLabelWidth = EditorGUIUtility.labelWidth;
+                    EditorGUIUtility.labelWidth = 180;
 
-                enableUnityDevelopment = EditorGUILayout.Toggle("Unity Development 模式", enableUnityDevelopment);
-                enableGameDevelopment = EditorGUILayout.Toggle("Game Development 模式", enableGameDevelopment);
-                enableBuildExcel = EditorGUILayout.Toggle("打表", enableBuildExcel);
-                enableIncrement = EditorGUILayout.Toggle("增量打包", enableIncrement);
+                    enableUnityDevelopment = EditorGUILayout.Toggle("Unity Development 模式", enableUnityDevelopment);
+                    enableGameDevelopment = EditorGUILayout.Toggle("Game Development 模式", enableGameDevelopment);
+                    enableBuildExcel = EditorGUILayout.Toggle("打表", enableBuildExcel);
+                    enableIncrement = EditorGUILayout.Toggle("增量打包", enableIncrement);
 
-                EditorGUIUtility.labelWidth = oldLabelWidth;
+                    EditorGUIUtility.labelWidth = oldLabelWidth;
 
-                EditorGUI.indentLevel--;
-                EditorGUILayout.EndVertical();
+                    EditorGUI.indentLevel--;
+                }
             }
-            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         /// <summary>
@@ -295,24 +303,26 @@ namespace AutoBuild
         private void DrawAndroidSettings()
         {
             showAndroidSettings = EditorGUILayout.BeginFoldoutHeaderGroup(showAndroidSettings, "Android 设置");
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
             if (showAndroidSettings)
             {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                EditorGUI.indentLevel++;
-
-                androidBuildOption = (AutoBuildArgs.AndroidBuildOption)EditorGUILayout.EnumPopup("编译选项", androidBuildOption);
-                DrawAndroidBuildOptionHelp();
-
-                androidVersionEndNum2 = EditorGUILayout.IntSlider("版本末位数字 (0-99)", androidVersionEndNum2, 0, 99);
-                if (androidVersionEndNum2 == 0)
+                using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
                 {
-                    EditorGUILayout.HelpBox("末位为0时，将使用当前小时数", MessageType.Info);
-                }
+                    EditorGUI.indentLevel++;
 
-                EditorGUI.indentLevel--;
-                EditorGUILayout.EndVertical();
+                    androidBuildOption = (AutoBuildArgs.AndroidBuildOption)EditorGUILayout.EnumPopup("编译选项", androidBuildOption);
+                    DrawAndroidBuildOptionHelp();
+
+                    androidVersionEndNum2 = EditorGUILayout.IntSlider("版本末位数字 (0-99)", androidVersionEndNum2, 0, 99);
+                    if (androidVersionEndNum2 == 0)
+                    {
+                        EditorGUILayout.HelpBox("末位为0时，将使用当前小时数", MessageType.Info);
+                    }
+
+                    EditorGUI.indentLevel--;
+                }
             }
-            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         /// <summary>
@@ -325,10 +335,10 @@ namespace AutoBuild
                 AutoBuildArgs.AndroidBuildOption.Mono => "Mono: ARMv7 + X86",
                 AutoBuildArgs.AndroidBuildOption.Il2cppArmFull => "IL2CPP: ARMv7 + ARM64",
                 AutoBuildArgs.AndroidBuildOption.AABModeArmFull => "AAB: ARMv7 + ARM64 (Google Play)",
-                AutoBuildArgs.AndroidBuildOption.Il2cppArmFullAndX86 => "IL2CPP: ARMv7 + ARM64 + X86",
-                AutoBuildArgs.AndroidBuildOption.Il2cpp32 => "IL2CPP: ARMv7 + X86 (32位)",
-                AutoBuildArgs.AndroidBuildOption.AABModeArmFullAndX86 => "AAB: X86",
-                AutoBuildArgs.AndroidBuildOption.Il2cppArm64AndX86 => "IL2CPP: ARM64 + X86 (32位)",
+                AutoBuildArgs.AndroidBuildOption.Il2cppArm64 => "IL2CPP: ARM64",
+                AutoBuildArgs.AndroidBuildOption.AABModeArm64 => "AAB: ARM64 (Google Play)",
+                AutoBuildArgs.AndroidBuildOption.Il2cppArm64AndX86_64 => "IL2CPP: ARM64 + X86_64 (64位)",
+                AutoBuildArgs.AndroidBuildOption.AABModeArm64AndX86_64 => "AAB: ARM64 + X86_64 (Google Play)",
                 _ => ""
             };
             if (!string.IsNullOrEmpty(helpText))
@@ -343,32 +353,35 @@ namespace AutoBuild
         private void DrawResVersionSettings()
         {
             showResVersionSettings = EditorGUILayout.BeginFoldoutHeaderGroup(showResVersionSettings, "热更资源设置");
+            EditorGUILayout.EndFoldoutHeaderGroup();
+
             if (showResVersionSettings)
             {
-                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                EditorGUI.indentLevel++;
-
-                copyToResVersion = EditorGUILayout.Toggle("拷贝到版本库", copyToResVersion);
-
-                if (copyToResVersion)
+                using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
                 {
-                    EditorGUILayout.BeginHorizontal();
-                    sourceVersionPath = EditorGUILayout.TextField("版本库路径", sourceVersionPath);
-                    if (GUILayout.Button("...", GUILayout.Width(30)))
+                    EditorGUI.indentLevel++;
+
+                    copyToResVersion = EditorGUILayout.Toggle("拷贝到版本库", copyToResVersion);
+
+                    if (copyToResVersion)
                     {
-                        string path = EditorUtility.OpenFolderPanel("选择版本库目录", sourceVersionPath, "");
-                        if (!string.IsNullOrEmpty(path))
+                        using (new EditorGUILayout.HorizontalScope())
                         {
-                            sourceVersionPath = path;
+                            sourceVersionPath = EditorGUILayout.TextField("版本库路径", sourceVersionPath);
+                            if (GUILayout.Button("...", GUILayout.Width(30)))
+                            {
+                                string path = EditorUtility.OpenFolderPanel("选择版本库目录", sourceVersionPath, "");
+                                if (!string.IsNullOrEmpty(path))
+                                {
+                                    sourceVersionPath = path;
+                                }
+                            }
                         }
                     }
-                    EditorGUILayout.EndHorizontal();
-                }
 
-                EditorGUI.indentLevel--;
-                EditorGUILayout.EndVertical();
+                    EditorGUI.indentLevel--;
+                }
             }
-            EditorGUILayout.EndFoldoutHeaderGroup();
         }
 
         /// <summary>
@@ -376,61 +389,62 @@ namespace AutoBuild
         /// </summary>
         private void DrawBuildButtons()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-
-            // 参数预览
-            EditorGUILayout.LabelField("打包预览", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField($"平台: {selectedPlatform}");
-            EditorGUILayout.LabelField($"模式: {buildMode}");
-            EditorGUILayout.LabelField($"版本: {versionNumber}");
-
-            EditorGUILayout.Space(10);
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-
-            // 重置按钮
-            if (GUILayout.Button("重置参数", GUILayout.Width(100), GUILayout.Height(35)))
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
-                if (EditorUtility.DisplayDialog("确认", "确定要重置所有参数吗？", "确定", "取消"))
+                // 参数预览
+                EditorGUILayout.LabelField("打包预览", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField($"平台: {selectedPlatform}");
+                EditorGUILayout.LabelField($"模式: {buildMode}");
+                EditorGUILayout.LabelField($"版本: {versionNumber}");
+
+                EditorGUILayout.Space(10);
+
+                using (new EditorGUILayout.HorizontalScope())
                 {
-                    LoadDefaultValues();
+                    GUILayout.FlexibleSpace();
+
+                    // 重置按钮
+                    if (GUILayout.Button("重置参数", GUILayout.Width(100), GUILayout.Height(35)))
+                    {
+                        if (EditorUtility.DisplayDialog("确认", "确定要重置所有参数吗？", "确定", "取消"))
+                        {
+                            LoadDefaultValues();
+                        }
+                    }
+
+                    GUILayout.Space(20);
+
+                    // 打包按钮
+                    GUI.backgroundColor = new Color(0.3f, 0.8f, 0.3f);
+                    if (GUILayout.Button("开始打包", GUILayout.Width(150), GUILayout.Height(35)))
+                    {
+                        StartBuild();
+                    }
+                    GUI.backgroundColor = Color.white;
+
+                    GUILayout.FlexibleSpace();
+                }
+
+                EditorGUILayout.Space(5);
+
+                // 打开输出目录按钮
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    GUILayout.FlexibleSpace();
+                    if (GUILayout.Button("打开输出目录", GUILayout.Width(150), GUILayout.Height(25)))
+                    {
+                        if (Directory.Exists(outputPath))
+                        {
+                            EditorUtility.RevealInFinder(outputPath);
+                        }
+                        else
+                        {
+                            EditorUtility.DisplayDialog("提示", "输出目录不存在", "确定");
+                        }
+                    }
+                    GUILayout.FlexibleSpace();
                 }
             }
-
-            GUILayout.Space(20);
-
-            // 打包按钮
-            GUI.backgroundColor = new Color(0.3f, 0.8f, 0.3f);
-            if (GUILayout.Button("开始打包", GUILayout.Width(150), GUILayout.Height(35)))
-            {
-                StartBuild();
-            }
-            GUI.backgroundColor = Color.white;
-
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.Space(5);
-
-            // 打开输出目录按钮
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button("打开输出目录", GUILayout.Width(150), GUILayout.Height(25)))
-            {
-                if (Directory.Exists(outputPath))
-                {
-                    EditorUtility.RevealInFinder(outputPath);
-                }
-                else
-                {
-                    EditorUtility.DisplayDialog("提示", "输出目录不存在", "确定");
-                }
-            }
-            GUILayout.FlexibleSpace();
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.EndVertical();
         }
 
         /// <summary>

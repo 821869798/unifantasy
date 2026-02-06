@@ -98,10 +98,10 @@ namespace AutoBuild
             Mono = 0,
             Il2cppArmFull = 1,
             AABModeArmFull = 2,
-            Il2cppArmFullAndX86 = 3,
-            Il2cpp32 = 4,
-            AABModeArmFullAndX86 = 5,
-            Il2cppArm64AndX86 = 6,
+            Il2cppArm64 = 3,
+            AABModeArm64 = 4,
+            Il2cppArm64AndX86_64 = 5,
+            AABModeArm64AndX86_64 = 6,
         }
 
         public static readonly string DefaultBuildOutputPath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "build_output").Replace('\\', '/');
@@ -133,7 +133,7 @@ namespace AutoBuild
                     break;
             }
             this.buildMode = BuildMode.AllBuild;
-            this.androidBuildOption = AndroidBuildOption.Il2cppArm64AndX86;
+            this.androidBuildOption = AndroidBuildOption.Il2cppArm64AndX86_64;
             this.enableUnityDevelopment = EditorUserBuildSettings.development;
             this.enableGameDevelopment = AutoBuildUtility.ContainScriptingDefineSymbol("GameDev");
             this.enableBuildExcel = true;
